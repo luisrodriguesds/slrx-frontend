@@ -1,3 +1,6 @@
+#Sistema Laboratório de Raio X
+Frontend do novo sistema que será gerenciar os sistema do LRX
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
