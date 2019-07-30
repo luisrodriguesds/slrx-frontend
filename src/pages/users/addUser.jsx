@@ -6,14 +6,14 @@ export default class addUser extends React.Component {
 
 	render() {
 		return (
-			<Main title="Cadaastrar Usuário">
+			<Main title="Cadastrar Usuário">
 				<div className="container">
 					<div className="row justify-content-md-center">
 						<div className="col-12 col-sm-12 col-lg-7">
 						<div className="card">
 					        <form className="needs-validation" id="" novalidate>
 					          <div className="card-header">
-					            <h4>Cadaastrar Usuário</h4>
+					            <h4>Cadastrar Usuário</h4>
 					          </div>
 					          <div className="card-body">
 					            <div className="form-group">

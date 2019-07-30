@@ -1,10 +1,9 @@
 import React from 'react';
-import {HashRouter, BrowserRouter} from 'react-router-dom';
+import {HashRouter, BrowserRouter, Route, Redirect} from 'react-router-dom';
+import { isAuthenticated } from "./services/auth";
 
-import Nav from './components/template/Nav';
-import Sidebar from './components/template/Sidebar';
-import Footer from './components/template/Footer';
-import Routes from './Routes';
+import Private from './Private';
+import Public from './Public';
 
 import './App.css';
 
@@ -13,10 +12,10 @@ function App() {
     <BrowserRouter>
       <div className="app" id="app">
         <div className="main-wrapper main-wrapper-1">
-          <Nav />
-          <Sidebar />
-          <Routes />
-          <Footer />
+          {/* Rota Publica */}
+          {!isAuthenticated() && <Public />}
+          {/* Rota Privada */}
+          {isAuthenticated() && <Private />}
         </div>
       </div>
     </BrowserRouter>

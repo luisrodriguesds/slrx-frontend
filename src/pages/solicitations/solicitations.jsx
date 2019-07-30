@@ -68,9 +68,11 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td>20/01/2018</td>
 			                      <td>
-				            		<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>
-			                      	<Link to="/solicitacoes/editar/1" className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
+			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
+			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                    <tr>
@@ -95,9 +97,11 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td>20/01/2018</td>
 			                      <td>
-				            		<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>
-			                      	<Link to="/solicitacoes/editar/1" className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
+			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
+			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                    <tr>
@@ -122,9 +126,11 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td>20/01/2018</td>
 			                      <td>
-				            		<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>
-			                      	<Link to="/solicitacoes/editar/1" className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
+			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
+			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                  </tbody>

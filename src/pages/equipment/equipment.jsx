@@ -15,8 +15,8 @@ export default class equipment extends React.Component {
 			              <h4>Equipamentos</h4>
 			              <div className="card-header-form">
 			                <div className="option-group">
-			                	<Link to="/equipamentos/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i class="fas fa-plus"></i></Link>
-				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger mr-1"><i class="fas fa-trash"></i></button>
+			                	<Link to="/equipamentos/cadastro" title="Cadastrar" className="btn btn-primary ml-1"><i class="fas fa-plus"></i></Link>
+				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger"><i class="fas fa-trash"></i></button>
 			                </div>
 			                <form>
 			                  <div className="input-group">
@@ -58,10 +58,12 @@ export default class equipment extends React.Component {
 			                        <img alt="image" src="assets/img/avatar/avatar-5.png" className="rounded-circle" width={35} data-toggle="tooltip" title="Wildan Ahdian" />
 			                      </td>
 			                      <td>2018-01-20</td>
-			                      <td><div className="badge badge-success">Habilitado</div></td>
+			                      <td><div className="badge badge-success">Disponível</div></td>
 			                      <td>
-			                      	<button className="btn btn-info mr-1"> <i className="fas fa-edit"></i> </button>
-			                      	<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
+			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                    <tr>
@@ -79,8 +81,10 @@ export default class equipment extends React.Component {
 			                      <td>2018-04-10</td>
 			                      <td><div className="badge badge-danger">Indisponível</div></td>
 			                      <td>
-			                      	<button className="btn btn-info mr-1"> <i className="fas fa-edit"></i> </button>
-			                      	<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
+			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                    <tr>
@@ -98,8 +102,10 @@ export default class equipment extends React.Component {
 			                      <td>2018-01-29</td>
 			                      <td><div className="badge badge-danger">Indisponível</div></td>
 			                      <td>
-			                      	<button className="btn btn-info mr-1"> <i className="fas fa-edit"></i> </button>
-			                      	<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
+			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                    <tr>
@@ -117,8 +123,10 @@ export default class equipment extends React.Component {
 			                      <td>2018-01-16</td>
 			                      <td><div className="badge badge-success">Disponível</div></td>
 			                      <td>
-			                      	<button className="btn btn-info mr-1"> <i className="fas fa-edit"></i> </button>
-			                      	<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
+			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
+									</div>
 			                      </td>
 			                    </tr>
 			                  </tbody>

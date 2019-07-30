@@ -21,29 +21,45 @@ import editAccount from './pages/editAccount/editAccount';
 
 import NotFound from './pages/notFound';
 
+import { isAuthenticated } from "./services/auth";
+
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route
+      {...rest}
+      render={props =>
+        isAuthenticated() ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to={{ pathname: "/inicio", state: { from: props.location } }} />
+        )
+      }
+    />
+  );
+
 const Routes = (props) => {
   return (
     <Switch>
-    	<Route exact path='/' component={Dashboard} />
-    	<Route exact path='/dashboard' component={Dashboard} />
+    	<PrivateRoute exact path='/' component={Dashboard} />
+    	<PrivateRoute exact path='/dashboard' component={Dashboard} />
 
-    	<Route exact path='/equipamentos' component={Equipment} />
-    	<Route exact path='/equipamentos/cadastro' component={addEquipment} />
+    	<PrivateRoute exact path='/equipamentos' component={Equipment} />
+    	<PrivateRoute exact path='/equipamentos/cadastro' component={addEquipment} />
 
-    	<Route exact path='/usuarios' component={Users} />
-    	<Route exact path='/usuarios/cadastro' component={addUser} />
-    	<Route path='/usuarios/editar/:id' component={UserEdit} />
-        <Route path='/usuarios/ver-perfil/:id' component={UsersProfile} />
+    	<PrivateRoute exact path='/usuarios' component={Users} />
+    	<PrivateRoute exact path='/usuarios/cadastro' component={addUser} />
+    	<PrivateRoute path='/usuarios/editar/:id' component={UserEdit} />
+        <PrivateRoute path='/usuarios/ver-perfil/:id' component={UsersProfile} />
 
-        <Route exact path='/solicitacoes' component={Solicitations} />
-        <Route exact path='/solicitacoes/cadastro' component={addSolicitation} />
-    	<Route path='/solicitacoes/ver-amostra/:id' component={SampleSingle} />
+        <PrivateRoute exact path='/solicitacoes' component={Solicitations} />
+        <PrivateRoute exact path='/solicitacoes/cadastro' component={addSolicitation} />
+    	<PrivateRoute path='/solicitacoes/ver-amostra/:id' component={SampleSingle} />
 
-    	<Route exact path='/perfil' component={Profile} />
-    	<Route exact path='/alterar-senha' component={ChangePass} />
-    	<Route exact path='/editar-conta' component={editAccount} />
+    	<PrivateRoute exact path='/perfil' component={Profile} />
+    	<PrivateRoute exact path='/alterar-senha' component={ChangePass} />
+    	<PrivateRoute exact path='/editar-conta' component={editAccount} />
 
-    	<Route exact path='/404' component={NotFound} />
+    	<PrivateRoute exact path='/404' component={NotFound} />
     	<Redirect from="*" to='/404' />
     </Switch>
   )
