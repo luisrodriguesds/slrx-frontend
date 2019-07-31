@@ -65,8 +65,8 @@
   outline: none; }
 
 a {
-  color: #41b6ad;
-  color: #0308a0;
+  /* color: #41b6ad; */
+  color: #27736d;
   font-weight: 600;
   transition: all .5s;
   -webkit-transition: all .5s;
@@ -1963,7 +1963,8 @@ body {
   font-size: 14px;
   font-weight: 400;
   font-family: 'Nunito', 'Segoe UI', arial;
-  color: #6c757d; }
+  /* color: #6c757d; */
+  color: #2c3033; }
 
 a.bb {
   text-decoration: none;

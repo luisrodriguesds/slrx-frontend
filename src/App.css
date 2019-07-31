@@ -6,6 +6,17 @@ body{
     background-position: center;
 }
 
+ul, ol, dl {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+li {
+    display: list-item;
+	text-align: -webkit-match-parent;
+}
+
 .main-footer{
 	background: #fff;
 }
@@ -22,4 +33,77 @@ body{
 .img-solicitation img{
 	width: 40%;
 	margin: 0 auto;
+}
+
+.button-login-footer{
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer{
+	background: #fff;
+	border-top: 2px solid #27736d;
+}
+
+.footer-copyright{
+	background: #14403e;
+}
+
+.footer-copyright p{
+	margin: 0;
+	color: #fff;
+}
+
+.footer-copyright p a{
+	color: #c1e7e5;
+}
+
+.footer-logo ol.flat-list{
+	display: flex;
+	align-items: center;
+}
+
+.footer-logo ol.flat-list i{
+	font-size: 14px;
+	margin: 0;
+}
+
+.footer-logo ol.flat-list li{
+	margin-right: 10px;
+}
+
+.footer-logo ol.flat-list li a {
+    display: block;
+    height: 33px;
+    width: 33px;
+    line-height: 33px;
+    background: #f3f3f3;
+    border-radius: 50%;
+    text-align: center;
+    box-shadow: 0px 0px 7px 0px rgba(133, 133, 133, 0.35);
+    -webkit-box-shadow: 0px 0px 7px 0px rgba(133, 133, 133, 0.35);
+    -moz-box-shadow: 0px 0px 7px 0px rgba(133, 133, 133, 0.35);
+    -o-box-shadow: 0px 0px 7px 0px rgba(133, 133, 133, 0.35);
+}
+.footer-widget-item ul{
+	margin-left: 10px
+}
+
+.footer-widget-item img:first-child{
+	margin-top: 20px;
+}
+
+.footer-widget-item img{
+	margin-bottom: 20px;
+}
+
+.btn{
+	font-size: 14px;
+}
+
+@media (min-width: 1200px){
+	.container {
+    	max-width: 1250px;
+	}
 }
