@@ -18,10 +18,10 @@ const Choose = () => {
                                 <p>Escolha o seu tipo de Usuário:</p>
                                 <p className="text-danger mb-0">*Alunos deverão passar pela aprovação do seu professor/orientador</p>
                                 <p className="text-danger mb-0">*Professores deverão passar pela aprovação do responsável pelo Laboratório, Professor Sasaki.</p>
-                                <p className="text-danger">*Representantes de empresas podem cadastrar suas amostras, mas só serão liberadas mediante a aprovação de uma proposta.</p>
+                                <p className="text-danger">*Representantes de empresas ou individual podem cadastrar suas amostras, mas somente serão liberadas mediante a aprovação de uma proposta.</p>
                                <Link to="/cadastro/aluno" className="btn btn-primary btn-block">Aluno</Link>
                                <Link to="/cadastro/professor" className="btn btn-primary btn-block">Professor</Link>
-                               <Link to="/cadastro/empresa" className="btn btn-primary btn-block">Empresa</Link>
+                               <Link to="/cadastro/empresa" className="btn btn-primary btn-block">Empresa ou Individual</Link>
                                <Link to="/cadastro/operador" className="btn btn-primary btn-block">Operador</Link>
                             </div>
                         </div>

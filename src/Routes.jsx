@@ -49,10 +49,10 @@ const Routes = (props) => {
     	<PrivateRoute exact path='/usuarios' component={Users} />
     	<PrivateRoute exact path='/usuarios/cadastro' component={addUser} />
     	<PrivateRoute path='/usuarios/editar/:id' component={UserEdit} />
-        <PrivateRoute path='/usuarios/ver-perfil/:id' component={UsersProfile} />
+      <PrivateRoute path='/usuarios/ver-perfil/:id' component={UsersProfile} />
 
-        <PrivateRoute exact path='/solicitacoes' component={Solicitations} />
-        <PrivateRoute exact path='/solicitacoes/cadastro' component={addSolicitation} />
+      <PrivateRoute exact path='/solicitacoes' component={Solicitations} />
+      <PrivateRoute exact path='/solicitacoes/cadastro' component={addSolicitation} />
     	<PrivateRoute path='/solicitacoes/ver-amostra/:id' component={SampleSingle} />
 
     	<PrivateRoute exact path='/perfil' component={Profile} />
