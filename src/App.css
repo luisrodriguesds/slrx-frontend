@@ -6,17 +6,6 @@ body{
     background-position: center;
 }
 
-ul, ol, dl {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-
-li {
-    display: list-item;
-	text-align: -webkit-match-parent;
-}
-
 .main-footer{
 	background: #fff;
 }
@@ -44,6 +33,16 @@ li {
 .footer{
 	background: #fff;
 	border-top: 2px solid #27736d;
+}
+.footer ul, ol, dl {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+li {
+    display: list-item;
+	text-align: -webkit-match-parent;
 }
 
 .footer-copyright{

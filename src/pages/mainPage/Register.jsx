@@ -52,6 +52,99 @@ export default class Register extends Component {
       e.preventDefault();
     }
 
+    renderCompany(){
+      return (
+      <div className="infos-company">
+        <div className="form-divider">
+            Informações da Empresa
+        </div>
+        <div className="row">
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="cnpj">CNPJ</label>
+                <InputMask id="cnpj" type="text" className="form-control" mask="99.999.999/9999-99" name="cnpj" />
+                <div className="invalid-feedback">
+                </div>
+            </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="name_company">Nome Fantasia</label>
+                <input id="name_company" type="text" className="form-control" name="name_company" />
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+        </div>
+        <div className="row">
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="razao_social">razao_social</label>
+                <InputMask id="razao_social" type="text" className="form-control" mask="99.999.999/9999-99" name="razao_social" />
+                <div className="invalid-feedback">
+                </div>
+            </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="nameCompany">Nome Fantasia</label>
+                <input id="nameCompany" type="text" className="form-control" name="nameCompany" />
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+        </div>
+        <div className="row">
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="ies">Instituição de Ensino Superior</label>
+                <select className="form-control" name="ies" required>
+                  <option value="">Selecione sua IES ...</option>
+                </select>
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="department">Departamento</label>
+                <select className="form-control" name="departamento" required>
+                  <option value="">Selecione seu Departamento ...</option>
+                </select>
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+        </div>
+        <div className="row">
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="titulo">Título</label>
+                <select className="form-control" name="titulo" required>
+                  <option value="">Selecione sua Título ...</option>
+                  <option value="0">Graduando</option>
+                  <option value="1">Graduado</option>
+                  <option value="2">Especializando</option>
+                  <option value="3">Especialista</option>
+                  <option value="4">Mestrando</option>
+                  <option value="5">Mestre</option>
+                  <option value="6">Doutorando</option>
+                  <option value="7">Doutor</option>
+                </select>
+                <div className="invalid-feedback">
+                </div>
+            </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="lab">Laboratório</label>
+                <input id="lab" type="text" className="form-control" name="lab" />
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12">
+                <label htmlFor="research">Área de Pesquisa</label>
+                <input id="research" type="text" className="form-control" name="research" />
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12">
+            <label htmlFor="research">Descrição da Pesquisa</label>
+            <textarea className="form-control" required defaultValue={""} />
+          </div>
+        </div>
+      </div>
+      );
+    }
 
     renderAcademy(){
       return (
@@ -95,6 +188,14 @@ export default class Register extends Component {
                     </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                    <label htmlFor="lab">Laboratório</label>
+                    <input id="lab" type="text" className="form-control" name="lab" />
+                     <div className="invalid-feedback">
+                      </div>
+                </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-12">
                     <label htmlFor="research">Área de Pesquisa</label>
                     <input id="research" type="text" className="form-control" name="research" />
                      <div className="invalid-feedback">
