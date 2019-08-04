@@ -78,8 +78,8 @@ export default class dashboard extends React.Component {
 		                <h4>Medida DRX em tempo Real</h4>
 		              </div>
 		              <div className="card-body">
-		                <canvas id="myChart" height={382} />
-		                {/*<iframe src="http://csd.fisica.ufc.br:8080/iframe" height="452" frameborder="0" style={{border:0, width:"100%"}} allowfullscreen=""></iframe>*/}
+		                {/*<canvas id="myChart" height={382} />*/}
+		                <iframe src="http://csd.fisica.ufc.br:8080/iframe" height="452" frameborder="0" style={{border:0, width:"100%"}} allowfullscreen=""></iframe>
 		              </div>
 		            </div>
 		          </div>

@@ -3,8 +3,11 @@ import aixos from 'axios';
 import InputMask from 'react-input-mask';
 
 import Main from './Main';
+import Logo from '../../assets/img/logo_lrx@2x.png';
+
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
+const urlCep = 'https://viacep.com.br/ws/60861135/json/';
 
 export default class Register extends Component {
     state = {
@@ -12,7 +15,8 @@ export default class Register extends Component {
       tipoSlug:"",
       data:{state:""},
       states:[],
-      cities:[]
+      cities:[],
+      address:{}
     };
 
     async componentDidMount(){
@@ -30,6 +34,9 @@ export default class Register extends Component {
         case 'operador':
           this.setState({tipo:"Operador",tipoSlug:tipo})  
         break;
+        default:
+          this.setState({tipo:"Independente",tipoSlug:tipo})
+        break;
       }
 
       //Load state
@@ -42,6 +49,17 @@ export default class Register extends Component {
       console.log(e.target.value);
       const cities = await aixos.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${e.target.value}/municipios`);
       this.setState({cities:cities.data});
+    }
+
+    handleCEP = async (e) => {
+      let cep = e.target.value.replace('-', '');
+          cep = parseInt(cep);
+      
+      if (cep.toString().length == 8) {
+        const address = await aixos.get(`https://viacep.com.br/ws/${cep}/json/`);
+        this.setState({address:address.data});
+        console.log(address);
+      }
     }
 
     _onChange = (e) => {
@@ -74,75 +92,92 @@ export default class Register extends Component {
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="razao_social">razao_social</label>
-                <InputMask id="razao_social" type="text" className="form-control" mask="99.999.999/9999-99" name="razao_social" />
+                <label htmlFor="razao_social">Razão Social</label>
+                <InputMask id="razao_social" type="text" className="form-control" name="razao_social" />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="nameCompany">Nome Fantasia</label>
-                <input id="nameCompany" type="text" className="form-control" name="nameCompany" />
+                <label htmlFor="inscricao_estadual">Inscrição Estadual</label>
+                <input id="inscricao_estadual" type="text" className="form-control" name="inscricao_estadual" />
                   <div className="invalid-feedback">
                   </div>
             </div>
         </div>
         <div className="row">
-            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="ies">Instituição de Ensino Superior</label>
-                <select className="form-control" name="ies" required>
-                  <option value="">Selecione sua IES ...</option>
-                </select>
-                  <div className="invalid-feedback">
-                  </div>
-            </div>
-            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="department">Departamento</label>
-                <select className="form-control" name="departamento" required>
-                  <option value="">Selecione seu Departamento ...</option>
-                </select>
-                  <div className="invalid-feedback">
-                  </div>
+            <div className="form-group col-12">
+                <label htmlFor="email_company">Email da Empresa</label>
+                <InputMask id="email_company" type="email" className="form-control" name="email_company" />
+                <div className="invalid-feedback">
+                </div>
             </div>
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="titulo">Título</label>
-                <select className="form-control" name="titulo" required>
-                  <option value="">Selecione sua Título ...</option>
-                  <option value="0">Graduando</option>
-                  <option value="1">Graduado</option>
-                  <option value="2">Especializando</option>
-                  <option value="3">Especialista</option>
-                  <option value="4">Mestrando</option>
-                  <option value="5">Mestre</option>
-                  <option value="6">Doutorando</option>
-                  <option value="7">Doutor</option>
-                </select>
+                <label htmlFor="fone_company">Fone</label>
+                <InputMask id="fone_company" type="text" mask="(99)99999-9999" className="form-control" name="fone_company" />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="lab">Laboratório</label>
-                <input id="lab" type="text" className="form-control" name="lab" />
+                <label htmlFor="cep">CEP</label>
+                <InputMask id="cep" type="text" mask="99999-999" onChange={(e) => this.handleCEP(e)} className="form-control" name="cep" />
                   <div className="invalid-feedback">
                   </div>
             </div>
         </div>
         <div className="row">
           <div className="form-group col-12">
-                <label htmlFor="research">Área de Pesquisa</label>
-                <input id="research" type="text" className="form-control" name="research" />
-                  <div className="invalid-feedback">
-                  </div>
+                <label htmlFor="street">Logradouro</label>
+                <input id="street" type="text" disabled defaultValue={this.state.address.logradouro}  className="form-control" name="street" />
+                <div className="invalid-feedback">
+                </div>
             </div>
         </div>
         <div className="row">
-          <div className="form-group col-12">
-            <label htmlFor="research">Descrição da Pesquisa</label>
-            <textarea className="form-control" required defaultValue={""} />
-          </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="neighborhood">Bairro</label>
+                <input id="neighborhood" type="text" disabled defaultValue={this.state.address.bairro} className="form-control" name="neighborhood" />
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="number">Número</label>
+                <input id="number" type="text" className="form-control" name="number" />
+                <div className="invalid-feedback">
+                </div>
+            </div>
+        </div>
+        <div className="row">
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="city_company">Localidade</label>
+                <input id="city_company" type="text" defaultValue={this.state.address.localidade} disabled disabled className="form-control" name="city_company" />
+                <div className="invalid-feedback">
+                </div>
+            </div>
+            <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                <label htmlFor="uf">Estado</label>
+                <input id="uf" type="text" disabled defaultValue={this.state.address.uf} className="form-control" name="uf" />
+                  <div className="invalid-feedback">
+                  </div>
+            </div>
         </div>
       </div>
+      );
+    }
+
+    renderStudent(){
+      return (
+        <div className="row">
+            <div className="form-group col-12">
+                <label htmlFor="email_leader" className="d-block">Email do seu Orientador</label>
+                <input id="email_leader" type="email" className="form-control" name="email_leader" />
+                <div id="pwindicator" className="pwindicator">
+                    <div className="bar" />
+                    <div className="label" />
+                </div>
+            </div>
+        </div>
       );
     }
 
@@ -218,6 +253,9 @@ export default class Register extends Component {
             <div className="container">
                 <div className="row justify-content-md-center">
                     <div className="col-12 col-sm-12 col-lg-7">
+                      <div className="login-brand">
+                        <img src={Logo} alt="logo" width="300" className="" />
+                      </div>
                         <div className="card card-primary">
                             <div className="card-header">
                                 <h4>Cadastro de {this.state.tipo}</h4>
@@ -308,6 +346,7 @@ export default class Register extends Component {
                                         </div>
                                     </div>
                                     {(this.state.tipoSlug == 'aluno' || this.state.tipoSlug == 'professor') ? this.renderAcademy() : ""}
+                                    {(this.state.tipoSlug == 'empresa') ? this.renderCompany() : ""}
                                     
                                     <div className="form-divider">
                                           Sistema
@@ -326,6 +365,7 @@ export default class Register extends Component {
                                             <input id="password2" type="password" className="form-control" name="password-confirm" />
                                         </div>
                                     </div>
+                                    {(this.state.tipoSlug == 'aluno') ? renderStudent() : ""}
                                     <div className="form-group">
                                         <div className="custom-control custom-checkbox">
                                             <input type="checkbox" name="agree" className="custom-control-input" id="agree" />
