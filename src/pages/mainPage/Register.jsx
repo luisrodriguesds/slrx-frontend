@@ -365,7 +365,7 @@ export default class Register extends Component {
                                             <input id="password2" type="password" className="form-control" name="password-confirm" />
                                         </div>
                                     </div>
-                                    {(this.state.tipoSlug == 'aluno') ? renderStudent() : ""}
+                                    {/* {(this.state.tipoSlug == 'aluno') ? renderStudent() : ""} */}
                                     <div className="form-group">
                                         <div className="custom-control custom-checkbox">
                                             <input type="checkbox" name="agree" className="custom-control-input" id="agree" />
