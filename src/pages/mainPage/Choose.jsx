@@ -23,12 +23,12 @@ const Choose = () => {
                                 <p className="text-danger">*Alunos deverão passar pela aprovação do seu professor/orientador</p>
                                 <p className="text-danger">*Professores deverão passar pela aprovação do responsável pelo Laboratório, Professor Sasaki.</p>
                                 <p className="text-danger">*Representantes de empresas podem cadastrar suas amostras, mas somente serão liberadas mediante a aprovação de uma proposta.</p>
-                                <p className="text-danger">*Usuários independentes podem cadastrar suas amostras, mas somente serão liberadas mediante a aprovação de uma proposta.</p>
+                                <p className="text-danger">*Usuários autônomos podem cadastrar suas amostras, mas somente serão liberadas mediante a aprovação de uma proposta.</p>
                                 <p className="text-danger">*Operadores somente serão liberados após a confirmação do responsável pelo Laboratório, Professor Sasaki.</p>
                                 <Link to="/cadastro/aluno" className="btn btn-primary btn-block">Aluno</Link>
                                 <Link to="/cadastro/professor" className="btn btn-primary btn-block">Professor</Link>
                                 <Link to="/cadastro/empresa" className="btn btn-primary btn-block">Empresa</Link>
-                                <Link to="/cadastro/independente" className="btn btn-primary btn-block">Independente</Link>
+                                <Link to="/cadastro/autonomo" className="btn btn-primary btn-block">Autônomo</Link>
                                 <Link to="/cadastro/operador" className="btn btn-primary btn-block">Operador</Link>
                             </div>
                         </div>

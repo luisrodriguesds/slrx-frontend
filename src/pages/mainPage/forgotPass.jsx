@@ -17,7 +17,7 @@ export default class forgotPass extends React.Component {
 				            </div>
 	                        <div className="card card-primary">
 	                            <div className="card-header">
-	                                <h4>Forgot Password</h4>
+	                                <h4>Esqueci Minha Senha</h4>
 	                            </div>
 	                            <div className="card-body">
 				                <p className="text-muted">Será enviado um email de recuperação de senha para o email informado</p>

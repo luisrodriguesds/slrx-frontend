@@ -101,6 +101,11 @@ li {
 	font-size: 14px;
 }
 
+.rotation{
+	 transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+}
+
 @media (min-width: 1200px){
 	.container {
     	max-width: 1250px;

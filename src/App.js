@@ -1,5 +1,5 @@
 import React from 'react';
-import {HashRouter, BrowserRouter, Route, Redirect} from 'react-router-dom';
+import {HashRouter, BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { isAuthenticated } from "./services/auth";
 
 import Private from './Private';

@@ -1,52 +1,141 @@
 import React, { Component } from 'react';
 import aixos from 'axios';
 import InputMask from 'react-input-mask';
+import { Link, withRouter } from "react-router-dom";
+
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import * as EmailValidation from 'email-validator';
 
 import Main from './Main';
 import Logo from '../../assets/img/logo_lrx@2x.png';
+import api from '../../services/api';
 
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
-const urlCep = 'https://viacep.com.br/ws/60861135/json/';
+const Red = () => (<span style={{color:'red'}}>*</span>);
+let init = {
+          "name":"",
+          "email":"",
+          "password":"",
+          "cpf":"",
+          "birthday":"",
+          "sex":"",
+          "other_email":"",
+          "state":"",
+          "city":"",
+          "phone1":"",
+          "phone2":"",
+      };
 
-export default class Register extends Component {
+const SignupSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  lastName: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  email: Yup.string()
+    .email('Invalid email')
+    .required('Required'),
+});
+
+class Register extends Component {
     state = {
       tipo:"",
       tipoSlug:"",
-      data:{state:""},
+      data:{state:"", ies:""},
       states:[],
       cities:[],
-      address:{}
+      address:{},
+      loading:false
     };
 
     async componentDidMount(){
       let tipo = window.location.pathname.split('/')[2];
       switch (tipo) {
         case 'aluno':
-          this.setState({tipo:"Aluno(a)",tipoSlug:tipo})  
+          init = { ...init,
+            "ies":"",
+            "department":"",
+            "title":"",
+            "laboratory":"",
+            "research":"",
+            "description":"",
+            "email_leader":"",
+            "access_level_slug":"aluno"
+          }
+          this.setState({tipo:"Aluno(a)",tipoSlug:tipo, data:{...init}});  
         break;
         case 'professor':
-          this.setState({tipo:"Professor(a)",tipoSlug:tipo})  
+          init = {
+            ...init,
+            "ies":"",
+            "department":"",
+            "title":"",
+            "laboratory":"",
+            "research":"",
+            "description":"",
+            "access_level_slug":"professor"
+          }
+          this.setState({tipo:"Professor(a)",tipoSlug:tipo, data:{...init}})  
         break;
         case 'empresa':
-          this.setState({tipo:"Empresa ou Individual",tipoSlug:tipo})  
+          init = {
+            ...init,
+            "cnpj":"",
+            "fantasy_name":"",
+            "company_name":"",
+            "state_registration":"",
+            "email_company":"",
+            "fone":"",
+            "cep":"",
+            "street":"",
+            "neighborhood":"",
+            "number":"",
+            "city":"",
+            "state":"",
+            "type_company":"",
+            "access_level_slug":"empresa"
+          }
+          this.setState({tipo:"Empresa ou Individual",tipoSlug:tipo, data:{...init}})  
         break;
         case 'operador':
-          this.setState({tipo:"Operador",tipoSlug:tipo})  
+          init = {
+            ...init,
+            "cep_address":"",
+            "street_address":"",
+            "neighborhood_address":"",
+            "number_address":"",
+            "city_address":"",
+            "state_address":"",
+            "access_level_slug":"operador"
+          }
+          this.setState({tipo:"Operador",tipoSlug:tipo, data:{...init}})  
         break;
         default:
-          this.setState({tipo:"Independente",tipoSlug:tipo})
+          init = {
+            ...init,
+            "cep_address":"",
+            "street_address":"",
+            "neighborhood_address":"",
+            "number_address":"",
+            "city_address":"",
+            "state_address":"",
+            "access_level_slug":"autonomo"
+          }
+          this.setState({tipo:"Autônomo",tipoSlug:'autonomo', data:{...init}})
         break;
       }
 
       //Load state
       const states = await aixos.get(urlStates);
       this.setState({states:states.data});
-      console.log(this.state);
     }
 
     handleStates = async (e) => {
-      console.log(e.target.value);
       const cities = await aixos.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${e.target.value}/municipios`);
       this.setState({cities:cities.data});
     }
@@ -58,16 +147,44 @@ export default class Register extends Component {
       if (cep.toString().length == 8) {
         const address = await aixos.get(`https://viacep.com.br/ws/${cep}/json/`);
         this.setState({address:address.data});
-        console.log(address);
       }
     }
 
     _onChange = (e) => {
-      this.setState({[e.target.name]: e.target.value})
+      let value = e.target.value;
+      if (e.target.name =='ies') { e.target.value=e.target.value.toUpperCase(); value.toUpperCase(); }
+      if (e.target.name == 'state') { 
+        const states = this.state.states;
+        const uf = states.filter(st => st.id == e.target.value); 
+              value = uf[0].sigla;
+      }
+      const data = {...this.state.data};
+      data[e.target.name] = value;
+      this.setState({data});
+
+      console.log(this.state);
     }
 
-    onSubmit = e => {
+    onSubmit = async e => {
       e.preventDefault();
+      //Set loading
+      this.setState({loading:true});
+      console.log(this.props);
+      //Layer of Validation
+
+      //send register to backend
+      const register = this.state.data;
+      const res = await api.post('/user', register);
+      if (res.data.error == true) {
+        alert(`${res.data.message}`);
+      }else{
+        alert(`${res.data.message}`);
+        this.props.history.push("/");
+      }
+      console.log(res);
+      setTimeout(() => {
+        this.setState({loading:false});
+      }, 2000);
     }
 
     renderCompany(){
@@ -121,7 +238,7 @@ export default class Register extends Component {
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="cep">CEP</label>
-                <InputMask id="cep" type="text" mask="99999-999" onChange={(e) => this.handleCEP(e)} className="form-control" name="cep" />
+                <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => this.handleCEP(e)} className="form-control" name="cep" />
                   <div className="invalid-feedback">
                   </div>
             </div>
@@ -171,7 +288,7 @@ export default class Register extends Component {
         <div className="row">
             <div className="form-group col-12">
                 <label htmlFor="email_leader" className="d-block">Email do seu Orientador</label>
-                <input id="email_leader" type="email" className="form-control" name="email_leader" />
+                <input id="email_leader" type="email" className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
                 <div id="pwindicator" className="pwindicator">
                     <div className="bar" />
                     <div className="label" />
@@ -189,58 +306,54 @@ export default class Register extends Component {
             </div>
             <div className="row">
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                    <label htmlFor="ies">Instituição de Ensino Superior</label>
-                    <select className="form-control" name="ies" required>
-                      <option value="">Selecione sua IES ...</option>
-                    </select>
+                    <label htmlFor="ies">Instituição de Ensino Superior <Red /> </label>
+                    <input id="ies" type="text" className="form-control" name="ies" onChange={(e) => this._onChange(e) } required />
                      <div className="invalid-feedback">
                       </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                    <label htmlFor="department">Departamento</label>
-                    <select className="form-control" name="departamento" required>
-                      <option value="">Selecione seu Departamento ...</option>
-                    </select>
+                    <label htmlFor="department">Departamento <Red /></label>
+                    <input id="department" type="text" className="form-control" name="department" onChange={(e) => this._onChange(e)} required />
                      <div className="invalid-feedback">
                       </div>
                 </div>
             </div>
             <div className="row">
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                    <label htmlFor="titulo">Título</label>
-                    <select className="form-control" name="titulo" required>
+                    <label htmlFor="title">Título <Red /></label>
+                    <select className="form-control" name="title" required onChange={(e) => this._onChange(e)}>
                       <option value="">Selecione sua Título ...</option>
-                      <option value="0">Graduando</option>
-                      <option value="1">Graduado</option>
-                      <option value="2">Especializando</option>
-                      <option value="3">Especialista</option>
-                      <option value="4">Mestrando</option>
-                      <option value="5">Mestre</option>
-                      <option value="6">Doutorando</option>
-                      <option value="7">Doutor</option>
+                      <option value="Graduando">Graduando</option>
+                      <option value="Graduado">Graduado</option>
+                      <option value="Especializando">Especializando</option>
+                      <option value="Especialista">Especialista</option>
+                      <option value="Mestrando">Mestrando</option>
+                      <option value="Mestre">Mestre</option>
+                      <option value="Doutorando">Doutorando</option>
+                      <option value="Doutor">Doutor</option>
                     </select>
                     <div className="invalid-feedback">
                     </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                    <label htmlFor="lab">Laboratório</label>
-                    <input id="lab" type="text" className="form-control" name="lab" />
+                    <label htmlFor="laboratory">Laboratório <Red /></label>
+                    <input id="laboratory" type="text" className="form-control" name="laboratory" onChange={(e) => this._onChange(e)} />
                      <div className="invalid-feedback">
                       </div>
                 </div>
             </div>
             <div className="row">
               <div className="form-group col-12">
-                    <label htmlFor="research">Área de Pesquisa</label>
-                    <input id="research" type="text" className="form-control" name="research" />
+                    <label htmlFor="research">Área de Pesquisa <Red /></label>
+                    <input id="research" type="text" className="form-control" name="research" onChange={(e) => this._onChange(e)} />
                      <div className="invalid-feedback">
                       </div>
                 </div>
             </div>
             <div className="row">
               <div className="form-group col-12">
-                <label htmlFor="research">Descrição da Pesquisa</label>
-                <textarea className="form-control" required defaultValue={""} />
+                <label htmlFor="description">Descrição da Pesquisa</label>
+                <textarea className="form-control" name="description" required defaultValue={""} onChange={(e) => this._onChange(e)} />
               </div>
             </div>
           </div>
@@ -260,124 +373,127 @@ export default class Register extends Component {
                             <div className="card-header">
                                 <h4>Cadastro de {this.state.tipo}</h4>
                             </div>
-                            <div className="card-body">
-                                <form method="post" noValidate onSubmit={this.onSubmit}>
-                                    <div className="form-divider">
-                                        Dados Pessoas
-                                    </div>
-                                    <div className="row">
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="name">Nome Completo</label>
-                                            <input id="name" type="text" className="form-control" name="name" autoFocus required />
-                                            <div className="invalid-feedback">
-                                            </div>
-                                        </div>
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="cpf">CPF</label>
-                                            <InputMask id="cpf" type="text" className="form-control" name="cpf" mask="999.999.999-99" required />
-                                            <div className="invalid-feedback">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="birthday">Data de Nascimento</label>
-                                            <InputMask id="birthday" type="text" className="form-control" name="birthday" mask="99/99/9999" required />
-                                            <div className="invalid-feedback">
-                                            </div>
-                                        </div>
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="sexo">Sexo</label>
-                                            <select className="form-control" name="sexo" required>
-                                              <option value="">Selecione seu sexo ...</option>
-                                              <option value="1">Masculino</option>
-                                              <option value="2">Feminino</option>
-                                            </select>
-                                             <div className="invalid-feedback">
-                                              </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="email">Email</label>
-                                        <input id="email" type="email" className="form-control" name="email" required />
-                                        <div className="invalid-feedback">
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <label htmlFor="other_email">Email Alternativo</label>
-                                        <input id="other_email" type="other_email" className="form-control" name="other_email" />
-                                        <div className="invalid-feedback">
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="estado">Estado</label>
-                                            <select className="form-control" name="estado" onChange={(e) => this.handleStates(e) } required>
-                                              <option value="">Selecione seu estado ...</option>
-                                              {this.state.states.map(sts => (
-                                                <option key={sts.id} value={sts.id}>{sts.nome}</option>
-                                              ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                            </div>
-                                        </div>
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="cidade">Cidade</label>
-                                            <select className="form-control" name="cidade" required>
-                                              <option value="">Selecione seu cidade ...</option>
-                                              {this.state.cities.map(city => (
-                                                <option key={city.id} value={city.nome}>{city.nome}</option>
-                                              ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="fone" className="d-block">Fone</label>
-                                            <InputMask id="fone" type="text" className="form-control" name="password" mask="(99)99999-9999" />
-                                            <div className="invalid-feedback">
-                                            </div>
-                                        </div>
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="fone2" className="d-block">Fone Alternativo</label>
-                                            <InputMask id="fone2" type="text" className="form-control" name="fone2" mask="(99)99999-9999" />
-                                        </div>
-                                    </div>
-                                    {(this.state.tipoSlug == 'aluno' || this.state.tipoSlug == 'professor') ? this.renderAcademy() : ""}
-                                    {(this.state.tipoSlug == 'empresa') ? this.renderCompany() : ""}
-                                    
-                                    <div className="form-divider">
-                                          Sistema
+                            <div className="card-body"> 
+                              <form method="post" noValidate onSubmit={this.onSubmit} autoComplete="off">
+                                  <span style={{color:'red'}}>* Campo Obrigatório</span>
+                                  <div className="form-divider">
+                                      Dados Pessoas
+                                  </div>
+                                  <div className="row">
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="name">Nome Completo <Red /></label>
+                                          <input id="name" type="text" className="form-control" name="name" onChange={(e) => this._onChange(e)} autoFocus required />
+                                          <div className="invalid-feedback">
+                                          </div>
                                       </div>
-                                    <div className="row">
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="password" className="d-block">Senha</label>
-                                            <input id="password" type="password" className="form-control" name="password" />
-                                            <div id="pwindicator" className="pwindicator">
-                                                <div className="bar" />
-                                                <div className="label" />
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="cpf">CPF <Red /></label>
+                                          <InputMask id="cpf" type="text" className="form-control" onChange={(e) => this._onChange(e)} name="cpf" mask="999.999.999-99" required />
+                                          <div className="invalid-feedback">
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="birthday">Data de Nascimento <Red /></label>
+                                          <InputMask id="birthday" type="date" className="form-control" onChange={(e) => this._onChange(e) } name="birthday" required />
+                                          <div className="invalid-feedback">
+                                          </div>
+                                      </div>
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="sexo">Sexo <Red /></label>
+                                          <select className="form-control" name="sex" required onChange={(e) => this._onChange(e) }>
+                                            <option value="">Selecione seu sexo ...</option>
+                                            <option value="1">Masculino</option>
+                                            <option value="2">Feminino</option>
+                                          </select>
+                                           <div className="invalid-feedback">
                                             </div>
-                                        </div>
-                                        <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                            <label htmlFor="password2" className="d-block">Confirmar Senha</label>
-                                            <input id="password2" type="password" className="form-control" name="password-confirm" />
-                                        </div>
+                                      </div>
+                                  </div>
+                                  <div className="form-group">
+                                      <label htmlFor="email">Email <Red /></label>
+                                      <input id="email" type="email" className="form-control" name="email" required onChange={(e) => this._onChange(e) } />
+                                      <div className="invalid-feedback">
+                                      </div>
+                                  </div>
+                                  <div className="form-group">
+                                      <label htmlFor="other_email">Email Alternativo</label>
+                                      <input id="other_email" type="other_email" className="form-control" name="other_email" onChange={(e) => this._onChange(e) } />
+                                      <div className="invalid-feedback">
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="state">Estado <Red /></label>
+                                          <select className="form-control" name="state" onChange={(e) => {this.handleStates(e); this._onChange(e);} } required>
+                                            <option value="">Selecione seu estado ...</option>
+                                            {this.state.states.map(sts => (
+                                              <option key={sts.id} value={sts.id}>{sts.nome}</option>
+                                            ))}
+                                          </select>
+                                          <div className="invalid-feedback">
+                                          </div>
+                                      </div>
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="city">Cidade <Red /></label>
+                                          <select className="form-control" name="city" required onChange={(e) => this._onChange(e) }>
+                                            <option value="">Selecione seu cidade ...</option>
+                                            {this.state.cities.map(city => (
+                                              <option key={city.id} value={city.nome}>{city.nome}</option>
+                                            ))}
+                                          </select>
+                                          <div className="invalid-feedback">
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div className="row">
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="phone1" className="d-block">Fone <Red /></label>
+                                          <InputMask id="phone1" type="text" className="form-control" name="phone1" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
+                                          <div className="invalid-feedback">
+                                          </div>
+                                      </div>
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="phone2" className="d-block">Fone Alternativo</label>
+                                          <InputMask id="phone2" type="text" className="form-control" name="phone2" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
+                                      </div>
+                                  </div>
+                                  {(this.state.tipoSlug == 'aluno' || this.state.tipoSlug == 'professor') ? this.renderAcademy() : ""}
+                                  {(this.state.tipoSlug == 'empresa') ? this.renderCompany() : ""}
+                                  
+                                  <div className="form-divider">
+                                        Sistema
                                     </div>
-                                    {/* {(this.state.tipoSlug == 'aluno') ? renderStudent() : ""} */}
-                                    <div className="form-group">
-                                        <div className="custom-control custom-checkbox">
-                                            <input type="checkbox" name="agree" className="custom-control-input" id="agree" />
-                                            <label className="custom-control-label" htmlFor="agree">Eu aceito os termos e as condições</label>
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <button type="submit" className="btn btn-primary btn-lg btn-block">
-                                            Cadastrar
-                                        </button>
-                                    </div>
-                                </form>
+                                  <div className="row">
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="password" className="d-block">Senha <Red /></label>
+                                          <input id="password" type="password" className="form-control" name="password" onChange={(e) => this._onChange(e) } />
+                                          <div id="pwindicator" className="pwindicator">
+                                              <div className="bar" />
+                                              <div className="label" />
+                                          </div>
+                                      </div>
+                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                          <label htmlFor="password2" className="d-block">Confirmar Senha <Red /></label>
+                                          <input id="password2" type="password" className="form-control" name="password-confirm" onChange={(e) => this._onChange(e) } />
+                                      </div>
+                                  </div>
+                                   {(this.state.tipoSlug == 'aluno') ? this.renderStudent() : ""} 
+                                  <div className="form-group">
+                                      <div className="custom-control custom-checkbox">
+                                          <input type="checkbox" name="agree" className="custom-control-input" id="agree" />
+                                          <label className="custom-control-label" htmlFor="agree">Eu aceito os termos e as condições</label>
+                                      </div>
+                                  </div>
+                                  <div className="form-group">
+                                      <button type="submit" disabled={this.state.loading} className="btn btn-primary btn-lg btn-block">
+                                          {this.state.loading && <i className="fas fa-sync-alt rotation"></i>}
+                                          {this.state.loading && <span>Enviando...</span>}
+                                          {!this.state.loading && <span>Cadastrar</span>}
+                                      </button>
+                                  </div>
+                              </form>
                             </div>
                         </div>
                     </div>
@@ -387,3 +503,5 @@ export default class Register extends Component {
         );
     }
 }
+
+export default withRouter(Register);
