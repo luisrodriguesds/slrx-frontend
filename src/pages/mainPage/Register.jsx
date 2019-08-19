@@ -89,18 +89,18 @@ class Register extends Component {
             "fantasy_name":"",
             "company_name":"",
             "state_registration":"",
-            "email_company":"",
-            "fone":"",
+            "company_email":"",
+            "company_phone":"",
             "cep":"",
             "street":"",
             "neighborhood":"",
             "number":"",
-            "city":"",
-            "state":"",
+            "company_city":"",
+            "company_state":"",
             "type_company":"",
             "access_level_slug":"empresa"
           }
-          this.setState({tipo:"Empresa ou Individual",tipoSlug:tipo, data:{...init}})  
+          this.setState({tipo:"Empresa",tipoSlug:tipo, data:{...init}})  
         break;
         case 'operador':
           init = {
@@ -146,7 +146,13 @@ class Register extends Component {
       
       if (cep.toString().length == 8) {
         const address = await aixos.get(`https://viacep.com.br/ws/${cep}/json/`);
-        this.setState({address:address.data});
+        let data = {...this.state.data};
+        data.company_city = address.data.localidade;
+        data.company_state = address.data.uf;
+        data.neighborhood = address.data.bairro;
+        data.street = address.data.logradouro;
+        this.setState({address:address.data, data});
+        console.log(data);
       }
     }
 
@@ -169,7 +175,7 @@ class Register extends Component {
       e.preventDefault();
       //Set loading
       this.setState({loading:true});
-      console.log(this.props);
+      
       //Layer of Validation
 
       //send register to backend
@@ -177,11 +183,14 @@ class Register extends Component {
       const res = await api.post('/user', register);
       if (res.data.error == true) {
         alert(`${res.data.message}`);
+        window.location='http://localhost:3000/';
+        
       }else{
         alert(`${res.data.message}`);
-        this.props.history.push("/");
+        // this.props.history.push("/");
+        window.location='http://localhost:3000/';
       }
-      console.log(res);
+      console.log(this.state.data);
       setTimeout(() => {
         this.setState({loading:false});
       }, 2000);
@@ -195,88 +204,99 @@ class Register extends Component {
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="cnpj">CNPJ</label>
-                <InputMask id="cnpj" type="text" className="form-control" mask="99.999.999/9999-99" name="cnpj" />
+                <label htmlFor="cnpj">CNPJ <Red /> </label>
+                <InputMask id="cnpj" type="text" className="form-control" mask="99.999.999/9999-99" name="cnpj" onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="name_company">Nome Fantasia</label>
-                <input id="name_company" type="text" className="form-control" name="name_company" />
+                <label htmlFor="fantasy_name">Nome Fantasia <Red /> </label>
+                <input id="fantasy_name" type="text" className="form-control" name="fantasy_name" onChange={(e) => this._onChange(e) } />
                   <div className="invalid-feedback">
                   </div>
             </div>
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="razao_social">Razão Social</label>
-                <InputMask id="razao_social" type="text" className="form-control" name="razao_social" />
+                <label htmlFor="company_name">Razão Social <Red /> </label>
+                <InputMask id="company_name" type="text" className="form-control" name="company_name" onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="inscricao_estadual">Inscrição Estadual</label>
-                <input id="inscricao_estadual" type="text" className="form-control" name="inscricao_estadual" />
+                <label htmlFor="state_registration">Inscrição Estadual </label>
+                <input id="state_registration" type="text" className="form-control" name="state_registration" onChange={(e) => this._onChange(e) } />
                   <div className="invalid-feedback">
                   </div>
             </div>
         </div>
         <div className="row">
             <div className="form-group col-12">
-                <label htmlFor="email_company">Email da Empresa</label>
-                <InputMask id="email_company" type="email" className="form-control" name="email_company" />
+                <label htmlFor="company_email">Email da Empresa <Red /> </label>
+                <InputMask id="company_email" type="email" className="form-control" name="company_email" onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="fone_company">Fone</label>
-                <InputMask id="fone_company" type="text" mask="(99)99999-9999" className="form-control" name="fone_company" />
+                <label htmlFor="company_phone">Fone <Red /> </label>
+                <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" name="company_phone" onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="cep">CEP</label>
-                <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => this.handleCEP(e)} className="form-control" name="cep" />
+                <label htmlFor="cep">CEP <Red /> </label>
+                <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} className="form-control" name="cep" />
                   <div className="invalid-feedback">
                   </div>
             </div>
         </div>
         <div className="row">
           <div className="form-group col-12">
-                <label htmlFor="street">Logradouro</label>
-                <input id="street" type="text" disabled defaultValue={this.state.address.logradouro}  className="form-control" name="street" />
+                <label htmlFor="street">Logradouro <Red /> </label>
+                <input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street" />
                 <div className="invalid-feedback">
                 </div>
             </div>
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="neighborhood">Bairro</label>
-                <input id="neighborhood" type="text" disabled defaultValue={this.state.address.bairro} className="form-control" name="neighborhood" />
+                <label htmlFor="neighborhood">Bairro <Red /> </label>
+                <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood" />
                   <div className="invalid-feedback">
                   </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="number">Número</label>
-                <input id="number" type="text" className="form-control" name="number" />
+                <label htmlFor="number">Número <Red /> </label>
+                <input id="number" type="text" className="form-control" name="number" onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="city_company">Localidade</label>
-                <input id="city_company" type="text" defaultValue={this.state.address.localidade} disabled disabled className="form-control" name="city_company" />
+                <label htmlFor="company_city">Localidade <Red /> </label>
+                <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="company_city" />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="uf">Estado</label>
-                <input id="uf" type="text" disabled defaultValue={this.state.address.uf} className="form-control" name="uf" />
+                <label htmlFor="company_state">Estado <Red /> </label>
+                <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="company_state" />
                   <div className="invalid-feedback">
                   </div>
+            </div>
+        </div>
+        <div className="form-group">
+            <label htmlFor="company_state">Cargo <Red /> </label>
+            <div className="custom-control custom-radio">
+                <input type="radio" name="type_company" defaultValue="tecnico"  onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_1" />
+                <label className="custom-control-label" htmlFor="type_company_1">Técnico</label>
+            </div>
+            <div className="custom-control custom-radio">
+                <input type="radio" name="type_company" defaultValue="financeiro"  onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_2" />
+                <label className="custom-control-label" htmlFor="type_company_2">Financeiro</label>
             </div>
         </div>
       </div>
@@ -289,9 +309,7 @@ class Register extends Component {
             <div className="form-group col-12">
                 <label htmlFor="email_leader" className="d-block">Email do seu Orientador</label>
                 <input id="email_leader" type="email" className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
-                <div id="pwindicator" className="pwindicator">
-                    <div className="bar" />
-                    <div className="label" />
+                <div className="invalid-feedback">
                 </div>
             </div>
         </div>
