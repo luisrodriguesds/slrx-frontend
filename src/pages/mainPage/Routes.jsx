@@ -9,6 +9,7 @@ import Choose from './Choose';
 import Register from './Register';
 import ForgotPass from './forgotPass';
 import NotFound from '../notFound';
+import NewPass from './NewPass';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route
@@ -41,11 +42,11 @@ export default class Routes extends Component {
         	    <Route exact path='/cadastro/aluno' component={()=><Register />} />
         	    <Route exact path='/cadastro/professor' component={()=><Register />} />
         	    <Route exact path='/cadastro/empresa' component={()=><Register />} />
-                <Route exact path='/cadastro/operador' component={()=><Register />} />
-                <Route exact path='/cadastro/independente' component={()=><Register />} />
+              <Route exact path='/cadastro/operador' component={()=><Register />} />
+              <Route exact path='/cadastro/autonomo' component={()=><Register />} />
 
-                <Route exact path='/recuperar-senha' component={()=><ForgotPass />} />
-        	    <Route exact path='/nova-senha' component={()=> <h1>Nova Senha</h1>} />
+              <Route exact path='/recuperar-senha' component={()=><ForgotPass />} />
+        	    <Route exact path='/nova-senha' component={()=> <NewPass />} />
 
         	    <Route exact path='/404' component={() => <NotFound />} />
             	<Redirect from="*" to='/' />

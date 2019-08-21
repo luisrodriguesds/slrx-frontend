@@ -10,7 +10,7 @@ import * as EmailValidation from 'email-validator';
 import Main from './Main';
 import Logo from '../../assets/img/logo_lrx@2x.png';
 import api from '../../services/api';
-
+import {URL_BASE} from '../../services/routesBackend';
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
 const Red = () => (<span style={{color:'red'}}>*</span>);
@@ -50,6 +50,7 @@ class Register extends Component {
       states:[],
       cities:[],
       address:{},
+      company:{},
       loading:false
     };
 
@@ -147,12 +148,28 @@ class Register extends Component {
       if (cep.toString().length == 8) {
         const address = await aixos.get(`https://viacep.com.br/ws/${cep}/json/`);
         let data = {...this.state.data};
-        data.company_city = address.data.localidade;
-        data.company_state = address.data.uf;
-        data.neighborhood = address.data.bairro;
-        data.street = address.data.logradouro;
+        if (this.state.tipoSlug == 'empresa') {
+          data.company_city = address.data.localidade;
+          data.company_state = address.data.uf;
+          data.neighborhood = address.data.bairro;
+          data.street = address.data.logradouro;
+        }else{
+          data.city_address = address.data.localidade;
+          data.state_address = address.data.uf;
+          data.neighborhood_address = address.data.bairro;
+          data.street_address = address.data.logradouro;
+        }
         this.setState({address:address.data, data});
-        console.log(data);
+      }
+    }
+    handleCNPJ = async (e) => {
+      let cnpj = e.target.value;
+      const res = await api.get(`/company/cnpj?cnpj=${cnpj}`);
+      if (res.data != '') {
+        const req = res.data;
+        const data = {...this.state.data, ...req};
+        this.setState({company:res.data, data, address:{localidade:req.company_city, uf:req.company_state, bairro:req.neighborhood, logradouro:req.street}});
+        console.log(this.state);     
       }
     }
 
@@ -167,8 +184,6 @@ class Register extends Component {
       const data = {...this.state.data};
       data[e.target.name] = value;
       this.setState({data});
-
-      console.log(this.state);
     }
 
     onSubmit = async e => {
@@ -182,15 +197,12 @@ class Register extends Component {
       const register = this.state.data;
       const res = await api.post('/user', register);
       if (res.data.error == true) {
-        alert(`${res.data.message}`);
-        window.location='http://localhost:3000/';
-        
+        alert(`${res.data.message}`);       
       }else{
         alert(`${res.data.message}`);
         // this.props.history.push("/");
-        window.location='http://localhost:3000/';
+        window.location=URL_BASE;
       }
-      console.log(this.state.data);
       setTimeout(() => {
         this.setState({loading:false});
       }, 2000);
@@ -205,13 +217,13 @@ class Register extends Component {
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="cnpj">CNPJ <Red /> </label>
-                <InputMask id="cnpj" type="text" className="form-control" mask="99.999.999/9999-99" name="cnpj" onChange={(e) => this._onChange(e) } />
+                <InputMask id="cnpj" type="text" className="form-control" mask="99.999.999/9999-99" name="cnpj" onChange={(e) => {this._onChange(e); this.handleCNPJ(e); } } />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="fantasy_name">Nome Fantasia <Red /> </label>
-                <input id="fantasy_name" type="text" className="form-control" name="fantasy_name" onChange={(e) => this._onChange(e) } />
+                <input id="fantasy_name" type="text" className="form-control" name="fantasy_name" defaultValue={this.state.company.fantasy_name} onChange={(e) => this._onChange(e) } />
                   <div className="invalid-feedback">
                   </div>
             </div>
@@ -219,13 +231,13 @@ class Register extends Component {
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="company_name">Razão Social <Red /> </label>
-                <InputMask id="company_name" type="text" className="form-control" name="company_name" onChange={(e) => this._onChange(e) } />
+                <InputMask id="company_name" type="text" className="form-control" name="company_name" defaultValue={this.state.company.company_name} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="state_registration">Inscrição Estadual </label>
-                <input id="state_registration" type="text" className="form-control" name="state_registration" onChange={(e) => this._onChange(e) } />
+                <input id="state_registration" type="text" className="form-control" name="state_registration" defaultValue={this.state.company.state_registration} onChange={(e) => this._onChange(e) } />
                   <div className="invalid-feedback">
                   </div>
             </div>
@@ -233,7 +245,7 @@ class Register extends Component {
         <div className="row">
             <div className="form-group col-12">
                 <label htmlFor="company_email">Email da Empresa <Red /> </label>
-                <InputMask id="company_email" type="email" className="form-control" name="company_email" onChange={(e) => this._onChange(e) } />
+                <InputMask id="company_email" type="email" className="form-control" name="company_email" defaultValue={this.state.company.company_email} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
@@ -241,13 +253,13 @@ class Register extends Component {
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="company_phone">Fone <Red /> </label>
-                <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" name="company_phone" onChange={(e) => this._onChange(e) } />
+                <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" name="company_phone" value={this.state.company.company_phone} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="cep">CEP <Red /> </label>
-                <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} className="form-control" name="cep" />
+                <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.company.cep} className="form-control" name="cep" />
                   <div className="invalid-feedback">
                   </div>
             </div>
@@ -269,7 +281,7 @@ class Register extends Component {
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="number">Número <Red /> </label>
-                <input id="number" type="text" className="form-control" name="number" onChange={(e) => this._onChange(e) } />
+                <input id="number" type="text" className="form-control" name="number" defaultValue={this.state.company.number} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                 </div>
             </div>
@@ -378,6 +390,59 @@ class Register extends Component {
       );
     }
 
+    renderOther(){
+      return (
+        <div className="infos-acad">
+            <div className="form-divider">
+                Endereço
+            </div>
+            <div className="row">
+              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                  <label htmlFor="cep">CEP <Red /> </label>
+                  <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.company.cep} className="form-control" name="cep_address" />
+                    <div className="invalid-feedback">
+                    </div>
+              </div>
+              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                  <label htmlFor="street">Logradouro <Red /> </label>
+                  <input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street_address" />
+                  <div className="invalid-feedback">
+                  </div>
+              </div>
+            </div>
+            <div className="row">
+                <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                    <label htmlFor="neighborhood">Bairro <Red /> </label>
+                    <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood_address" />
+                      <div className="invalid-feedback">
+                      </div>
+                </div>
+                <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                    <label htmlFor="number">Número <Red /> </label>
+                    <input id="number" type="text" className="form-control" name="number_address" defaultValue={this.state.company.number} onChange={(e) => this._onChange(e) } />
+                    <div className="invalid-feedback">
+                    </div>
+                </div>
+            </div>
+            <div className="row">
+                <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                    <label htmlFor="company_city">Localidade <Red /> </label>
+                    <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="city_address" />
+                    <div className="invalid-feedback">
+                    </div>
+                </div>
+                <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                    <label htmlFor="company_state">Estado <Red /> </label>
+                    <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="state_address" />
+                      <div className="invalid-feedback">
+                      </div>
+                </div>
+            </div>
+        </div>
+
+      );
+    }
+
     render() {
         return (
           <Main title="Cadastrar Solicitações">
@@ -479,6 +544,7 @@ class Register extends Component {
                                   </div>
                                   {(this.state.tipoSlug == 'aluno' || this.state.tipoSlug == 'professor') ? this.renderAcademy() : ""}
                                   {(this.state.tipoSlug == 'empresa') ? this.renderCompany() : ""}
+                                  {(this.state.tipoSlug == 'operador' || this.state.tipoSlug == 'autonomo') ? this.renderOther() : ""}
                                   
                                   <div className="form-divider">
                                         Sistema

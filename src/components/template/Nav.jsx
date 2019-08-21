@@ -1,6 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import Logout from '../events/logout';
+
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 
 const Nav = (props) => {
@@ -225,7 +227,7 @@ const Nav = (props) => {
                 </Link>
                 <div className="dropdown-divider" />
                 <Link to="/logout" className="dropdown-item has-icon text-danger">
-                  <i className="fas fa-sign-out-alt" /> Sair
+                    <i className="fas fa-sign-out-alt" /> Sair
                 </Link>
               </div>
             </li>
