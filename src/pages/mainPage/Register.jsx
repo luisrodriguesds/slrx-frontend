@@ -11,6 +11,7 @@ import Main from './Main';
 import Logo from '../../assets/img/logo_lrx@2x.png';
 import api from '../../services/api';
 import {URL_BASE} from '../../services/routesBackend';
+import Button from '../../components/events/LoadingButtom';
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
 const Red = () => (<span style={{color:'red'}}>*</span>);
@@ -571,11 +572,7 @@ class Register extends Component {
                                       </div>
                                   </div>
                                   <div className="form-group">
-                                      <button type="submit" disabled={this.state.loading} className="btn btn-primary btn-lg btn-block">
-                                          {this.state.loading && <i className="fas fa-sync-alt rotation"></i>}
-                                          {this.state.loading && <span>Enviando...</span>}
-                                          {!this.state.loading && <span>Cadastrar</span>}
-                                      </button>
+                                      <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Cadastrar" loadName="Enviando..."></Button>
                                   </div>
                               </form>
                             </div>

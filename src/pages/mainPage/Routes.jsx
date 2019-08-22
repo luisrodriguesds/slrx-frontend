@@ -11,19 +11,6 @@ import ForgotPass from './forgotPass';
 import NotFound from '../notFound';
 import NewPass from './NewPass';
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
-    <Route
-      {...rest}
-      render={props =>
-        isAuthenticated() ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: "/", state: { from: props.location } }} />
-        )
-      }
-    />
-  );
-
 export default class Routes extends Component {
   
   componentDidUpdate() {

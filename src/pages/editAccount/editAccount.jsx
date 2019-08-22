@@ -2,9 +2,17 @@ import React from 'react';
 
 import Main from '../../components/template/Main';
 
+import {user} from '../../services/auth';
+
 export default class editAccount extends React.Component {
-
-
+	state = {
+		user:{}
+	}
+	async componentDidMount(){
+		const u = await user();
+		this.setState({user:u});
+		console.log(this.state);
+	}
 	render() {
 		return (
 			<Main title="Editar Conta">

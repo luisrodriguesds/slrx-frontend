@@ -6,6 +6,7 @@ import Logout from '../events/logout';
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 
 const Nav = (props) => {
+  const {user} = props;
   return (
     <React.Fragment>
         <div className="navbar-bg" />
@@ -212,7 +213,7 @@ const Nav = (props) => {
             {/* Avatar */}
             <li className="dropdown"><a href="#" data-toggle="dropdown" className="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image" src={Avatar} className="rounded-circle mr-1" />
-                <div className="d-sm-none d-lg-inline-block">Olá, Luis Rodrigues!</div></a>
+                <div className="d-sm-none d-lg-inline-block">Olá, {user.name}!</div></a>
               {/* Menus */}
               <div className="dropdown-menu dropdown-menu-right">
                 <div className="dropdown-title">Logado há 10 min</div>

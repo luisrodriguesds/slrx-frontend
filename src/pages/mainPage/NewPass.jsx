@@ -4,6 +4,7 @@ import Logo from '../../assets/img/logo_lrx@2x.png';
 import Main from './Main';
 import api from "../../services/api";
 import { URL_BASE } from '../../services/routesBackend';
+import Button from '../../components/events/LoadingButtom';
 
 export default class forgotPass extends React.Component {
 	state = {
@@ -83,11 +84,7 @@ export default class forgotPass extends React.Component {
 				                    <input id="confirmPass" type="password" className="form-control" onChange={(e) => this._onChange(e)} name="confirmPass" tabIndex={1} required />
 				                  </div>
 				                  <div className="form-group">
-				                    <button type="submit" disabled={this.state.loading} className="btn btn-primary btn-lg btn-block" tabIndex={1}>
-									{this.state.loading && <i className="fas fa-sync-alt rotation"></i>}
-									{this.state.loading && <span>Enviando...</span>}
-									{!this.state.loading && <span>Enviar</span>}
-				                    </button>
+								  	<Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Enviar" loadName="Enviando ..."></Button>
 				                  </div>
 				                </form>
 				              </div>

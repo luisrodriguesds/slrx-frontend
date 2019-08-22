@@ -1,6 +1,6 @@
 import React from 'react';
 import {Switch, Route, Redirect} from 'react-router';
-import ScrollToTop from 'react-router-scroll-top';
+import ScrollToTop, { componentDidUpdate } from 'react-router-scroll-top';
 
 import Dashboard from './pages/dashboard/dashboard';
 
@@ -22,23 +22,31 @@ import editAccount from './pages/editAccount/editAccount';
 
 import NotFound from './pages/notFound';
 
-import { isAuthenticated } from "./services/auth";
+import { isAuthenticated, user } from "./services/auth";
 import Logout from './components/events/logout';
 
-const PrivateRoute = ({ component: Component, ...rest }) => (
+const renderMergedProps = (component, ...rest) => {
+  const finalProps = Object.assign({}, ...rest);
+  return React.createElement(component, finalProps);
+};
+
+const PrivateRoute = ({ component: Component,...rest }) => {
+  return (
     <Route
       {...rest}
-      render={props =>
+      render={(routeProps, props)  =>
         isAuthenticated() ? (
-          <Component {...props} />
+          renderMergedProps(Component, routeProps, rest)
         ) : (
           <Redirect to={{ pathname: "/", state: { from: props.location } }} />
         )
       }
     />
-  );
+  )
+};
 
 const Routes = (props) => {
+  
   return (
     <React.Fragment>
       <ScrollToTop />

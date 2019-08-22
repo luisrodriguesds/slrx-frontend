@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom';
+import Button from '../../components/events/LoadingButtom';
 import api from '../../services/api';
 import { login } from "../../services/auth";
 import { URL_BASE } from '../../services/routesBackend';
@@ -34,7 +35,7 @@ export default class Login extends Component {
         }
         setTimeout(() => {
             this.setState({loading:false});
-        }, 2000);
+        }, 1000);
     }
 
   render() {
@@ -79,11 +80,7 @@ export default class Login extends Component {
             <div className="card-footer">
             {/* onClick="$.cardProgress('#sample-login', {dismiss: true,onDismiss: function() {alert('Dismissed :)')}});return false;" */}
                 <div className="button-login-footer">
-                    <button type="submit" className="btn btn-primary" disabled={this.state.loading}>
-                        {this.state.loading && <i className="fas fa-sync-alt rotation"></i>}
-                        {this.state.loading && <span>Carregando...</span>}
-                        {!this.state.loading && <span>Login</span>}
-                    </button>
+                    <Button type="submit" className="btn btn-primary" loading={this.state.loading} name="Login" loadName="Carregando ..."></Button>
                     <Link to="/cadastro" className="ml-2" title="Alunos, Professores, Operadores, Empresa e Funcionários">Cadastre-se</Link>
                     <Link to="/recuperar-senha" className="ml-2">Esqueci Minha Senha</Link>
                 </div>
