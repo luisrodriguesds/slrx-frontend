@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Provider} from 'react-redux';
 
 import Nav from './components/template/Nav';
 import Sidebar from './components/template/Sidebar';
@@ -7,24 +8,21 @@ import Routes from './Routes';
 
 import {user} from './services/auth';
 import {URL_BASE} from './services/routesBackend';
+
+import store from './store/store';
+
+
 export default class Private extends Component {
-  state = {
-    user:{}
-  };
-  async componentDidMount(){
-    const u = await user();
-    if(u == null){
-      window.location=URL_BASE;
-    }
-    this.setState({user:{...u}});
-  }
+  
   render() {
     return (
         <React.Fragment>
-            <Nav user={this.state.user} />
-            <Sidebar user={this.state.user} />
-            <Routes user={this.state.user} />
-            <Footer />
+          <Provider store={store}>
+              <Nav />
+              <Sidebar />
+              <Routes />
+              <Footer />
+          </Provider>
         </React.Fragment>
     );
   }

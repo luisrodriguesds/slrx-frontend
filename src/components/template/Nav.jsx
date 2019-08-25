@@ -1,12 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Link} from 'react-router-dom';
+import {useSelector, useDispatch} from 'react-redux';
 
-import Logout from '../events/logout';
+import {requestUser} from '../../store/actions/user';
+import {logout} from '../../services/auth';
+import {URL_BASE} from '../../services/routesBackend';
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 
-const Nav = (props) => {
-  const {user} = props;
+function Nav(){
+  const user = useSelector(state => state.user.user);
+  const dispatch = useDispatch();
+  useEffect(()=> {
+    dispatch(requestUser())
+  }, []);
+
   return (
     <React.Fragment>
         <div className="navbar-bg" />
@@ -227,7 +235,7 @@ const Nav = (props) => {
                   <i className="fas fa-cog" /> Editar Conta
                 </Link>
                 <div className="dropdown-divider" />
-                <Link to="/logout" className="dropdown-item has-icon text-danger">
+                <Link to="/logout" onClick={() => {logout(); window.location=URL_BASE; } } className="dropdown-item has-icon text-danger">
                     <i className="fas fa-sign-out-alt" /> Sair
                 </Link>
               </div>

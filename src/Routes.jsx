@@ -22,8 +22,8 @@ import editAccount from './pages/editAccount/editAccount';
 
 import NotFound from './pages/notFound';
 
-import { isAuthenticated, user } from "./services/auth";
-import Logout from './components/events/logout';
+import { isAuthenticated } from "./services/auth";
+import {useSelector} from 'react-redux';
 
 const renderMergedProps = (component, ...rest) => {
   const finalProps = Object.assign({}, ...rest);
@@ -31,6 +31,7 @@ const renderMergedProps = (component, ...rest) => {
 };
 
 const PrivateRoute = ({ component: Component,...rest }) => {
+
   return (
     <Route
       {...rest}
@@ -45,8 +46,8 @@ const PrivateRoute = ({ component: Component,...rest }) => {
   )
 };
 
-const Routes = (props) => {
-  
+function Routes(props){
+  const user = useSelector(state => state.user.user);
   return (
     <React.Fragment>
       <ScrollToTop />
@@ -68,10 +69,9 @@ const Routes = (props) => {
 
       	<PrivateRoute exact path='/perfil' component={Profile} />
       	<PrivateRoute exact path='/alterar-senha' component={ChangePass} />
-      	<PrivateRoute exact path='/editar-conta' component={editAccount} />
+      	<PrivateRoute exact path='/editar-conta' user={user} component={editAccount} />
 
       	<PrivateRoute exact path='/404' component={NotFound} />
-      	<PrivateRoute exact path='/logout' component={Logout} />
       	<Redirect from="*" to='/' />
 
       </Switch>

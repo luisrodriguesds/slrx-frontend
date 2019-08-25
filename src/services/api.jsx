@@ -13,4 +13,10 @@ api.interceptors.request.use(async config => {
   return config;
 });
 
+//User
+
+export const userLogin = (auth) => api.post('/user/auth', auth);
+export const userRegister = (register) => api.post('/user', register);
+
+
 export default api;

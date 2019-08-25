@@ -3,15 +3,11 @@ import aixos from 'axios';
 import InputMask from 'react-input-mask';
 import { Link, withRouter } from "react-router-dom";
 
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
-import * as EmailValidation from 'email-validator';
-
 import Main from './Main';
 import Logo from '../../assets/img/logo_lrx@2x.png';
-import api from '../../services/api';
-import {URL_BASE} from '../../services/routesBackend';
+import api,{userRegister} from '../../services/api';
 import Button from '../../components/events/LoadingButtom';
+import { URL_BASE } from '../../services/routesBackend';
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
 const Red = () => (<span style={{color:'red'}}>*</span>);
@@ -28,20 +24,6 @@ let init = {
           "phone1":"",
           "phone2":"",
       };
-
-const SignupSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  lastName: Yup.string()
-    .min(2, 'Too Short!')
-    .max(50, 'Too Long!')
-    .required('Required'),
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
-});
 
 class Register extends Component {
     state = {
@@ -196,13 +178,13 @@ class Register extends Component {
 
       //send register to backend
       const register = this.state.data;
-      const res = await api.post('/user', register);
+      const res = await userRegister(register);
       if (res.data.error == true) {
         alert(`${res.data.message}`);       
       }else{
         alert(`${res.data.message}`);
-        // this.props.history.push("/");
-        window.location=URL_BASE;
+        this.props.history.push("/");
+        // window.location=URL_BASE;
       }
       setTimeout(() => {
         this.setState({loading:false});

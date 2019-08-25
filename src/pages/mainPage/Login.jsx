@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import Button from '../../components/events/LoadingButtom';
-import api from '../../services/api';
+import api, {userLogin} from '../../services/api';
 import { login } from "../../services/auth";
 import { URL_BASE } from '../../services/routesBackend';
-export default class Login extends Component {
+
+class Login extends Component {
     state = {
         data:{email:'', password:''},
         loading:false,
@@ -25,12 +26,13 @@ export default class Login extends Component {
         //Set loading
         this.setState({loading:true});
         const auth = this.state.data;
-        const res = await api.post('/user/auth', auth);
+        const res = await userLogin(auth);
         if (res.data.error == true) {
             this.setState({error:res.data.message});
         }else{
             this.setState({error:''});
             login(res.data.token);
+            // this.props.history.push("/");
             window.location=URL_BASE;
         }
         setTimeout(() => {
@@ -92,3 +94,5 @@ export default class Login extends Component {
         );
   }
 }
+
+export default withRouter(Login)
