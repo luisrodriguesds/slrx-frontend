@@ -177,14 +177,20 @@ class Register extends Component {
       //Layer of Validation
 
       //send register to backend
-      const register = this.state.data;
-      const res = await userRegister(register);
-      if (res.data.error == true) {
-        alert(`${res.data.message}`);       
-      }else{
-        alert(`${res.data.message}`);
-        this.props.history.push("/");
-        // window.location=URL_BASE;
+      //Check em outros erros
+      try {
+        const register = this.state.data;
+        const res = await userRegister(register);
+        if (res.data.error == true) {
+          alert(`${res.data.message}`);       
+        }else{
+          alert(`${res.data.message}`);
+          this.props.history.push("/");
+          // window.location=URL_BASE;
+        }
+      } catch (error) {
+        alert(`Algo inesperado aconteceu, sua pagina será recarregada`);        
+        this.props.history.push("/");        
       }
       setTimeout(() => {
         this.setState({loading:false});

@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import { GridLoader } from 'react-spinners';
+//https://www.react-spinners.com/
 
 import Main from '../../components/template/Main';
 import InputMask from 'react-input-mask';
@@ -7,6 +9,8 @@ import Button from '../../components/events/LoadingButtom';
 
 // import {user} from '../../services/auth';
 import {useSelector} from 'react-redux';
+import {URL_BASE} from '../../services/routesBackend';
+import api, {userUpdate} from '../../services/api';
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
 const Red = () => (<span style={{color:'red'}}>*</span>);
@@ -22,7 +26,8 @@ export default class editAccount extends React.Component {
       cities:[],
       address:{},
       company:{},
-      loading:false
+	  loading:false,
+	  loadpage:true
     };
 
 
@@ -36,12 +41,12 @@ export default class editAccount extends React.Component {
 	}
 
 	async componentDidUpdate(prevProps, prevState){
-		console.log(prevState);
+		// console.log(prevState);
 		if (Object.keys(prevState.user).length !== Object.keys(this.state.user).length) {
-			console.log("Update no state");
+			// console.log("Update no state");
 			// await this.loadDataForm();
 		}else{
-			console.log("sem Update no state");
+			// console.log("sem Update no state");
 		}
 	}
 
@@ -63,25 +68,54 @@ export default class editAccount extends React.Component {
 		const cities = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${st}/municipios`);
 		this.setState({cities:cities.data});
 			
-		this.setState({data:{...this.state.user, ...this.state.user.academic, ...this.state.user.company, ...this.state.user.address}});
+		this.setState({data:{user_id:this.state.user.id, ...this.state.user, ...this.state.user.academic, ...this.state.user.company[0], ...this.state.user.address, type_company:this.state.user.access_level_slug}});
+		
+		//if estudante - get no email do professor
+		if (this.state.user.access_level_slug == 'aluno') {			
+			const professor = await api.get(`/professor-studant/show?studant_id=${this.state.user.id}`);
+			this.setState({professor:`${professor.data.name} - ${professor.data.email}`});
+		}else if (this.state.user.access_level_slug == 'professor') {
+			
+		}else if (this.state.user.access_level_slug == 'financeiro' || this.state.user.access_level_slug == 'tecnico') {
+			let e = {target:{value:''}};
+			e.target.value = this.state.data.cnpj;
+			await this.handleCNPJ(e);
+			this.setState({data:{company_id:this.state.user.company[0].id, ...this.state.data}})
+		}else{
+			let e = {target:{value:''}};
+			e.target.value = this.state.data.cep_address;
+			await this.handleCEP(e);
+			this.setState({data:{address_id:this.state.user.address.id, ...this.state.data}});
+		}
+		this.setState({loadpage:false});		
 		console.log(this.state);
+	}
+
+	handleCNPJ = async (e) => {
+		let cnpj = e.target.value;
+		const res = await api.get(`/company/cnpj?cnpj=${cnpj}`);
+		if (res.data != '') {
+		  const req = res.data;
+		  const data = {...this.state.data, ...req};
+		  this.setState({company:res.data, data, address:{localidade:req.company_city, uf:req.company_state, bairro:req.neighborhood, logradouro:req.street}});
+		  console.log(this.state);     
+		}
 	}
 
 	handleCEP = async (e) => {
 		let cep = e.target.value.replace('-', '');
 			cep = parseInt(cep);
-		
 		if (cep.toString().length == 8) {
 			const address = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 			let data = {...this.state.data};
 			if (this.state.data.access_level_slug == 'tecnico' ||this.state.data.access_level_slug == 'financeiro') {
-				data.company_city = address.data.localidade;
-				data.company_state = address.data.uf;
-				data.neighborhood = address.data.bairro;
-				data.street = address.data.logradouro;
+				data.company_city 	= address.data.localidade;
+				data.company_state 	= address.data.uf;
+				data.neighborhood 	= address.data.bairro;
+				data.street 		= address.data.logradouro;
 			}else{
-				data.city_address = address.data.localidade;
-				data.state_address = address.data.uf;
+				data.city_address 	= address.data.localidade;
+				data.state_address 	= address.data.uf;
 				data.neighborhood_address = address.data.bairro;
 				data.street_address = address.data.logradouro;
 			}
@@ -117,22 +151,28 @@ export default class editAccount extends React.Component {
       //Layer of Validation
 
       //send register to backend
-      // const register = this.state.data;
-      // const res = await userRegister(register);
-      // if (res.data.error == true) {
-      //   alert(`${res.data.message}`);       
-      // }else{
-      //   alert(`${res.data.message}`);
-      //   this.props.history.push("/");
-      //   // window.location=URL_BASE;
-      // }
+      try {
+		const update = this.state.data;
+		const res = await userUpdate(update);
+		if (res.data.error == true) {
+		  alert(`${res.data.message}`);       
+		}else{
+		  alert(`${res.data.message}`);
+		  window.scrollTo(0,0);
+		//   this.props.history.push("/");
+		//   window.location=URL_BASE+'editar-conta';
+		}
+	  } catch (error) {
+		alert(`Algo de errado aconteceu, procure o suporte técnico.`);
+	  }
       setTimeout(() => {
         this.setState({loading:false});
-      }, 2000);
+      }, 1000);
 
       console.log(this.state);
 	}
 	
+
 	renderCompany(){
 		return (
 		<div className="infos-company">
@@ -156,7 +196,7 @@ export default class editAccount extends React.Component {
 		  <div className="row">
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="company_name">Razão Social <Red /> </label>
-				  <InputMask id="company_name" type="text" className="form-control" defaultValue={this.state.data.company_name} name="company_name" defaultValue={this.state.company.company_name} onChange={(e) => this._onChange(e) } />
+				  <input id="company_name" type="text" className="form-control" defaultValue={this.state.data.company_name} name="company_name" defaultValue={this.state.company.company_name} onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
 				  </div>
 			  </div>
@@ -178,13 +218,13 @@ export default class editAccount extends React.Component {
 		  <div className="row">
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="company_phone">Fone <Red /> </label>
-				  <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" defaultValue={this.state.data.company_phone} name="company_phone" value={this.state.company.company_phone} onChange={(e) => this._onChange(e) } />
+				  <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" defaultValue={this.state.data.company_phone} name="company_phone"  onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
 				  </div>
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="cep">CEP <Red /> </label>
-				  <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.company.cep} className="form-control" name="cep" />
+				  <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" defaultValue={this.state.data.cep} onChange={(e) => { this.handleCEP(e); this._onChange(e); }} className="form-control" name="cep" />
 					<div className="invalid-feedback">
 					</div>
 			  </div>
@@ -228,17 +268,17 @@ export default class editAccount extends React.Component {
 		  <div className="form-group">
 			  <label htmlFor="company_state">Cargo <Red /> </label>
 			  <div className="custom-control custom-radio">
-				  <input type="radio" name="type_company" defaultValue="tecnico"  onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_1" />
+				  <input type="radio" name="type_company" defaultValue="tecnico" defaultChecked={(this.state.data.access_level_slug == 'tecnico') ? this.state.data.access_level_slug : ''} onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_1" />
 				  <label className="custom-control-label" htmlFor="type_company_1">Técnico</label>
 			  </div>
 			  <div className="custom-control custom-radio">
-				  <input type="radio" name="type_company" defaultValue="financeiro"  onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_2" />
+				  <input type="radio" name="type_company" defaultValue="financeiro" defaultChecked={(this.state.data.access_level_slug == 'financeiro') ? this.state.data.access_level_slug : ''}  onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_2" />
 				  <label className="custom-control-label" htmlFor="type_company_2">Financeiro</label>
 			  </div>
 		  </div>
 		</div>
 		);
-	  }
+	}
 
 	renderAcademy(){
 		return (
@@ -302,27 +342,89 @@ export default class editAccount extends React.Component {
 		);
 	}  
 	
-	  renderStudent(){
+	renderStudent(){
 		return (
 		  <div className="row">
 			  <div className="form-group col-12">
-				  <label htmlFor="email_leader" className="d-block">Email do seu Orientador</label>
-				  <input id="email_leader" type="email" className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
+				  <label htmlFor="email_leader" className="d-block">Orientador</label>
+				  <input id="email_leader" type="email" disabled defaultValue={this.state.professor} className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
 				  </div>
 			  </div>
 		  </div>
 		);
-	  }
+	}
+
+	renderOther(){
+		return (
+		  <div className="infos-acad">
+			  <div className="form-divider">
+				  Endereço
+			  </div>
+			  <div className="row">
+				<div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+					<label htmlFor="cep">CEP <Red /> </label>
+					<InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.data.cep_address} className="form-control" name="cep_address" />
+					  <div className="invalid-feedback">
+					  </div>
+				</div>
+				<div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+					<label htmlFor="street">Logradouro <Red /> </label>
+					<input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street_address" />
+					<div className="invalid-feedback">
+					</div>
+				</div>
+			  </div>
+			  <div className="row">
+				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+					  <label htmlFor="neighborhood">Bairro <Red /> </label>
+					  <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood_address" />
+						<div className="invalid-feedback">
+						</div>
+				  </div>
+				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+					  <label htmlFor="number">Número <Red /> </label>
+					  <input id="number" type="text" className="form-control" name="number_address" defaultValue={this.state.data.number_address} onChange={(e) => this._onChange(e) } />
+					  <div className="invalid-feedback">
+					  </div>
+				  </div>
+			  </div>
+			  <div className="row">
+				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+					  <label htmlFor="company_city">Localidade <Red /> </label>
+					  <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="city_address" />
+					  <div className="invalid-feedback">
+					  </div>
+				  </div>
+				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+					  <label htmlFor="company_state">Estado <Red /> </label>
+					  <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="state_address" />
+						<div className="invalid-feedback">
+						</div>
+				  </div>
+			  </div>
+		  </div>
+  
+		);
+	}
 
 	render() {
+		
 		return (
 			<Main title="Editar Conta">
+				
 	            <div className="container">
 	                <div className="row justify-content-md-center">
-	                    <div className="col-12 col-sm-12 col-lg-7">
-	                      
-	                        <div className="card card-primary">
+	                    <div className="col-12 col-sm-12 col-lg-8">
+							<center>
+								<GridLoader
+									sizeUnit={"px"}
+									size={30}
+									color={'#41b6ad'}
+									loading={this.state.loadpage}
+									/>
+							</center>
+	                        <div className="card card-primary" style={{display:((this.state.loadpage) ? 'none' : 'block')}}>
 	                           
 	                            <div className="card-body"> 
 	                              <form method="post" noValidate onSubmit={this.onSubmit} autoComplete="off">
@@ -412,36 +514,26 @@ export default class editAccount extends React.Component {
 	                                  </div>
 	                                  {(this.state.data.access_level_slug == 'aluno' || this.state.data.access_level_slug == 'professor') ? this.renderAcademy() : ""}
 	                                  {(this.state.data.access_level_slug == 'tecnico' || this.state.data.access_level_slug == 'financeiro') ? this.renderCompany() : ""}
-	                                  {/*(this.state.tipoSlug == 'operador' || this.state.tipoSlug == 'autonomo') ? this.renderOther() : ""*/}
+	                                  {(this.state.data.access_level_slug == 'operador' || this.state.data.access_level_slug == 'autonomo' || this.state.data.access_level_slug == 'administrador') ? this.renderOther() : ""}
 	                                  
 	                                  <div className="form-divider">
 	                                        Sistema
 	                                    </div>
-	                                  <div className="row">
-	                                      {/*
-										<div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="password" className="d-block">Senha <Red /></label>
-	                                          <input id="password" type="password" className="form-control" name="password" onChange={(e) => this._onChange(e) } />
-	                                          <div id="pwindicator" className="pwindicator">
-	                                              <div className="bar" />
-	                                              <div className="label" />
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="password2" className="d-block">Confirmar Senha <Red /></label>
-	                                          <input id="password2" type="password" className="form-control" name="password-confirm" onChange={(e) => this._onChange(e) } />
-	                                      </div>
-	                                      */}
-	                                  </div>
 	                                   {(this.state.data.access_level_slug == 'aluno') ? this.renderStudent() : ""} 
-	                                  <div className="form-group">
+									   <div className="row">
+										<div className="form-group col-12">
+											<label htmlFor="password" className="d-block">Tipo de Usuário <Red /></label>
+											<input id="access_level" type="text" className="form-control" name="access_level" defaultValue={(this.state.user.access_level_slug == 'tecnico' || this.state.user.access_level_slug == 'financeiro') ? 'Empresa' : this.state.user.access_level} disabled />
+	                                    </div>
+	                                  </div>
+									  <div className="form-group">
 	                                      <div className="custom-control custom-checkbox">
 	                                          <input type="checkbox" defaultChecked name="agree" disabled className="custom-control-input" id="agree" />
 	                                          <label className="custom-control-label" htmlFor="agree">Eu aceito os termos e as condições</label>
 	                                      </div>
 	                                  </div>
 	                                  <div className="form-group">
-	                                      <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Cadastrar" loadName="Enviando..."></Button>
+	                                      <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Editar" loadName="Enviando..."></Button>
 	                                  </div>
 	                              </form>
 	                            </div>
