@@ -474,13 +474,23 @@ $(function() {
   });
 
   // Bootstrap 4 Validation
-  $(".needs-validation").submit(function() {
-    var form = $(this);
-    if (form[0].checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    form.addClass('was-validated');
+  // $(".needs-validation").submit(function() {
+  //   var form = $(this);
+  //   if (form[0].checkValidity() === false) {
+  //     event.preventDefault();
+  //     event.stopPropagation();
+  //   }
+  //   form.addClass('was-validated');
+  // });
+
+  $(document).on('submit', ".needs-validation", function() {
+      /* Act on the event */
+      var form = $(this);
+      if (form[0].checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.addClass('was-validated');
   });
 
   // alert dismissible

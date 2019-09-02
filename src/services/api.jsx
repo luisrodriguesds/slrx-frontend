@@ -18,6 +18,7 @@ api.interceptors.request.use(async config => {
 export const userLogin = (auth) => api.post('/user/auth', auth);
 export const userRegister = (register) => api.post('/user', register);
 export const userUpdate = (update) => api.put('/user', update);
+export const changePass = (update) => api.put('/user/change-pass', update);
 
 
 export default api;

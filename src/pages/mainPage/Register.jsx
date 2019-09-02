@@ -208,12 +208,14 @@ class Register extends Component {
                 <label htmlFor="cnpj">CNPJ <Red /> </label>
                 <InputMask id="cnpj" type="text" className="form-control" mask="99.999.999/9999-99" name="cnpj" onChange={(e) => {this._onChange(e); this.handleCNPJ(e); } } />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="fantasy_name">Nome Fantasia <Red /> </label>
                 <input id="fantasy_name" type="text" className="form-control" name="fantasy_name" defaultValue={this.state.company.fantasy_name} onChange={(e) => this._onChange(e) } />
                   <div className="invalid-feedback">
+                    como? Não entendi.
                   </div>
             </div>
         </div>
@@ -222,12 +224,14 @@ class Register extends Component {
                 <label htmlFor="company_name">Razão Social <Red /> </label>
                 <InputMask id="company_name" type="text" className="form-control" name="company_name" defaultValue={this.state.company.company_name} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="state_registration">Inscrição Estadual </label>
                 <input id="state_registration" type="text" className="form-control" name="state_registration" defaultValue={this.state.company.state_registration} onChange={(e) => this._onChange(e) } />
                   <div className="invalid-feedback">
+                    como? Não entendi.
                   </div>
             </div>
         </div>
@@ -236,6 +240,7 @@ class Register extends Component {
                 <label htmlFor="company_email">Email da Empresa <Red /> </label>
                 <InputMask id="company_email" type="email" className="form-control" name="company_email" defaultValue={this.state.company.company_email} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
         </div>
@@ -244,12 +249,14 @@ class Register extends Component {
                 <label htmlFor="company_phone">Fone <Red /> </label>
                 <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" name="company_phone" value={this.state.company.company_phone} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="cep">CEP <Red /> </label>
                 <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.company.cep} className="form-control" name="cep" />
                   <div className="invalid-feedback">
+                    como? Não entendi.
                   </div>
             </div>
         </div>
@@ -258,6 +265,7 @@ class Register extends Component {
                 <label htmlFor="street">Logradouro <Red /> </label>
                 <input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street" />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
         </div>
@@ -266,12 +274,14 @@ class Register extends Component {
                 <label htmlFor="neighborhood">Bairro <Red /> </label>
                 <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood" />
                   <div className="invalid-feedback">
+                    como? Não entendi.
                   </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="number">Número <Red /> </label>
                 <input id="number" type="text" className="form-control" name="number" defaultValue={this.state.company.number} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
         </div>
@@ -280,12 +290,14 @@ class Register extends Component {
                 <label htmlFor="company_city">Localidade <Red /> </label>
                 <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="company_city" />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                 <label htmlFor="company_state">Estado <Red /> </label>
                 <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="company_state" />
                   <div className="invalid-feedback">
+                    como? Não entendi.
                   </div>
             </div>
         </div>
@@ -311,6 +323,7 @@ class Register extends Component {
                 <label htmlFor="email_leader" className="d-block">Email do seu Orientador</label>
                 <input id="email_leader" type="email" className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
+                  como? Não entendi.
                 </div>
             </div>
         </div>
@@ -328,12 +341,14 @@ class Register extends Component {
                     <label htmlFor="ies">Instituição de Ensino Superior <Red /> </label>
                     <input id="ies" type="text" className="form-control" name="ies" onChange={(e) => this._onChange(e) } required />
                      <div className="invalid-feedback">
+                       como? Não entendi.
                       </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                     <label htmlFor="department">Departamento <Red /></label>
                     <input id="department" type="text" className="form-control" name="department" onChange={(e) => this._onChange(e)} required />
                      <div className="invalid-feedback">
+                       como? Não entendi.
                       </div>
                 </div>
             </div>
@@ -352,12 +367,14 @@ class Register extends Component {
                       <option value="Doutor">Doutor</option>
                     </select>
                     <div className="invalid-feedback">
+                      como? Não entendi.
                     </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                     <label htmlFor="laboratory">Laboratório <Red /></label>
                     <input id="laboratory" type="text" className="form-control" name="laboratory" onChange={(e) => this._onChange(e)} />
                      <div className="invalid-feedback">
+                       como? Não entendi.
                       </div>
                 </div>
             </div>
@@ -366,6 +383,7 @@ class Register extends Component {
                     <label htmlFor="research">Área de Pesquisa <Red /></label>
                     <input id="research" type="text" className="form-control" name="research" onChange={(e) => this._onChange(e)} />
                      <div className="invalid-feedback">
+                       como? Não entendi.
                       </div>
                 </div>
             </div>
@@ -390,12 +408,14 @@ class Register extends Component {
                   <label htmlFor="cep">CEP <Red /> </label>
                   <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.company.cep} className="form-control" name="cep_address" />
                     <div className="invalid-feedback">
+                      como? Não entendi.
                     </div>
               </div>
               <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                   <label htmlFor="street">Logradouro <Red /> </label>
                   <input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street_address" />
                   <div className="invalid-feedback">
+                    como? Não entendi.
                   </div>
               </div>
             </div>
@@ -404,12 +424,14 @@ class Register extends Component {
                     <label htmlFor="neighborhood">Bairro <Red /> </label>
                     <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood_address" />
                       <div className="invalid-feedback">
+                        como? Não entendi.
                       </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                     <label htmlFor="number">Número <Red /> </label>
                     <input id="number" type="text" className="form-control" name="number_address" defaultValue={this.state.company.number} onChange={(e) => this._onChange(e) } />
                     <div className="invalid-feedback">
+                      como? Não entendi.
                     </div>
                 </div>
             </div>
@@ -418,12 +440,14 @@ class Register extends Component {
                     <label htmlFor="company_city">Localidade <Red /> </label>
                     <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="city_address" />
                     <div className="invalid-feedback">
+                      como? Não entendi.
                     </div>
                 </div>
                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                     <label htmlFor="company_state">Estado <Red /> </label>
                     <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="state_address" />
                       <div className="invalid-feedback">
+                        como? Não entendi.
                       </div>
                 </div>
             </div>
@@ -446,7 +470,7 @@ class Register extends Component {
                                 <h4>Cadastro de {this.state.tipo}</h4>
                             </div>
                             <div className="card-body"> 
-                              <form method="post" noValidate onSubmit={this.onSubmit} autoComplete="off">
+                              <form method="post" noValidate className="needs-validation" onSubmit={this.onSubmit} autoComplete="off">
                                   <span style={{color:'red'}}>* Campo Obrigatório</span>
                                   <div className="form-divider">
                                       Dados Pessoas
@@ -456,12 +480,14 @@ class Register extends Component {
                                           <label htmlFor="name">Nome Completo <Red /></label>
                                           <input id="name" type="text" className="form-control" name="name" onChange={(e) => this._onChange(e)} autoFocus required />
                                           <div className="invalid-feedback">
+                                            como? Não entendi.
                                           </div>
                                       </div>
                                       <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                                           <label htmlFor="cpf">CPF <Red /></label>
                                           <InputMask id="cpf" type="text" className="form-control" onChange={(e) => this._onChange(e)} name="cpf" mask="999.999.999-99" required />
                                           <div className="invalid-feedback">
+                                            como? Não entendi.
                                           </div>
                                       </div>
                                   </div>
@@ -470,6 +496,7 @@ class Register extends Component {
                                           <label htmlFor="birthday">Data de Nascimento <Red /></label>
                                           <InputMask id="birthday" type="date" className="form-control" onChange={(e) => this._onChange(e) } name="birthday" required />
                                           <div className="invalid-feedback">
+                                            como? Não entendi.
                                           </div>
                                       </div>
                                       <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
@@ -480,6 +507,7 @@ class Register extends Component {
                                             <option value="2">Feminino</option>
                                           </select>
                                            <div className="invalid-feedback">
+                                             como? Não entendi.
                                             </div>
                                       </div>
                                   </div>
@@ -487,12 +515,14 @@ class Register extends Component {
                                       <label htmlFor="email">Email <Red /></label>
                                       <input id="email" type="email" className="form-control" name="email" required onChange={(e) => this._onChange(e) } />
                                       <div className="invalid-feedback">
+                                        como? Não entendi.
                                       </div>
                                   </div>
                                   <div className="form-group">
                                       <label htmlFor="other_email">Email Alternativo</label>
                                       <input id="other_email" type="other_email" className="form-control" name="other_email" onChange={(e) => this._onChange(e) } />
                                       <div className="invalid-feedback">
+                                        como? Não entendi.
                                       </div>
                                   </div>
                                   <div className="row">
@@ -505,6 +535,7 @@ class Register extends Component {
                                             ))}
                                           </select>
                                           <div className="invalid-feedback">
+                                            como? Não entendi.
                                           </div>
                                       </div>
                                       <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
@@ -516,6 +547,7 @@ class Register extends Component {
                                             ))}
                                           </select>
                                           <div className="invalid-feedback">
+                                            como? Não entendi.
                                           </div>
                                       </div>
                                   </div>
@@ -524,6 +556,7 @@ class Register extends Component {
                                           <label htmlFor="phone1" className="d-block">Fone <Red /></label>
                                           <InputMask id="phone1" type="text" className="form-control" name="phone1" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
                                           <div className="invalid-feedback">
+                                            como? Não entendi.
                                           </div>
                                       </div>
                                       <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">

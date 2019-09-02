@@ -184,12 +184,14 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="cnpj">CNPJ <Red /> </label>
 				  <InputMask id="cnpj" type="text" className="form-control" value={this.state.data.cnpj} mask="99.999.999/9999-99" name="cnpj" onChange={(e) => {this._onChange(e); this.handleCNPJ(e); } } />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="fantasy_name">Nome Fantasia <Red /> </label>
 				  <input id="fantasy_name" type="text" className="form-control" defaultValue={this.state.data.fantasy_name} name="fantasy_name" defaultValue={this.state.company.fantasy_name} onChange={(e) => this._onChange(e) } />
 					<div className="invalid-feedback">
+						Como? Não entendi.
 					</div>
 			  </div>
 		  </div>
@@ -198,12 +200,14 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="company_name">Razão Social <Red /> </label>
 				  <input id="company_name" type="text" className="form-control" defaultValue={this.state.data.company_name} name="company_name" defaultValue={this.state.company.company_name} onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="state_registration">Inscrição Estadual </label>
 				  <input id="state_registration" type="text" className="form-control" defaultValue={this.state.data.state_registration} name="state_registration" defaultValue={this.state.company.state_registration} onChange={(e) => this._onChange(e) } />
 					<div className="invalid-feedback">
+						Como? Não entendi.
 					</div>
 			  </div>
 		  </div>
@@ -212,6 +216,7 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="company_email">Email da Empresa <Red /> </label>
 				  <InputMask id="company_email" type="email" className="form-control" defaultValue={this.state.data.company_email} name="company_email" defaultValue={this.state.company.company_email} onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 		  </div>
@@ -220,12 +225,14 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="company_phone">Fone <Red /> </label>
 				  <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" defaultValue={this.state.data.company_phone} name="company_phone"  onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="cep">CEP <Red /> </label>
 				  <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" defaultValue={this.state.data.cep} onChange={(e) => { this.handleCEP(e); this._onChange(e); }} className="form-control" name="cep" />
 					<div className="invalid-feedback">
+						Como? Não entendi.
 					</div>
 			  </div>
 		  </div>
@@ -234,6 +241,7 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="street">Logradouro <Red /> </label>
 				  <input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street" />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 		  </div>
@@ -242,12 +250,14 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="neighborhood">Bairro <Red /> </label>
 				  <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood" />
 					<div className="invalid-feedback">
+						Como? Não entendi.
 					</div>
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="number">Número <Red /> </label>
 				  <input id="number" type="text" className="form-control" name="number" defaultValue={this.state.company.number} onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 		  </div>
@@ -256,12 +266,14 @@ export default class editAccount extends React.Component {
 				  <label htmlFor="company_city">Localidade <Red /> </label>
 				  <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="company_city" />
 				  <div className="invalid-feedback">
+					  Como? Não entendi.
 				  </div>
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="company_state">Estado <Red /> </label>
 				  <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="company_state" />
 					<div className="invalid-feedback">
+						Como? Não entendi.
 					</div>
 			  </div>
 		  </div>
@@ -427,7 +439,7 @@ export default class editAccount extends React.Component {
 	                        <div className="card card-primary" style={{display:((this.state.loadpage) ? 'none' : 'block')}}>
 	                           
 	                            <div className="card-body"> 
-	                              <form method="post" noValidate onSubmit={this.onSubmit} autoComplete="off">
+	                              <form method="post" className="needs-validation" noValidate onSubmit={this.onSubmit} autoComplete="off">
 	                                  <span style={{color:'red'}}>* Campo Obrigatório</span>
 	                                  <div className="form-divider">
 	                                      Dados Pessoas
