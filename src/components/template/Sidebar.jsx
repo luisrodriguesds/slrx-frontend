@@ -22,8 +22,8 @@ const Sidebar = (props) => {
                 <span>Arquivos Úteis</span>
               </Link>
               <ul className="dropdown-menu">
-                <li><Link className="nav-link" to="/arquivos/enviar">Enviar Arquivo</Link></li>
-                <li><Link className="nav-link" to="/arquivos">Ver Arquivos</Link></li>
+                <li><Link className="nav-link" to="/arquivos-uteis/enviar">Enviar Arquivo</Link></li>
+                <li><Link className="nav-link" to="/arquivos-uteis">Ver Arquivos</Link></li>
               </ul>
             </li>
             <li className="dropdown">
@@ -46,7 +46,7 @@ const Sidebar = (props) => {
                 <li><Link className="nav-link" to="/usuarios/alunos">Alunos</Link></li>
                 <li><Link className="nav-link" to="/usuarios/operadores">Operadores</Link></li>
                 <li><Link className="nav-link" to="/usuarios/funcionarios">Funcionarios de Empresa</Link></li>
-                <li><Link className="nav-link" to="/usuarios/empresa">Empresa</Link></li>
+                <li><Link className="nav-link" to="/usuarios/empresas">Empresas</Link></li>
                 <li><Link className="nav-link" to="/usuarios/pendentes">Usuários não confirmados</Link></li>
               </ul>
             </li>
@@ -62,11 +62,11 @@ const Sidebar = (props) => {
                 <li><Link className="nav-link" to="/solicitacoes/tutoriais">Tutoriais</Link></li>
               </ul>
             </li> 
-            <li className="dropdown">
+            {/* <li className="dropdown">
               <Link to="/fornos" className="nav-link"><i className="fas fa-server" /> 
                 <span>Fornos</span>
               </Link>
-            </li>  
+            </li>   */}
           </ul>
         </aside>
       </div>
