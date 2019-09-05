@@ -83,16 +83,27 @@ $(function() {
     if($(".main-sidebar").length) {
       $(".main-sidebar").niceScroll(sidebar_nicescroll_opts);
       sidebar_nicescroll = $(".main-sidebar").getNiceScroll();
+      console.log(sidebar_nicescroll);
+      // $(".main-sidebar .sidebar-menu li a.has-dropdown").off('click').on('click', function() {
+      //   var me = $(this);
+      //   console.log(me);
+      //   me.parent().find('> .dropdown-menu').slideToggle(500, function() {
+      //     update_sidebar_nicescroll();
+      //     return false;
+      //   });
+      //   return false;
+      // });
 
-      $(".main-sidebar .sidebar-menu li a.has-dropdown").off('click').on('click', function() {
+      $(document).off('click').on('click', ".main-sidebar .sidebar-menu li a.has-dropdown", function() {
         var me = $(this);
-
+        console.log(me);
         me.parent().find('> .dropdown-menu').slideToggle(500, function() {
           update_sidebar_nicescroll();
           return false;
         });
         return false;
       });
+
     }
   }
   sidebar_dropdown();

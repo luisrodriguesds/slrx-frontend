@@ -159,7 +159,8 @@ function Nav(){
               </div>
             </li>
             {/* Notificações */}
-            <li className="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg beep"><i className="far fa-bell" /></a>
+            <li className="dropdown dropdown-list-toggle">
+              <a href="#" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg beep"><i className="far fa-bell" /></a>
               <div className="dropdown-menu dropdown-list dropdown-menu-right">
                 <div className="dropdown-header">Notificações
                   <div className="float-right">
@@ -219,7 +220,9 @@ function Nav(){
               </div>
             </li>
             {/* Avatar */}
-            <li className="dropdown"><a href="#" data-toggle="dropdown" className="nav-link dropdown-toggle nav-link-lg nav-link-user">
+            <li className="dropdown dropdown-list-toggle">
+            {/* dropdown-toggle -> essa class está com problema, modificado arquivo script.js e ela parou de funcionar ???? */}
+              <a href="#" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg nav-link-user">
                 <img alt="image" src={Avatar} className="rounded-circle mr-1" />
                 <div className="d-sm-none d-lg-inline-block">Olá, {user.name}!</div></a>
               {/* Menus */}

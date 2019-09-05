@@ -19,5 +19,8 @@ export const userRegister = (register) => api.post('/user', register);
 export const userUpdate = (update) => api.put('/user', update);
 export const changePass = (update) => api.put('/user/change-pass', update);
 
+//Menu
+export const getMenu = () => api.get('/menu/show');
+
 
 export default api;
