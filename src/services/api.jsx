@@ -22,5 +22,12 @@ export const changePass = (update) => api.put('/user/change-pass', update);
 //Menu
 export const getMenu = () => api.get('/menu/show');
 
+//Solicitations
+export const getGap = () => api.get('/gap');
+export const getEquipment = () => api.get('/equipment');
+export const postSolicitation = (data) => api.post('/solictation', data);
+export const getSolicitation = () => api.post('/solictation/own');
+
+
 
 export default api;

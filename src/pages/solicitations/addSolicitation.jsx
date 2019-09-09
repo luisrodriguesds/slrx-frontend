@@ -1,11 +1,69 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+
+import {getGap, getEquipment, postSolicitation} from '../../services/api';
+
 import Eppendorf from '../../assets/img/eppendorf.jpg';
 
 import Main from '../../components/template/Main';
+import Button from '../../components/events/LoadingButtom';
 
 export default class addSolicitation extends React.Component {
-	
+	// "settings":{"tecnica":"DRX", "dois_theta_inicial":10, "dois_theta_final":100, "delta_dois_theta":0.013},
+	// "settings":{"tecnica":"FRX", "resultado":"oxidos", "medida":"semi-quantitativa"},
+	state = {
+		data:{
+			"equipment_id":3,
+			"gap_id":"",
+			"method":"",
+			"settings":{},
+			"composition":"",
+			"shape":"",
+			"flammable":"Não",
+			"radioactive":"Não",
+			"toxic":"Não",
+			"corrosive":"Não",
+			"hygroscopic":"Não",
+			"note":"",
+			"quantity":"1"
+		},
+		equipments:[],
+		gaps:[],
+		loading:false,
+	  	loadpage:true
+	}
+
+	async componentDidMount(){
+		//load equipments
+		const equipments= await getEquipment();
+		const gaps 		= await getGap();
+		this.setState({...this.state, gaps:gaps.data, equipments:equipments.data})
+	}
+
+	_onChange = async (e) => {
+      let value = e.target.value;
+
+      if (e.target.name == 'method') {
+      	if (value == 'DRX') {
+      		console.log("DRX");
+    		this.setState({data:{equipment_id:2}});
+    	}else if(value == 'FRX'){
+      		console.log("FRX");
+    		this.setState({ data:{equipment_id:3}});
+    	}
+      }
+
+      const data = {...this.state.data};
+      data[e.target.name] = value;
+	  this.setState({data});
+	  console.log(this.state);
+    }
+
+    handleEquipment = () =>{
+    	
+    	
+    }
+
 
 	render() {
 		return (
@@ -14,7 +72,7 @@ export default class addSolicitation extends React.Component {
 					<div className="row justify-content-md-center">
 						<div className="col-12 col-sm-12 col-lg-7">
 						<div className="card">
-					        <form className="needs-validation" id="" noValidate>
+					        <form className="needs-validation" method="post" id="" noValidate>
 					          <div className="card-header">
 					            <h4>Cadastrar Solicitação</h4>
 					          </div>
@@ -24,12 +82,12 @@ export default class addSolicitation extends React.Component {
 			                      <div className="control-label">Selecione o tipo de análise</div>
 			                      <div className="custom-switches-stacked mt-2">
 			                        <label className="custom-switch">
-			                          <input type="radio" name="option" value="1" className="custom-switch-input" />
+			                          <input type="radio" name="method" value="DRX" onChange={(e) => (this._onChange(e) )} className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">DRX</span>
 			                        </label>
 			                        <label className="custom-switch">
-			                          <input type="radio" name="option" value="2" className="custom-switch-input" />
+			                          <input type="radio" name="method" value="FRX" onChange={(e) => (this._onChange(e))} className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">FRX</span>
 			                        </label>
@@ -37,9 +95,24 @@ export default class addSolicitation extends React.Component {
 			                    </div>
 			                    <div className="form-group">
 				            		<label>Equipamento</label>
-				            		<select className="form-control" required>
-				                        <option value="">Selecione o tipo de Equipamento ...</option>
-				                        <option value="1">PANalytical X'Pert PRO</option>
+				            		<select className="form-control" value={this.state.data.equipment_id} onChange={(e) => this._onChange(e)} name="equipment_id" required>
+				                        <option value=""> Selecione o Equipamento ...</option>
+				                        {this.state.equipments.map(equipment => {
+				                        	if (this.state.data.method == 'FRX') {
+				                        		if (equipment.type == 'FRX') {
+				                        			return (
+				                        				<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
+				                        				)
+				                        		}
+				                        	}else{
+				                        		if (equipment.type == 'DRX') {
+				                        			return (
+				                        				<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
+				                        				)
+				                        		}
+				                        	}
+				                        }
+				                        )}
 				                    </select>
 				            		<div className="invalid-feedback">
 				                		Como? Não entendi.
@@ -155,7 +228,7 @@ export default class addSolicitation extends React.Component {
 					            </div>
 					          </div>
 					          <div className="card-footer text-right">
-					            <button className="btn btn-primary">Solicitar</button>
+	                             <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Solicitar" loadName="Solicitando..."></Button>
 					          </div>
 					        </form>
 					      </div>

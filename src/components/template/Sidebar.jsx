@@ -43,9 +43,9 @@ const Sidebar = (props) => {
                 </Link>
                 <ul className="dropdown-menu">
                   
-                  {section.itens.map((item) => {
+                  {section.itens.map((item, i) => {
                     return (
-                        <li><Link className="nav-link" key={item.menu_table_id} to={item.url}>{item.name}</Link></li>                      
+                        <li key={`sub-${i}`}><Link className="nav-link" to={item.url}>{item.name}</Link></li>                      
                     )
                   })}
                 </ul>
