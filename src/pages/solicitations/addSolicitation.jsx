@@ -16,7 +16,7 @@ export default class addSolicitation extends React.Component {
 			"equipment_id":3,
 			"gap_id":"",
 			"method":"",
-			"settings":{},
+			"settings":{"tecnica":""},
 			"composition":"",
 			"shape":"",
 			"flammable":"Não",
@@ -25,10 +25,13 @@ export default class addSolicitation extends React.Component {
 			"corrosive":"Não",
 			"hygroscopic":"Não",
 			"note":"",
-			"quantity":"1"
+			"quantity":1
 		},
 		equipments:[],
+		equiSelect:2,
+		method:'',
 		gaps:[],
+		setting_drx:{"tecnica":"drx","dois_theta_inicial":10,"dois_theta_final":100,"delta_dois_theta":0.013},
 		loading:false,
 	  	loadpage:true
 	}
@@ -40,16 +43,14 @@ export default class addSolicitation extends React.Component {
 		this.setState({...this.state, gaps:gaps.data, equipments:equipments.data})
 	}
 
-	_onChange = async (e) => {
+	_onChange = (e) => {
       let value = e.target.value;
 
       if (e.target.name == 'method') {
       	if (value == 'DRX') {
-      		console.log("DRX");
-    		this.setState({data:{equipment_id:2}});
+    		this.setState({equiSelect:2, method:'DRX'});
     	}else if(value == 'FRX'){
-      		console.log("FRX");
-    		this.setState({ data:{equipment_id:3}});
+			  this.setState({equiSelect:3, method:'FRX'});    		
     	}
       }
 
@@ -57,13 +58,26 @@ export default class addSolicitation extends React.Component {
       data[e.target.name] = value;
 	  this.setState({data});
 	  console.log(this.state);
-    }
+	}
+	
+	handleCheckbox = (e) => {
+	  	let value = e.target.value;
+	  		value = (this.state.data[e.target.name] == 'Sim') ? 'Não' : 'Sim';
+	  
+		const data = {...this.state.data};
+		data[e.target.name] = value;
+		this.setState({data});
+	}
 
-    handleEquipment = () =>{
-    	
-    	
-    }
-
+	handleDRX = (e) => {
+		let value = e.target.value;
+		
+		console.log(e.target.name, e.target.value);
+		const data = {...this.state.data};
+		data[e.target.name] = value;
+		this.setState({data:{settings:{tecnica:"DRX", [e.target.name]:value}, ...this.state.data}});
+		console.log(this.state.data)
+	}
 
 	render() {
 		return (
@@ -95,7 +109,7 @@ export default class addSolicitation extends React.Component {
 			                    </div>
 			                    <div className="form-group">
 				            		<label>Equipamento</label>
-				            		<select className="form-control" value={this.state.data.equipment_id} onChange={(e) => this._onChange(e)} name="equipment_id" required>
+				            		<select className="form-control" value={this.state.equiSelect} onChange={(e) => this._onChange(e)} name="equipment_id" required>
 				                        <option value=""> Selecione o Equipamento ...</option>
 				                        {this.state.equipments.map(equipment => {
 				                        	if (this.state.data.method == 'FRX') {
@@ -121,12 +135,13 @@ export default class addSolicitation extends React.Component {
 								<div className="form-divider">Informações da Amostra</div>
 								<div className="form-group">
 				            		<label>Escolha o tipo da amostra</label>
-				            		<select className="form-control" required>
+				            		<select name="shape"  className="form-control" onChange={(e) => this._onChange(e)} required>
 				                        <option value="">Selecione o tipo da amostra ...</option>
-				                        <option value="1">Pó</option>
-				                        <option value="1">Filme</option>
-				                        <option value="1">Pastilha</option>
-				                        <option value="1">Eletródo</option>
+				                        <option value="Pó">Pó</option>
+				                        <option value="Filme">Filme</option>
+				                        <option value="Pastilha">Pastilha</option>
+				                        <option value="Eletródo">Eletródo</option>
+				                        <option value="Outro">Outro</option>
 				                    </select>
 				            		<div className="invalid-feedback">
 				                		Como? Não entendi.
@@ -140,7 +155,7 @@ export default class addSolicitation extends React.Component {
 				            	</div>
 								<div className="form-group">
 					              <label>Composição</label>
-					              <input type="text" className="form-control" required />
+					              <input type="text" name="composition" onChange={(e) => this._onChange(e)} className="form-control" required />
 					              <div className="invalid-feedback">
 					                Como? Não entendi.
 					              </div>
@@ -149,36 +164,37 @@ export default class addSolicitation extends React.Component {
 			                      <div className="control-label">Segurança</div>
 			                      <div className="custom-switches-stacked mt-2">
 			                        <label className="custom-switch">
-			                          <input type="checkbox" name="option" value="Inflamável" className="custom-switch-input" />
+			                          <input type="checkbox" name="flammable" onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">Inflamável</span>
 			                        </label>
 			                        <label className="custom-switch">
-			                          <input type="checkbox" name="option" value="Tóxico" className="custom-switch-input" />
+			                          <input type="checkbox" name="toxic" onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">Tóxico</span>
 			                        </label>
 									<label className="custom-switch">
-			                          <input type="checkbox" name="option" value="Higroscópico" className="custom-switch-input" />
+			                          <input type="checkbox" name="hygroscopic" onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">Higroscópico</span>
 			                        </label>
 									<label className="custom-switch">
-			                          <input type="checkbox" name="option" value="Corrosivo" className="custom-switch-input" />
+			                          <input type="checkbox" name="corrosive" onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">Corrosivo</span>
 			                        </label>
 									<label className="custom-switch">
-			                          <input type="checkbox" name="option" value="Radioativo" className="custom-switch-input" />
+			                          <input type="checkbox" name="radioactive" onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">Radioativo</span>
 			                        </label>
 			                      </div>
 			                    </div>
+
 								<div className="form-divider">Configurações da análise</div>
 								<div className="form-group">
 									<label>2θ inicial</label>
-									<select className="form-control" required>									
+									<select name="dois_theta_inicial" onChange={(e) => this.handleDRX(e)} className="form-control" required>									
 										<option value="10°">10°</option>
 										<option value="10°">11°</option>
 										<option value="10°">12°</option>
@@ -192,7 +208,8 @@ export default class addSolicitation extends React.Component {
 								</div>
 								<div className="form-group">
 									<label>2θ final</label>
-									<select className="form-control" required>									<option value="10°">10°</option>
+									<select name="dois_theta_final" onChange={(e) => this.handleDRX(e)} className="form-control" required>								
+										<option value="10°">10°</option>
 										<option value="10°">11°</option>
 										<option value="10°">12°</option>
 										<option value="10°">13°</option>
@@ -205,15 +222,17 @@ export default class addSolicitation extends React.Component {
 								</div>
 								<div className="form-group">
 					              <label>Δθ</label>
-					              <input type="text" className="form-control" value="0,013" disabled placeholder="Digite os elementos" required />
+					              <input type="text" name="delta_dois_theta" className="form-control" value="0,013" disabled placeholder="Digite os elementos" required />
 					              <div className="invalid-feedback">
 					                Como? Não entendi.
 					              </div>
 					            </div>
+
+				
 								<div className="form-divider"><strong>Observações Gerais</strong></div>
 								<div className="form-group">
 					              <label>Observações</label>
-					              <textarea className="form-control" required defaultValue={""} />
+					              <textarea className="form-control" name="note" onChange={(e) => this._onChange(e)} required defaultValue={""} />
 					              <div className="invalid-feedback">
 					                Como? Não entendi.
 					              </div>
@@ -221,7 +240,7 @@ export default class addSolicitation extends React.Component {
 								<div className="form-divider"><strong>Range de Amostras</strong></div>
 								<div className="form-group">
 					              <label>Quantas amostras deseja cadastrar?</label>
-					              <input type="number" className="form-control" placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={0} max={20} required />
+					              <input type="number" className="form-control" name="quantity" onChange={(e) => this._onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={0} max={20} required />
 					              <div className="invalid-feedback">
 					                Como? Não entendi.
 					              </div>

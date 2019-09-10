@@ -94,7 +94,7 @@ $(function() {
       //   return false;
       // });
 
-      $(document).off('click').on('click', ".main-sidebar .sidebar-menu li a.has-dropdown", function() {
+      $('body').off('click').on('click', ".main-sidebar .sidebar-menu li a.has-dropdown", function() {
         var me = $(this);
         // console.log(me);
         me.parent().find('> .dropdown-menu').slideToggle(500, function() {

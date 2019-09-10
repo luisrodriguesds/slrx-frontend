@@ -82,13 +82,15 @@ export default class editAccount extends React.Component {
 			await this.handleCNPJ(e);
 			this.setState({data:{company_id:this.state.user.company[0].id, ...this.state.data}})
 		}else{
-			let e = {target:{value:''}};
-			e.target.value = this.state.data.cep_address;
-			await this.handleCEP(e);
-			this.setState({data:{address_id:this.state.user.address.id, ...this.state.data}});
+			if (this.state.data.cep_address) {
+				let e = {target:{value:''}};
+				e.target.value = this.state.data.cep_address;
+				await this.handleCEP(e);
+				this.setState({data:{address_id:this.state.user.address.id, ...this.state.data}});
+			}
 		}
 		this.setState({loadpage:false});		
-		console.log(this.state);
+		// console.log(this.state);
 	}
 
 	handleCNPJ = async (e) => {
