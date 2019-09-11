@@ -18,6 +18,7 @@ export const userLogin = (auth) => api.post('/user/auth', auth);
 export const userRegister = (register) => api.post('/user', register);
 export const userUpdate = (update) => api.put('/user', update);
 export const changePass = (update) => api.put('/user/change-pass', update);
+export const getUser = () => api.get('/user/token');
 
 //Menu
 export const getMenu = () => api.get('/menu/show');
@@ -26,7 +27,7 @@ export const getMenu = () => api.get('/menu/show');
 export const getGap = () => api.get('/gap');
 export const getEquipment = () => api.get('/equipment');
 export const postSolicitation = (data) => api.post('/solictation', data);
-export const getSolicitation = () => api.post('/solictation/own');
+export const getSolicitation = () => api.get('/solictation/own');
 
 
 

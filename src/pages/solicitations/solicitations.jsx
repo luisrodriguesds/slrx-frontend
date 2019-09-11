@@ -1,10 +1,27 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import {getUser, getSolicitation} from '../../services/api';
+
 import Main from '../../components/template/Main';
 
 export default class solicitations extends React.Component {
-	
+	state = {
+		user:{},
+		solicitations:{},
+		status:[],
+		loading:false,
+	  	loadpage:true
+	}
+
+	async componentDidMount(){
+		const user = await getUser();
+		const solicitations = await getSolicitation();
+
+		this.setState({user:user.data.user, solicitations:solicitations.data})
+		console.log(this.state);
+	}
+
 	render() {
 		return (
 
@@ -33,19 +50,20 @@ export default class solicitations extends React.Component {
 			            <div className="card-body p-0">
 			              <div className="table-responsive">
 			                <table className="table table-striped">
-			                  <tbody><tr>
-			                      <th>
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
-			                          <label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </th>
-			                      <th>Código</th>
-			                      <th>Equipamento</th>
-			                      <th>Status</th>
-			                      <th>Data da Solicitação</th>
-			                      <th>Ações</th>
-			                    </tr>
+			                  <tbody>
+								  <tr>
+									<th>
+										<div className="custom-checkbox custom-control">
+										<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
+										<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
+										</div>
+									</th>
+									<th>Código</th>
+									<th>Equipamento</th>
+									<th>Status</th>
+									<th>Data da Solicitação</th>
+									<th>Ações</th>
+									</tr>
 			                    <tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
@@ -68,7 +86,7 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td>20/01/2018</td>
 			                      <td>
-								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
 			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
 			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
@@ -97,7 +115,7 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td>20/01/2018</td>
 			                      <td>
-								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
 			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
 			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
@@ -126,7 +144,7 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td>20/01/2018</td>
 			                      <td>
-								  	<div class="btn-group" role="group" aria-label="Exemplo básico">
+								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
 			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
 			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>

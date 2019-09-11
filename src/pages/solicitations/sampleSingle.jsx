@@ -4,8 +4,16 @@ import {Link} from 'react-router-dom';
 import Main from '../../components/template/Main';
 
 export default class sampleSingle extends React.Component {
+	state = {
+		solicitations:[],
+		loading:false,
+	  	loadpage:true
+	}
 	
+	async componentDidMount(){
 
+	}
+	
 	render() {
 		return (
 			<Main title="Amostra">
