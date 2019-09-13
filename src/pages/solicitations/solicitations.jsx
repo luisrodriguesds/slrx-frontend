@@ -9,14 +9,27 @@ export default class solicitations extends React.Component {
 	state = {
 		user:{},
 		solicitations:{},
-		status:[],
+		status:[
+			{number:1, descripiton:'Aguardando autorização'},
+			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
+			{number:3, descripiton:'Aguardando confirmação da entrega da amostra'},
+			{number:4, descripiton:'Na fila do equipamento'},
+			{number:5, descripiton:'Em processo de análise'},
+			{number:6, descripiton:'Análise concluída. Aguardando recolhimento da amostra'},
+			{number:7, descripiton:'Solicitação Finalizada'},
+		],
 		loading:false,
 	  	loadpage:true
 	}
 
 	async componentDidMount(){
 		const user = await getUser();
-		const solicitations = await getSolicitation();
+		//Check if user is adm or oper to get all solicitations or this solicitations are they
+		let solicitations = await getSolicitation();
+		console.log(solicitations);
+		// for (let i = 0; i < solicitations.data.data.length; i++) {
+		// 	solicitations.data[i].check = false;
+		// }
 
 		this.setState({user:user.data.user, solicitations:solicitations.data})
 		console.log(this.state);
@@ -51,7 +64,7 @@ export default class solicitations extends React.Component {
 			              <div className="table-responsive">
 			                <table className="table table-striped">
 			                  <tbody>
-								  <tr>
+								<tr>
 									<th>
 										<div className="custom-checkbox custom-control">
 										<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
@@ -63,7 +76,7 @@ export default class solicitations extends React.Component {
 									<th>Status</th>
 									<th>Data da Solicitação</th>
 									<th>Ações</th>
-									</tr>
+								</tr>
 			                    <tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
