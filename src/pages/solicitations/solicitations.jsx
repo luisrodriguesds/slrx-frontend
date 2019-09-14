@@ -8,7 +8,7 @@ import Main from '../../components/template/Main';
 export default class solicitations extends React.Component {
 	state = {
 		user:{},
-		solicitations:{},
+		solicitations:{data:[]},
 		status:[
 			{number:1, descripiton:'Aguardando autorização'},
 			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
@@ -27,15 +27,18 @@ export default class solicitations extends React.Component {
 		//Check if user is adm or oper to get all solicitations or this solicitations are they
 		let solicitations = await getSolicitation();
 		console.log(solicitations);
-		// for (let i = 0; i < solicitations.data.data.length; i++) {
-		// 	solicitations.data[i].check = false;
-		// }
+		
+		for (let i = 0; i < solicitations.data.data.length; i++) {
+			let date = new Date(solicitations.data.data[i].created_at);
+			solicitations.data.data[i].created_at = date.toLocaleDateString();
+		}
 
 		this.setState({user:user.data.user, solicitations:solicitations.data})
 		console.log(this.state);
 	}
 
 	render() {
+		let {solicitations} = this.state;
 		return (
 
 			<Main title="Solicitações">
@@ -63,41 +66,41 @@ export default class solicitations extends React.Component {
 			            <div className="card-body p-0">
 			              <div className="table-responsive">
 			                <table className="table table-striped">
+			                	<thead>
+			                		<tr>
+										<th>
+											<div className="custom-checkbox custom-control">
+											<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
+											<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
+											</div>
+										</th>
+										<th>Código</th>
+										<th>Equipamento</th>
+										<th>Status</th>
+										<th>Data da Solicitação</th>
+										<th>Ações</th>
+									</tr>
+			                	</thead>
 			                  <tbody>
-								<tr>
-									<th>
-										<div className="custom-checkbox custom-control">
-										<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
-										<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
-										</div>
-									</th>
-									<th>Código</th>
-									<th>Equipamento</th>
-									<th>Status</th>
-									<th>Data da Solicitação</th>
-									<th>Ações</th>
-								</tr>
-			                    <tr>
+								
+								{solicitations.data.map((solicitation, i) => (
+								<tr key={i}>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
+			                          <input type="checkbox" data-checkboxes="mygroup" value={solicitation.id} className="custom-control-input" name="check" id="checkbox-1" />
 			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </td>
 			                      <td>
-			                      	<Link to="/solicitacoes/ver-amostra/1">MND298D005</Link>
+			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
 			                      </td>
-			                      <td className="align-middle">PANalytical X'Pert PRO</td>
+			                      <td className="align-middle">{solicitation.equipment.name}</td>
 			                      <td>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando autorização">1</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Aguardando aprovação do Laboratório">2</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Aguardando confirmação da entrega da amostra">3</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Na fila do equipamento">4</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Em processo de análise">5</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Análise concluída. Aguardando recolhimento da amostra.">6</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Solicitação Finalizada">7</div>
+			                      {this.state.status.map((value, i) => (
+			                      	<div className={((value.number == solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{value.number}</div>
+			                      ))}
 			                      </td>
-			                      <td>20/01/2018</td>
+			                      <td>{solicitation.created_at}</td>
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
@@ -106,7 +109,11 @@ export default class solicitations extends React.Component {
 									</div>
 			                      </td>
 			                    </tr>
-			                    <tr>
+
+								))}
+			                    
+
+			                    {/*<tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
 			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-2" />
@@ -164,6 +171,7 @@ export default class solicitations extends React.Component {
 									</div>
 			                      </td>
 			                    </tr>
+			                	*/}
 			                  </tbody>
 			                </table>
 			              </div>
