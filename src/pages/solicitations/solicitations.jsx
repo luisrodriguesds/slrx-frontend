@@ -1,14 +1,16 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {getUser, getSolicitation} from '../../services/api';
+import {getUser, getSolicitation, searchSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
 
 export default class solicitations extends React.Component {
+	//SALVAR AS MARCAÇÕES 
+
 	state = {
 		user:{},
-		solicitations:{data:[]},
+		solicitations:{data:[], lastPage:'', page:'', total:'', perPage:''},
 		status:[
 			{number:1, descripiton:'Aguardando autorização'},
 			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
@@ -18,6 +20,8 @@ export default class solicitations extends React.Component {
 			{number:6, descripiton:'Análise concluída. Aguardando recolhimento da amostra'},
 			{number:7, descripiton:'Solicitação Finalizada'},
 		],
+		selectSol:[],
+		checkboxAll:false,
 		loading:false,
 	  	loadpage:true
 	}
@@ -25,16 +29,102 @@ export default class solicitations extends React.Component {
 	async componentDidMount(){
 		const user = await getUser();
 		//Check if user is adm or oper to get all solicitations or this solicitations are they
-		let solicitations = await getSolicitation();
-		console.log(solicitations);
+		let res = await getSolicitation({page:1});
+		let solicitations = res.data;
+
+		// for (let i = 0; i < res.data.data.length; i++) {
+		// 	let date = new Date(solicitations.data.data[i].created_at);
+		// 	solicitations.data.data[i].created_at = date.toLocaleDateString();
+		// }
+
+		this.setState({user:user.data.user, solicitations, loadpage:false})
+		console.log(this.state);
+	}
+
+	handleSearch = async (e) => {
+		const filter = e.target.value;
+		const res = await searchSolicitation({filter});
+		let solicitations = res.data;
+		this.setState({solicitations});
+
+		// console.log(res, filter);
+	}
+
+	handleCheckboxAll = () => {
+		let selectSol = [];
+		if (this.state.checkboxAll == false) {
+			selectSol = this.state.solicitations.data.map(value => value.id);
+		}else{
+			selectSol = [];
+		}
+		this.setState({checkboxAll:!this.state.checkboxAll, selectSol});
+		// console.log(selectSol);
+	}
+
+	handleCheckbox = (id) => {
+		//Não consegue desmarcar enquanto todos estão marcados
+		let {selectSol} = this.state;
+		//Isolate sections
+	    let check = selectSol.filter((v,i) => selectSol.indexOf(id) === i);
+    	if(check.length >= 1){
+	    	selectSol = selectSol.filter((v,i) => selectSol.indexOf(id) !== i);
+	    	this.setState({selectSol});
+	    	console.log(selectSol);
+    	}else{		
+	    	selectSol.push(id);
+		    this.setState({selectSol});
+	    	// console.log(selectSol);
+    	}
+	}
+
+	handlePaginate = async (page) => {
+		let res = await getSolicitation({page});
+		let solicitations = res.data;
 		
-		for (let i = 0; i < solicitations.data.data.length; i++) {
-			let date = new Date(solicitations.data.data[i].created_at);
-			solicitations.data.data[i].created_at = date.toLocaleDateString();
+		this.setState({solicitations});
+		window.scroll(0,0);
+	}
+
+	renderPaginate(){
+		const {lastPage, page, total, perPage} = this.state.solicitations;
+		if (total <= perPage) {
+			return;
 		}
 
-		this.setState({user:user.data.user, solicitations:solicitations.data})
-		console.log(this.state);
+		let pages = [];
+		for (let i = 1; i <= lastPage; i++) {
+			pages.push(i);
+		}
+
+		return (
+			<nav className="d-inline-block">
+	          <ul className="pagination mb-0">
+	            <li className={((page == 1) ? "page-item disabled" : "page-item")}>
+		            <button className="page-link" tabIndex={-1} onClick={() => this.handlePaginate(page-1)}>
+		              <i className="fas fa-chevron-left" />
+		            </button>
+	            </li>
+	            {pages.map((value, i) => (
+		            <li key={i} className={((value == page) ? "page-item active" : "page-item")}>
+		            	<button className="page-link" onClick={() => this.handlePaginate(value)}>
+		            		{value} {/*<span className="sr-only">(current)</span>*/}
+		            	</button>
+		            </li>
+	            ))}
+	            {/*<li className="page-item">
+	              <button className="page-link">2</button>
+	            </li>
+	            <li className="page-item">
+	            	<button className="page-link">3</button>
+	            </li>*/}
+	            <li className={((page == lastPage) ? "page-item disabled" : "page-item")}>
+	              <button className="page-link" onClick={() => this.handlePaginate(page+1)}>
+	              	<i className="fas fa-chevron-right" />
+	              </button>
+	            </li>
+	          </ul>
+	        </nav>
+		)
 	}
 
 	render() {
@@ -55,7 +145,7 @@ export default class solicitations extends React.Component {
 			                </div>
 			                <form>
 			                  <div className="input-group">
-			                    <input type="text" className="form-control" placeholder="Pesquisar" />
+			                    <input type="text" className="form-control" placeholder="Pesquisar" onChange={(e) => this.handleSearch(e)} />
 			                    <div className="input-group-btn">
 			                      <button className="btn btn-primary"><i className="fas fa-search" /></button>
 			                    </div>
@@ -70,8 +160,8 @@ export default class solicitations extends React.Component {
 			                		<tr>
 										<th>
 											<div className="custom-checkbox custom-control">
-											<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
-											<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
+												<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" onClick={() => this.handleCheckboxAll()} className="custom-control-input" id="checkbox-all" />
+												<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
 											</div>
 										</th>
 										<th>Código</th>
@@ -86,10 +176,10 @@ export default class solicitations extends React.Component {
 								{solicitations.data.map((solicitation, i) => (
 								<tr key={i}>
 			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" value={solicitation.id} className="custom-control-input" name="check" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
-			                        </div>
+			                      	<div className="custom-control custom-checkbox">
+                                          <input type="checkbox" data-checkboxes="mygroup" checked={this.state.checkboxAll} onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
+                                          <label className="custom-control-label" htmlFor={`checkbox-${i}`}>&nbsp;</label>
+                                     </div>
 			                      </td>
 			                      <td>
 			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
@@ -97,14 +187,14 @@ export default class solicitations extends React.Component {
 			                      <td className="align-middle">{solicitation.equipment.name}</td>
 			                      <td>
 			                      {this.state.status.map((value, i) => (
-			                      	<div className={((value.number == solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{value.number}</div>
+			                      	<div className={((value.number <= solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{value.number}</div>
 			                      ))}
 			                      </td>
 			                      <td>{solicitation.created_at}</td>
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
-			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
+			                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
 			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
 									</div>
 			                      </td>
@@ -177,21 +267,7 @@ export default class solicitations extends React.Component {
 			              </div>
 			            </div>
 					      <div className="card-footer text-right">
-					        <nav className="d-inline-block">
-					          <ul className="pagination mb-0">
-					            <li className="page-item disabled">
-					              <a className="page-link" href="#" tabIndex={-1}><i className="fas fa-chevron-left" /></a>
-					            </li>
-					            <li className="page-item active"><a className="page-link" href="#">1 <span className="sr-only">(current)</span></a></li>
-					            <li className="page-item">
-					              <a className="page-link" href="#">2</a>
-					            </li>
-					            <li className="page-item"><a className="page-link" href="#">3</a></li>
-					            <li className="page-item">
-					              <a className="page-link" href="#"><i className="fas fa-chevron-right" /></a>
-					            </li>
-					          </ul>
-					        </nav>
+					        {this.renderPaginate()}
 					      </div>
 			          </div>
 			        </div>

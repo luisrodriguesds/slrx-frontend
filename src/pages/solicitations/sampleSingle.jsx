@@ -1,56 +1,87 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import {getUser, showSolicitation} from '../../services/api';
+
 import Main from '../../components/template/Main';
 
 export default class sampleSingle extends React.Component {
 	state = {
-		solicitations:[],
+		solicitation:{user:{name:''}, equipment:{name:''}, settings:{}},
 		loading:false,
 	  	loadpage:true
 	}
 	
 	async componentDidMount(){
+		const name = this.props.computedMatch.params.id;
+		try{
+			const res = await showSolicitation({name});
+			this.setState({solicitation:res.data[0]})
+			console.log(this.state);
+		}catch(error){
+			alert(`Algo de errado acomteceu ou você não tem permissão para acessar est página.`);
+		}
 
 	}
 	
 	render() {
+		const {solicitation} = this.state; 
 		return (
 			<Main title="Amostra">
 				<div className="row">
 					<div className="col-12 col-sm-12 col-lg-6">
 						<div className="card card-primary">
 		                  <div className="card-header">
-		                    <h4>MND298D005</h4>
+		                    <h4>{solicitation.name}</h4>
 		                  </div>
 		                  <div className="card-body">
 		                    <div className="ScrollStyle">
 			                    <p>
-			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to="/usuarios/ver-perfil/1">Mateus Nunes de Oliveira</Link></span><br />
+			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to="/usuarios/ver-perfil/1">{solicitation.user.name}</Link></span><br />
 			                    </p>
 			                    <p>
-			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">19/10/2018</span><br />
+			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">{solicitation.created_at}</span><br />
 			                        <strong>Data do Recebimento: </strong><span id="detalhe_DataRecebimento">23/10/2018</span>
 			                    </p>
 			                    <p>
-			                        <strong>Equipamento: </strong> <span id="detalhe_Equipamento">PANalytical X'Pert PRO</span><br />
+			                        <strong>Equipamento: </strong> <span id="detalhe_Equipamento">{solicitation.equipment.name}</span><br />
 			                    </p>
 			                    <p>
-			                        <strong>Composição: </strong><span id="detalhe_Composicao">K2O, SiO2, Fe2O3,CaO</span><br />
-			                        <strong>Tipo: </strong> <span id="detalhe_Tipo">Pó</span><br />
+			                        <strong>Composição: </strong><span id="detalhe_Composicao">{solicitation.composition}</span><br />
+			                        <strong>Tipo: </strong> <span id="detalhe_Tipo">{solicitation.shape}</span><br />
 			                    </p>
-			                    <p id="detelhe_Configuracao_DRX">
-			                        <strong>2θ Inicial: </strong><span id="detalhe_2ThetaInicial">10</span>°<br />
-			                        <strong>2θ Final: </strong><span id="detalhe_2ThetaFinal">100</span>°<br />
-			                        <strong>Δθ: </strong><span id="detalhe_DeltaTheta">0.013</span>°<br />
-			                    </p>
-			                    <p id="detelhe_Configuracao_FRX">
-			                        <strong>Tipo de Medida: </strong><span id="detalhe_TipoMedida"></span><br />
-			                        <strong>Forma do Resultado: </strong><span id="detalhe_FormaResultado"></span><br />
-			                    </p>
+			                    {
+			                    	solicitation.method == 'DRX' && (
+
+					                    <p id="detelhe_Configuracao_DRX">
+					                        <strong>2θ Inicial: </strong><span id="detalhe_2ThetaInicial">{solicitation.settings.dois_theta_inicial}</span><br />
+					                        <strong>2θ Final: </strong><span id="detalhe_2ThetaFinal">{solicitation.settings.dois_theta_final}</span><br />
+					                        <strong>Δθ: </strong><span id="detalhe_DeltaTheta">{solicitation.settings.delta_dois_theta}</span><br />
+					                    </p>
+			                    	)
+			                    }
+
+			                    {
+			                    	solicitation.method == 'FRX' && (
+					                    <p id="detelhe_Configuracao_FRX">
+					                        <strong>Tipo de Medida: </strong><span id="detalhe_TipoMedida">{solicitation.settings.medida}</span><br />
+					                        <strong>Forma do Resultado: </strong><span id="detalhe_FormaResultado">{solicitation.settings.resultado}</span><br />
+					                    </p>
+			                    	)
+
+			                    }
+
 			                    <p>
-			                        <strong>Segurança: </strong><span id="detalhe_Seguranca">Higroscópico</span><br />
-			                        <strong>Observações: </strong><span id="detalhe_Observacoes">Cinza de castanha de caju</span><br />
+			                        <strong>Segurança: </strong>
+			                        	<span id="detalhe_Seguranca">
+			                        	{solicitation.corrosive == 'Sim' && 'Corrosivo, '}
+			                        	{solicitation.flammable == 'Sim' && 'Inflamável, '}
+			                        	{solicitation.hygroscopic == 'Sim' && 'Hidroscópico, '}
+			                        	{solicitation.radioactive == 'Sim' && 'Radioativo, '}
+			                        	{solicitation.toxic == 'Sim' && 'Tóxico'}
+			                        	</span>
+			                        <br />
+			                        <strong>Observações: </strong><span id="detalhe_Observacoes">{solicitation.note}</span><br />
 			                        <span id="detalhe_Corrosao"></span><br />
 			                    </p>
 

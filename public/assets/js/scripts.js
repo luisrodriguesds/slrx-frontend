@@ -123,9 +123,13 @@ $(function() {
     return false;
   });
 
-  $(document).on('click', function(e) {
+  $('body').on('click', function(e) {
     $(".nav-collapse .navbar-nav").removeClass('show');
   });
+
+  // $(document).on('click', function(e) {
+  //   $(".nav-collapse .navbar-nav").removeClass('show');
+  // });
 
   var toggle_sidebar_mini = function(mini) {
     let body = $('body');
@@ -494,7 +498,7 @@ $(function() {
   //   form.addClass('was-validated');
   // });
 
-  $(document).on('submit', ".needs-validation", function() {
+  $('body').on('submit', ".needs-validation", function() {
       /* Act on the event */
       var form = $(this);
       if (form[0].checkValidity() === false) {
