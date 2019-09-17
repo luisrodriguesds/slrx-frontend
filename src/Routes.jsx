@@ -15,6 +15,7 @@ import UsersProfile from './pages/users/usersProfile';
 import Solicitations from './pages/solicitations/solicitations';
 import SampleSingle from './pages/solicitations/sampleSingle';
 import addSolicitation from './pages/solicitations/addSolicitation';
+import editSolicitation from './pages/solicitations/editSolicitation';
 
 import Profile from './pages/profile/profile';
 import ChangePass from './pages/changePass/changePass';
@@ -23,7 +24,7 @@ import editAccount from './pages/editAccount/editAccount';
 import NotFound from './pages/notFound';
 
 import { isAuthenticated } from "./services/auth";
-import {useSelector} from 'react-redux';
+// import {useSelector} from 'react-redux';
 
 const renderMergedProps = (component, ...rest) => {
   const finalProps = Object.assign({}, ...rest);
@@ -47,7 +48,7 @@ const PrivateRoute = ({ component: Component,...rest }) => {
 };
 
 function Routes(props){
-  const user = useSelector(state => state.user.user);
+  // const user = useSelector(state => state.user.user);
   return (
     <React.Fragment>
       <ScrollToTop />
@@ -66,10 +67,11 @@ function Routes(props){
         <PrivateRoute exact path='/solicitacoes' component={Solicitations} />
         <PrivateRoute exact path='/solicitacoes/cadastro' component={addSolicitation} />
       	<PrivateRoute path='/solicitacoes/ver-amostra/:id' component={SampleSingle} />
+      	<PrivateRoute path='/solicitacoes/editar/:name' component={editSolicitation} />
 
       	<PrivateRoute exact path='/perfil' component={Profile} />
       	<PrivateRoute exact path='/alterar-senha' component={ChangePass} />
-      	<PrivateRoute exact path='/editar-conta' user={user} component={editAccount} />
+      	<PrivateRoute exact path='/editar-conta' component={editAccount} />
 
       	<PrivateRoute exact path='/404' component={NotFound} />
       	<Redirect from="*" to='/' />

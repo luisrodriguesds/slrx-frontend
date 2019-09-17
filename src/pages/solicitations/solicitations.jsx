@@ -1,7 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {getUser, getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation} from '../../services/api';
+import store from '../../store/store';
+import {getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
 
@@ -30,18 +31,20 @@ export default class solicitations extends React.Component {
 	}
 
 	async componentDidMount(){
-		let user = await getUser();
-		//Check if user is adm or oper to get all solicitations or this solicitations are they
+		//Sempre que precisar chamar o usuário logado, basta chamar o estado do redux, pois está sendo guardado nele.
+		store.subscribe(() =>{
+			this.setState({
+				user:store.getState().user.user
+			})
+		});
+		store.dispatch({
+			type:'REQUEST_USER'
+		});
+
 		let res = await getSolicitation({page:1});
 		let solicitations = res.data;
 
-		// for (let i = 0; i < res.data.data.length; i++) {
-		// 	let date = new Date(solicitations.data.data[i].created_at);
-		// 	solicitations.data.data[i].created_at = date.toLocaleDateString();
-		// }
-
-		this.setState({user:user.data.user, solicitations, loadpage:false})
-		console.log(this.state);
+		this.setState({solicitations, loadpage:false})
 	}
 
 	handleSearch = async (e) => {
@@ -113,7 +116,10 @@ export default class solicitations extends React.Component {
 		if (this.state.selectSol.length == 0) {
 			alert(`Você precisa selecionar alguma amostra.`);
 		}else{
-			await destroyAllSolicitation(this.state.selectSol);
+			if (window.confirm(`Você tem certeza que deseja cancelar as amostras selecionadas?`)) {
+				await destroyAllSolicitation(this.state.selectSol);
+				window.location=window.location.href;
+			}
 		}
 	}
 

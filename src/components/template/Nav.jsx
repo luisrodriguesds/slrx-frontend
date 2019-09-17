@@ -1,18 +1,25 @@
-import React, {useEffect} from 'react';
+import React, {useState,useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 
-import {requestUser} from '../../store/actions/user';
+import store from '../../store/store';
 import {logout} from '../../services/auth';
 import {URL_BASE} from '../../services/routesBackend';
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 
 function Nav(){
-  const user = useSelector(state => state.user.user);
-  const dispatch = useDispatch();
+
+  const [user, setUser] = useState({});
   useEffect(()=> {
-    dispatch(requestUser())
+    store.subscribe(() => {
+      const getUser = store.getState().user.user;
+      setUser({ ...getUser});
+    })
+    store.dispatch({
+      type:'REQUEST_USER'
+    })
+    // dispatch(requestUser())
   }, []);
 
   return (

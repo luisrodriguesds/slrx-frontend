@@ -8,9 +8,10 @@ import InputMask from 'react-input-mask';
 import Button from '../../components/events/LoadingButtom';
 
 // import {user} from '../../services/auth';
-import {useSelector} from 'react-redux';
-import {URL_BASE} from '../../services/routesBackend';
+// import {useSelector} from 'react-redux';
+// import {URL_BASE} from '../../services/routesBackend';
 import api, {userUpdate} from '../../services/api';
+import store from '../../store/store';
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
 const Red = () => (<span style={{color:'red'}}>*</span>);
@@ -31,33 +32,28 @@ export default class editAccount extends React.Component {
     };
 
 
-	static getDerivedStateFromProps(props, state) {
-		if (Object.keys(props.user).length) {
-			return {
-		    	user: props.user
-		    };
-		}
-		return null;
-	}
+	// static getDerivedStateFromProps(props, state) {
+	// 	if (Object.keys(props.user).length) {
+	// 		return {
+	// 	    	user: props.user
+	// 	    };
+	// 	}
+	// 	return null;
+	// }
 
-	async componentDidUpdate(prevProps, prevState){
-		// console.log(prevState);
-		if (Object.keys(prevState.user).length !== Object.keys(this.state.user).length) {
-			// console.log("Update no state");
-			// await this.loadDataForm();
-		}else{
-			// console.log("sem Update no state");
-		}
-	}
 
 	async componentDidMount(){
-	    //Carregar Todo o estado - Encontrar solução
-	    setTimeout(async () => {
-			await this.loadDataForm();
-	    }, 1000);
+		//Carregar Todo o estado - Encontrar solução
+		store.subscribe(() => {
+			this.loadDataForm(store.getState().user.user);
+		});
+		store.dispatch({
+			type:'REQUEST_USER'
+		})
 	}
 
-	loadDataForm = async () =>{
+	loadDataForm = async (user) =>{
+		this.setState({user});
 		const states = await axios.get(urlStates);
 		this.setState({states:states.data});
 	

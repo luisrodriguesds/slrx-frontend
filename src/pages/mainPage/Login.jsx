@@ -36,7 +36,7 @@ class Login extends Component {
             this.setState({error:''});
             login(res.data.token);
             // this.props.history.push("/");
-            window.location=URL_BASE;
+			window.location=window.location.href;    
         }
         
     }
