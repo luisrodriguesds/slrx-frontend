@@ -133,15 +133,15 @@ export default class users extends React.Component {
 					        <nav className="d-inline-block">
 					          <ul className="pagination mb-0">
 					            <li className="page-item disabled">
-					              <a className="page-link" href="#" tabIndex={-1}><i className="fas fa-chevron-left" /></a>
+					              <Link className="page-link" to="#" tabIndex={-1}><i className="fas fa-chevron-left" /></Link>
 					            </li>
-					            <li className="page-item active"><a className="page-link" href="#">1 <span className="sr-only">(current)</span></a></li>
+					            <li className="page-item active"><Link className="page-link" to="#">1 <span className="sr-only">(current)</span></Link></li>
 					            <li className="page-item">
-					              <a className="page-link" href="#">2</a>
+					              <Link className="page-link" to="#">2</Link>
 					            </li>
-					            <li className="page-item"><a className="page-link" href="#">3</a></li>
+					            <li className="page-item"><Link className="page-link" to="#">3</Link></li>
 					            <li className="page-item">
-					              <a className="page-link" href="#"><i className="fas fa-chevron-right" /></a>
+					              <Link className="page-link" to="#"><i className="fas fa-chevron-right" /></Link>
 					            </li>
 					          </ul>
 					        </nav>

@@ -162,15 +162,15 @@ export default class usersProfile extends React.Component {
 					        <nav className="d-inline-block">
 					          <ul className="pagination mb-0">
 					            <li className="page-item disabled">
-					              <a className="page-link" href="#" tabIndex={-1}><i className="fas fa-chevron-left" /></a>
+					              <Link className="page-link" to="#" tabIndex={-1}><i className="fas fa-chevron-left" /></Link>
 					            </li>
-					            <li className="page-item active"><a className="page-link" href="#">1 <span className="sr-only">(current)</span></a></li>
+					            <li className="page-item active"><Link className="page-link" to="#">1 <span className="sr-only">(current)</span></Link></li>
 					            <li className="page-item">
-					              <a className="page-link" href="#">2</a>
+					              <Link className="page-link" to="#">2</Link>
 					            </li>
-					            <li className="page-item"><a className="page-link" href="#">3</a></li>
+					            <li className="page-item"><Link className="page-link" to="#">3</Link></li>
 					            <li className="page-item">
-					              <a className="page-link" href="#"><i className="fas fa-chevron-right" /></a>
+					              <Link className="page-link" to="#"><i className="fas fa-chevron-right" /></Link>
 					            </li>
 					          </ul>
 					        </nav>
@@ -221,7 +221,7 @@ export default class usersProfile extends React.Component {
 				              <div className="card-header">
 				                <h4 className="d-inline">Alunos</h4>
 				                <div className="card-header-action">
-				                  <a href="#" className="btn btn-primary">Ver todas</a>
+				                  <Link to="#" className="btn btn-primary">Ver todas</Link>
 				                </div>
 				              </div>
 				              <div className="card-body">             
@@ -234,7 +234,7 @@ export default class usersProfile extends React.Component {
 				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-4.png" alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-danger mb-1 float-right">Incompleto</div>
-				                      <h6 className="media-title"><a href="#">Redesign header</a></h6>
+				                      <h6 className="media-title"><Link to="#">Redesign header</Link></h6>
 				                      <div className="text-small text-muted">Alfa Zulkarnain <div className="bullet" /> <span className="text-primary">Now</span></div>
 				                    </div>
 				                  </li>
@@ -246,7 +246,7 @@ export default class usersProfile extends React.Component {
 				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-5.png" alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-primary mb-1 float-right">Completo</div>
-				                      <h6 className="media-title"><a href="#">Add a new component</a></h6>
+				                      <h6 className="media-title"><Link to="#">Add a new component</Link></h6>
 				                      <div className="text-small text-muted">Serj Tankian <div className="bullet" /> 4 Min</div>
 				                    </div>
 				                  </li>
@@ -258,7 +258,7 @@ export default class usersProfile extends React.Component {
 				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-2.png" alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-warning mb-1 float-right">Em progresso</div>
-				                      <h6 className="media-title"><a href="#">Fix modal window</a></h6>
+				                      <h6 className="media-title"><Link to="#">Fix modal window</Link></h6>
 				                      <div className="text-small text-muted">Ujang Maman <div className="bullet" /> 8 Min</div>
 				                    </div>
 				                  </li>
@@ -270,7 +270,7 @@ export default class usersProfile extends React.Component {
 				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-1.png" alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-danger mb-1 float-right">Incompleto</div>
-				                      <h6 className="media-title"><a href="#">Remove unwanted classes</a></h6>
+				                      <h6 className="media-title"><Link to="#">Remove unwanted classes</Link></h6>
 				                      <div className="text-small text-muted">Farhan A Mujib <div className="bullet" /> 21 Min</div>
 				                    </div>
 				                  </li>

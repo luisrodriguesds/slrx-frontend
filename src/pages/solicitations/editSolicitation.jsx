@@ -1,7 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 
-import {getGap, getEquipment, postSolicitation, showSolicitation, editSolicitation} from '../../services/api';
+import {getGap, getEquipment, showSolicitation, editSolicitation} from '../../services/api';
 
 import Eppendorf from '../../assets/img/eppendorf_1.5ml.jpg';
 
@@ -63,7 +62,7 @@ export default class addSolicitation extends React.Component {
         try {
             const res = await showSolicitation({name});
             
-            if (res.data[0].method == 'DRX') {
+            if (res.data[0].method === 'DRX') {
                 this.setState({
                     data:res.data[0], 
                     equiSelect:res.data[0].equipment_id,
@@ -76,7 +75,7 @@ export default class addSolicitation extends React.Component {
                     setting_frx:res.data[0].settings,
                 });
             }
-            console.log(this.state);
+            // console.log(this.state);
         } catch (error) {
             alert(`Amostra não encontrada.`);
         }
@@ -84,10 +83,10 @@ export default class addSolicitation extends React.Component {
 
 	_onChange = (e) => {
       let value = e.target.value;
-      if (e.target.name == 'method') {
-      	if (value == 'DRX') {
+      if (e.target.name === 'method') {
+      	if (value === 'DRX') {
     		this.setState({data:{method:'DRX', equipment_id:2, ...this.state.data}, equiSelect:2});
-    	}else if(value == 'FRX'){
+    	}else if(value === 'FRX'){
     		this.setState({data:{method:'FRX', equipment_id:3, ...this.state.data}, equiSelect:3});
     	}
       }
@@ -95,23 +94,23 @@ export default class addSolicitation extends React.Component {
       const data = {...this.state.data};
       data[e.target.name] = value;
 	  this.setState({data});
-	  console.log(this.state);
+	  // console.log(this.state);
 	}
 	
 	handleCheckbox = (e) => {
 	  	let value = e.target.value;
-	  		value = (this.state.data[e.target.name] == 'Sim') ? 'Não' : 'Sim';
+	  		value = (this.state.data[e.target.name] === 'Sim') ? 'Não' : 'Sim';
 	  
 		const data = {...this.state.data};
 		data[e.target.name] = value;
-		this.setState({data});
+		// this.setState({data});
 	}
 
 	handleDRX = (e) => {
 		let value = e.target.value;
 		const setting_drx = {...this.state.setting_drx};
 		setting_drx[e.target.name] = value;
-		this.setState({setting_drx});
+		// this.setState({setting_drx});
 	}
 
 	handleFRX = (e) => {
@@ -120,7 +119,7 @@ export default class addSolicitation extends React.Component {
 		setting_frx[e.target.name] = value;
 		console.log(setting_frx);
 		this.setState({setting_frx});
-		console.log(this.state);
+		// console.log(this.state);
 	}
 
 	onSubmit = async e => {
@@ -137,33 +136,32 @@ export default class addSolicitation extends React.Component {
 		//Check em outros erros
 		try {
 			let data = {...this.state.data}
-				data.settings = (data.method == 'DRX') ? this.state.setting_drx : this.state.setting_frx;
+				data.settings = (data.method === 'DRX') ? this.state.setting_drx : this.state.setting_frx;
 				data.equipment_id = this.state.equiSelect;
             const res = await editSolicitation(data);
-            console.log(res.data);
-			// if (res.data.error == true) {
-			// 	window.scroll(0,0);
-			// 	alert(`${res.data.message}`);       			
-			// }else{
-			// 	alert(`${res.data.message}`);
-			// 	this.props.history.push("/solicitacoes");
-			// }
-			// console.log(data);
+            
+			if (res.data.error === true) {
+				window.scroll(0,0);
+				alert(`${res.data.message}`);       			
+			}else{
+				alert(`${res.data.message}`);
+				this.props.history.push("/solicitacoes");
+			}
 		} catch (error) {
-		  alert(`Algo inesperado aconteceu, sua pagina será recarregada`);        
-		//   this.props.history.push("/");        
+		  alert(`Algo inesperado aconteceu, informe ao suporte técnico e atualize sua página.`);        
+		  // this.props.history.push("/");    
 		}
 		
 	  }
 
 	DRXrender(){
 		return (
-			<>
+			<React.Fragment>
 			<div className="form-group">
 				<label>2θ inicial</label>
 				<select name="dois_theta_inicial" onChange={(e) => this.handleDRX(e)} className="form-control" required>									
 				{this.state.dois_theta_inicial.map((value, i) => (
-						<option key={i} value={value} selected={(value == '10°') ? true : false}>{value}</option>
+						<option key={i} value={value} selected={(value === '10°') ? true : false}>{value}</option>
 					))}
 				</select>
 				<div className="invalid-feedback">
@@ -174,7 +172,7 @@ export default class addSolicitation extends React.Component {
 				<label>2θ final</label>
 				<select name="dois_theta_final" onChange={(e) => this.handleDRX(e)} className="form-control" required>								
 					{this.state.dois_theta_final.map((value, i) => (
-						<option key={i} value={value} selected={(value == '100°') ? true : false}>{value}</option>
+						<option key={i} value={value} selected={(value === '100°') ? true : false}>{value}</option>
 					))}
 				</select>
 				<div className="invalid-feedback">
@@ -188,13 +186,13 @@ export default class addSolicitation extends React.Component {
 					Como? Não entendi.
 				</div>
 			</div>
-			</>
+			</React.Fragment>
 		)
 	}
 
 	FRXrender(){
 		return (
-			<>
+			<React.Fragment>
 				<div className="form-group">
 					<label htmlFor="">Selecione o tipo de medida</label>
 					<div className="custom-control custom-radio">
@@ -213,7 +211,7 @@ export default class addSolicitation extends React.Component {
 						<label className="custom-control-label" htmlFor="resultado_2">Elementos</label>
 					</div>
 				</div>
-			</>
+			</React.Fragment>
 		)
 	}
 
@@ -234,18 +232,18 @@ export default class addSolicitation extends React.Component {
 			                      <div className="control-label">Selecione o tipo de análise</div>
 			                      <div className="custom-switches-stacked mt-2">
 			                        <label className="custom-switch">
-			                          <input type="radio" name="method" value="DRX" disabled checked={(this.state.data.method == 'DRX') ? true : false} onChange={(e) => (this._onChange(e) )} className="custom-switch-input" />
+			                          <input type="radio" name="method" value="DRX" disabled checked={(this.state.data.method === 'DRX') ? true : false} onChange={(e) => (this._onChange(e) )} className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">DRX</span>
 			                        </label>
 			                        <label className="custom-switch">
-			                          <input type="radio" name="method" value="FRX" disabled checked={(this.state.data.method == 'FRX') ? true : false} onChange={(e) => (this._onChange(e))} className="custom-switch-input" />
+			                          <input type="radio" name="method" value="FRX" disabled checked={(this.state.data.method === 'FRX') ? true : false} onChange={(e) => (this._onChange(e))} className="custom-switch-input" />
 			                          <span className="custom-switch-indicator"></span>
 			                          <span className="custom-switch-description">FRX</span>
 			                        </label>
 			                      </div>
 			                    </div>
-								<div className="full-form" style={{display:(this.state.data.method != '') ? 'block': 'none'}}>
+								<div className="full-form" style={{display:(this.state.data.method !== '') ? 'block': 'none'}}>
 
 								
 									<div className="form-group">
@@ -253,14 +251,14 @@ export default class addSolicitation extends React.Component {
 										<select className="form-control" value={this.state.equiSelect} onChange={(e) => this._onChange(e)} name="equipment_id" required>
 											<option value=""> Selecione o Equipamento ...</option>
 											{this.state.equipments.map(equipment => {
-												if (this.state.data.method == 'FRX') {
-													if (equipment.type == 'FRX') {
+												if (this.state.data.method === 'FRX') {
+													if (equipment.type === 'FRX') {
 														return (
 															<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
 															)
 													}
 												}else{
-													if (equipment.type == 'DRX') {
+													if (equipment.type === 'DRX') {
 														return (
 															<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
 															)
@@ -305,27 +303,27 @@ export default class addSolicitation extends React.Component {
 									<div className="control-label">Segurança</div>
 									<div className="custom-switches-stacked mt-2">
 										<label className="custom-switch">
-										<input type="checkbox" name="flammable" checked={(this.state.data.flammable == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="flammable" checked={(this.state.data.flammable === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Inflamável</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="toxic" checked={(this.state.data.toxic == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="toxic" checked={(this.state.data.toxic === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Tóxico</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="hygroscopic" checked={(this.state.data.hygroscopic == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="hygroscopic" checked={(this.state.data.hygroscopic === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Higroscópico</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="corrosive" checked={(this.state.data.corrosive == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="corrosive" checked={(this.state.data.corrosive === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Corrosivo</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="radioactive" checked={(this.state.data.radioactive == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="radioactive" checked={(this.state.data.radioactive === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Radioativo</span>
 										</label>
@@ -333,13 +331,13 @@ export default class addSolicitation extends React.Component {
 									</div>
 
 									<div className="form-divider"><strong>Configurações da análise</strong></div>
-									{this.state.data.method == 'DRX' ? this.DRXrender() : ''}
-									{this.state.data.method == 'FRX' ? this.FRXrender() : ''}
+									{this.state.data.method === 'DRX' ? this.DRXrender() : ''}
+									{this.state.data.method === 'FRX' ? this.FRXrender() : ''}
 					
 									<div className="form-divider"><strong>Observações Gerais</strong></div>
 									<div className="form-group">
 										<label>Observações</label>
-										<textarea className="form-control" name="note" onChange={(e) => this._onChange(e)} defaultValue={this.state.data.note} />
+										<textarea className="form-control" name="note" onChange={(e) => this._onChange(e)} value={this.state.data.note}></textarea>
 									</div>
 
 									{/* <div className="form-divider"><strong>Range de Amostras</strong></div>

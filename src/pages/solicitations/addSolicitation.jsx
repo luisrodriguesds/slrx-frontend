@@ -131,7 +131,7 @@ export default class addSolicitation extends React.Component {
 
 	DRXrender(){
 		return (
-			<>
+			<React.Fragment>
 			<div className="form-group">
 				<label>2θ inicial</label>
 				<select name="dois_theta_inicial" onChange={(e) => this.handleDRX(e)} className="form-control" required>									
@@ -161,13 +161,13 @@ export default class addSolicitation extends React.Component {
 					Como? Não entendi.
 				</div>
 			</div>
-			</>
+			</React.Fragment>
 		)
 	}
 
 	FRXrender(){
 		return (
-			<>
+			<React.Fragment>
 				<div className="form-group">
 					<label htmlFor="">Selecione o tipo de medida</label>
 					<div className="custom-control custom-radio">
@@ -186,7 +186,7 @@ export default class addSolicitation extends React.Component {
 						<label className="custom-control-label" htmlFor="resultado_2">Elementos</label>
 					</div>
 				</div>
-			</>
+			</React.Fragment>
 		)
 	}
 

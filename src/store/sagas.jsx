@@ -1,4 +1,5 @@
-import {takeLatest, put, all, delay, call, select} from 'redux-saga/effects';
+import {takeLatest, put, all, call} from 'redux-saga/effects';
+// delay, select
 import {user}  from '../services/auth';
 
 function* getUser(){

@@ -21,9 +21,9 @@ export default class changePassPage extends React.Component {
 			this.setState({loading:false});
 		  }, 1000);
 
-		if (this.state.data.current_password == '' || this.state.data.password == '' || this.state.data.password_confirm == '') {
+		if (this.state.data.current_password === '' || this.state.data.password === '' || this.state.data.password_confirm === '') {
 			return;
-		}else if(this.state.data.password != this.state.data.password_confirm){
+		}else if(this.state.data.password !== this.state.data.password_confirm){
 			alert(`As senhas não correspondem`);       
 			return;
 		}
@@ -32,7 +32,7 @@ export default class changePassPage extends React.Component {
 			try {
 				const update = this.state.data;
 				const res = await changePass(update);
-				if (res.data.error == true) {
+				if (res.data.error === true) {
 				  alert(`${res.data.message}`);       
 				}else{
 				  alert(`${res.data.message}`);

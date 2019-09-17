@@ -16,7 +16,7 @@ export const logout = () => {
 export const user = async () => {
     const userToken = await api.get('/user/token');
     // console.log(userToken);
-    if(userToken.data.error == true){
+    if(userToken.data.error === true){
       logout();
       return null;
     }else{
