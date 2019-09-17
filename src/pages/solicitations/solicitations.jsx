@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {getUser, getSolicitation, searchSolicitation} from '../../services/api';
+import {getUser, getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
 
@@ -12,6 +12,9 @@ export default class solicitations extends React.Component {
 		user:{},
 		solicitations:{data:[], lastPage:'', page:'', total:'', perPage:''},
 		status:[
+			{number:-3, descripiton:'Cancelada por falta de entrega da amostra.'},
+			{number:-2, descripiton:'Cancelada pelo operador.'},
+			{number:-1, descripiton:'Cancelada pelo responsável.'},
 			{number:1, descripiton:'Aguardando autorização'},
 			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
 			{number:3, descripiton:'Aguardando confirmação da entrega da amostra'},
@@ -27,7 +30,7 @@ export default class solicitations extends React.Component {
 	}
 
 	async componentDidMount(){
-		const user = await getUser();
+		let user = await getUser();
 		//Check if user is adm or oper to get all solicitations or this solicitations are they
 		let res = await getSolicitation({page:1});
 		let solicitations = res.data;
@@ -73,8 +76,45 @@ export default class solicitations extends React.Component {
     	}else{		
 	    	selectSol.push(id);
 		    this.setState({selectSol});
-	    	// console.log(selectSol);
+	    	console.log(selectSol);
     	}
+	}
+
+	handleDelete = async (name) => {
+		if (window.confirm("Você deseja realizar o cancelamento desta amostra?")) {
+			try{
+				const res = await destroySolicitation({name});
+				if (res.data.error == true) {
+					alert(`${res.data.message}`);
+				}else{
+					console.log(res.data.solicitation);
+					alert(`${res.data.message}`);
+					let solicitations = this.state.solicitations.data;
+					for (let i = 0; i < solicitations.length; i++) {
+						if (solicitations[i].name == res.data.solicitation.name) {
+							solicitations[i].status = res.data.solicitation.status;
+						}
+					}
+					console.log(solicitations);
+
+					this.setState({solicitations:{data:solicitations, ...this.state.solicitations}});
+
+					console.log(this.state);
+				}
+			}catch(error){
+				// alert(`Algo Inesperado aconteceu, sua página será recarregada.`);
+				//Recarregar a página aqui
+				console.log(error);
+			}
+		}
+	}
+
+	handleDeleteAll = async () => {
+		if (this.state.selectSol.length == 0) {
+			alert(`Você precisa selecionar alguma amostra.`);
+		}else{
+			await destroyAllSolicitation(this.state.selectSol);
+		}
 	}
 
 	handlePaginate = async (page) => {
@@ -140,8 +180,8 @@ export default class solicitations extends React.Component {
 			              <div className="card-header-form">
 			                <div className="option-group">
 			                	<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-				            	<button data-toggle="tooltip" title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>
-				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
+				            	{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+				            	<button data-toggle="tooltip" title="Cancelar" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
 			                </div>
 			                <form>
 			                  <div className="input-group">
@@ -160,7 +200,7 @@ export default class solicitations extends React.Component {
 			                		<tr>
 										<th>
 											<div className="custom-checkbox custom-control">
-												<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" onClick={() => this.handleCheckboxAll()} className="custom-control-input" id="checkbox-all" />
+												<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
 												<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
 											</div>
 										</th>
@@ -174,10 +214,10 @@ export default class solicitations extends React.Component {
 			                  <tbody>
 								
 								{solicitations.data.map((solicitation, i) => (
-								<tr key={i}>
+								<tr className={((solicitation.status < 1) ? 'solicitation-canceled' : '')} key={i}>
 			                      <td className="p-0 text-center">
 			                      	<div className="custom-control custom-checkbox">
-                                          <input type="checkbox" data-checkboxes="mygroup" checked={this.state.checkboxAll} onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
+                                          <input type="checkbox" data-checkboxes="mygroup" onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
                                           <label className="custom-control-label" htmlFor={`checkbox-${i}`}>&nbsp;</label>
                                      </div>
 			                      </td>
@@ -185,17 +225,21 @@ export default class solicitations extends React.Component {
 			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
 			                      </td>
 			                      <td className="align-middle">{solicitation.equipment.name}</td>
-			                      <td>
-			                      {this.state.status.map((value, i) => (
-			                      	<div className={((value.number <= solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{value.number}</div>
-			                      ))}
+			                      <td title={this.state.status.filter((value) => value.number == solicitation.status)[0].descripiton}>
+			                      {this.state.status.map((value, i) => {
+			                      	if (value.number >= 1) {		                      		
+				                      	return (
+				                      		<div className={((value.number <= solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{value.number}</div>
+				                      	)
+			                      	}
+			                      })}
 			                      </td>
 			                      <td>{solicitation.created_at}</td>
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
+										{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>}
 			                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+			                      		<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(solicitation.name)}> <i className="fas fa-trash"></i> </button>
 									</div>
 			                      </td>
 			                    </tr>
