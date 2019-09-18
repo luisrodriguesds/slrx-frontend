@@ -7,7 +7,20 @@ import Main from '../../components/template/Main';
 
 export default class sampleSingle extends React.Component {
 	state = {
-		solicitation:{user:{name:''}, equipment:{name:''}, settings:{}},
+		solicitation:{user:{name:''}, equipment:{name:''}, status:'', settings:{}},
+		status:[
+			{number:-3, descripiton:'Cancelada por falta de entrega da amostra.'},
+			{number:-2, descripiton:'Cancelada pelo operador.'},
+			{number:-1, descripiton:'Cancelada pelo responsável.'},
+			{number:1, descripiton:'Aguardando autorização'},
+			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
+			{number:3, descripiton:'Aguardando confirmação da entrega da amostra'},
+			{number:4, descripiton:'Na fila do equipamento'},
+			{number:5, descripiton:'Em processo de análise'},
+			{number:6, descripiton:'Análise concluída. Aguardando recolhimento da amostra'},
+			{number:7, descripiton:'Solicitação Finalizada'},
+		],
+		phase:'',
 		loading:false,
 	  	loadpage:true
 	}
@@ -16,7 +29,9 @@ export default class sampleSingle extends React.Component {
 		const name = this.props.computedMatch.params.id;
 		try{
 			const res = await showSolicitation({name});
-			this.setState({solicitation:res.data[0]})
+			const phase = this.state.status.filter((value) => value.number == res.data[0].status)[0].descripiton
+			
+			this.setState({solicitation:res.data[0], phase})
 			console.log(this.state);
 		}catch(error){
 			alert(`Algo de errado acomteceu ou você não tem permissão para acessar est página.`);
@@ -36,12 +51,16 @@ export default class sampleSingle extends React.Component {
 		                  </div>
 		                  <div className="card-body">
 		                    <div className="ScrollStyle">
+		                    	<p>
+			                        <strong>Status: </strong> <span id="status" style={{color:(solicitation.status < 1) ? 'red' : 'blue'}}>{this.state.phase}</span><br />
+			                    </p>
 			                    <p>
 			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to="/usuarios/ver-perfil/1">{solicitation.user.name}</Link></span><br />
 			                    </p>
 			                    <p>
 			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">{solicitation.created_at}</span><br />
-			                        <strong>Data do Recebimento: </strong><span id="detalhe_DataRecebimento">23/10/2018</span>
+			                        {solicitation.received_date != null && <React.Fragment> <strong>Data do Recebimento: </strong><span id="detalhe_DataRecebimento">{new Date(solicitation.received_date).toLocaleString('pt-BR')}</span> </React.Fragment>}
+			                        {solicitation.conclusion_date != null && <React.Fragment> <strong>Data da Conclusão: </strong><span id="detalhe_DataConclusao">{new Date(solicitation.conclusion_date).toLocaleString('pt-BR')}</span> </React.Fragment>}
 			                    </p>
 			                    <p>
 			                        <strong>Equipamento: </strong> <span id="detalhe_Equipamento">{solicitation.equipment.name}</span><br />
@@ -91,6 +110,52 @@ export default class sampleSingle extends React.Component {
 					</div>
 					<div className="col-12 col-sm-12 col-lg-6">
 						<div className="activities">
+							{this.state.status.map((value,i) =>{
+
+								if (value.number >= 1 && value.number <= solicitation.status) {
+									
+									return (
+										<div key={i} className="activity">
+								          <div className={`activity-icon ${(value.number == solicitation.status) ? 'bg-danger' : 'bg-primary'} text-white shadow-primary`}>
+								            <strong>{value.number}</strong>
+								          </div>
+								          <div className="activity-detail">
+								            <div className="mb-2">
+								              <span className="text-job">{new Date(solicitation.updated_at).toLocaleString('pt-BR')}</span>
+								              <span className="bullet" />
+								              <Link className="text-job" to="/">Ver</Link>
+								              
+								            </div>
+								            <p>{value.descripiton}</p>
+								          </div>
+								        </div>
+									);
+								}else if (value.number < 1 && value.number === solicitation.status) {
+									return (
+										<div key={i} className="activity">
+								          <div className={`activity-icon bg-danger text-white shadow-primary`}>
+								            <strong>0</strong>
+								          </div>
+								          <div className="activity-detail">
+								            <div className="mb-2">
+								              <span className="text-job">{new Date(solicitation.updated_at).toLocaleString('pt-BR')}</span>
+								              <span className="bullet" />
+								              <Link className="text-job" to="/">Ver</Link>
+								              
+								            </div>
+								            <p>{value.descripiton}</p>
+								          </div>
+								        </div>
+									);
+								}
+							})}
+
+						</div>
+					</div>
+
+					{/*<div className="col-12 col-sm-12 col-lg-6">
+						<div className="activities">
+
 					        <div className="activity">
 					          <div className="activity-icon bg-primary text-white shadow-primary">
 					            <strong>1</strong>
@@ -105,6 +170,7 @@ export default class sampleSingle extends React.Component {
 					            <p>Mateus Nunes de Oliveira efetuou o a solicitação dessa amostra.</p>
 					          </div>
 					        </div>
+
 					        <div className="activity">
 					          <div className="activity-icon bg-primary text-white shadow-primary">
 					            <strong>2</strong>
@@ -119,6 +185,7 @@ export default class sampleSingle extends React.Component {
 					            <p>Orientador liberou a análise da amostra.</p>
 					          </div>
 					        </div>
+
 					        <div className="activity">
 					          <div className="activity-icon bg-primary text-white shadow-primary">
 					            <strong>3</strong>
@@ -133,6 +200,7 @@ export default class sampleSingle extends React.Component {
 					            <p>Isabela Oliveira recebeu a amostra deixada por Mateus Nunes de Oliveira.</p>
 					          </div>
 					        </div>
+
 					        <div className="activity">
 					          <div className="activity-icon bg-danger text-white shadow-primary">
 					            <strong>4</strong>
@@ -147,8 +215,10 @@ export default class sampleSingle extends React.Component {
 					            <p>Amostra está na fila para o equipamento. Veja como está a <Link to="/fila-do-equipamento">fila</Link></p>
 					          </div>
 					        </div>
+
 					      </div>
-					</div>
+					</div>*/}
+
 				</div>
 			</Main>
 		);

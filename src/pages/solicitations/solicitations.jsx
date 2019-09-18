@@ -92,17 +92,18 @@ export default class solicitations extends React.Component {
 				}else{
 					console.log(res.data.solicitation);
 					alert(`${res.data.message}`);
-					let solicitations = this.state.solicitations.data;
-					for (let i = 0; i < solicitations.length; i++) {
-						if (solicitations[i].name == res.data.solicitation.name) {
-							solicitations[i].status = res.data.solicitation.status;
-						}
-					}
-					console.log(solicitations);
+					window.location=window.location.href;
+					// let solicitations = this.state.solicitations.data;
+					// for (let i = 0; i < solicitations.length; i++) {
+					// 	if (solicitations[i].name == res.data.solicitation.name) {
+					// 		solicitations[i].status = res.data.solicitation.status;
+					// 	}
+					// }
+					// console.log(solicitations);
 
-					this.setState({solicitations:{data:solicitations, ...this.state.solicitations}});
+					// this.setState({solicitations:{data:solicitations, ...this.state.solicitations}});
 
-					console.log(this.state);
+					// console.log(this.state);
 				}
 			}catch(error){
 				// alert(`Algo Inesperado aconteceu, sua página será recarregada.`);
@@ -220,7 +221,7 @@ export default class solicitations extends React.Component {
 			                  <tbody>
 								
 								{solicitations.data.map((solicitation, i) => (
-								<tr className={((solicitation.status < 1) ? 'solicitation-canceled' : '')} key={i}>
+								<tr key={i}>
 			                      <td className="p-0 text-center">
 			                      	<div className="custom-control custom-checkbox">
                                           <input type="checkbox" data-checkboxes="mygroup" onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
@@ -235,7 +236,7 @@ export default class solicitations extends React.Component {
 			                      {this.state.status.map((value, i) => {
 			                      	if (value.number >= 1) {		                      		
 				                      	return (
-				                      		<div className={((value.number <= solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{value.number}</div>
+				                      		<div className={((value.number <= solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{(solicitation.status < 1) ? <i className="fa fa-times" aria-hidden="true"></i> : value.number}</div>
 				                      	)
 			                      	}
 			                      })}
@@ -243,8 +244,8 @@ export default class solicitations extends React.Component {
 			                      <td>{solicitation.created_at}</td>
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-										{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>}
-			                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
+										{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+			                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-warning" title="Editar"> <i className="fas fa-edit"></i> </Link>
 			                      		<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(solicitation.name)}> <i className="fas fa-trash"></i> </button>
 									</div>
 			                      </td>

@@ -51,7 +51,7 @@ export default class addSolicitation extends React.Component {
 		for (let i = 4; i <= 120; i++) {
 			dois_theta_inicial.push(i+'°');
 		}
-		
+		this.setState({dois_theta_inicial, dois_theta_final, gaps:gaps.data, equipments:equipments.data});	
 	}
 
 
