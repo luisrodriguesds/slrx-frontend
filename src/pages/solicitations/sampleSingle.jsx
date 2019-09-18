@@ -34,7 +34,8 @@ export default class sampleSingle extends React.Component {
 			this.setState({solicitation:res.data[0], phase})
 			console.log(this.state);
 		}catch(error){
-			alert(`Algo de errado acomteceu ou você não tem permissão para acessar est página.`);
+			alert(`Algo de errado acomteceu ou você não tem permissão para acessar esta página.`);
+			this.props.history.push('/solicitacoes')
 		}
 
 	}

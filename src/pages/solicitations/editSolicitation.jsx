@@ -150,8 +150,7 @@ export default class addSolicitation extends React.Component {
 		} catch (error) {
 		  alert(`Algo inesperado aconteceu, informe ao suporte técnico e atualize sua página.`);        
 		  // this.props.history.push("/");    
-		}
-		
+		}		
 	  }
 
 	DRXrender(){

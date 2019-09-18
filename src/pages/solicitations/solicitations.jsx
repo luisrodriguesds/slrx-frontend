@@ -213,7 +213,7 @@ export default class solicitations extends React.Component {
 										</th>
 										<th>Código</th>
 										<th>Equipamento</th>
-										<th>Status</th>
+										<th className="width-fixed">Status</th>
 										<th>Data da Solicitação</th>
 										<th>Ações</th>
 									</tr>
@@ -241,7 +241,7 @@ export default class solicitations extends React.Component {
 			                      	}
 			                      })}
 			                      </td>
-			                      <td>{solicitation.created_at}</td>
+			                      <td>{new Date(solicitation.created_at).toLocaleString('pt-BR')}</td>
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 										{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}

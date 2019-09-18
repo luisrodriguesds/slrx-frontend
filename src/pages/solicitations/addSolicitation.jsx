@@ -317,7 +317,8 @@ export default class addSolicitation extends React.Component {
 									</div>
 									<div className="form-divider"><strong>Range de Amostras</strong></div>
 									<div className="form-group">
-										<label>Quantas amostras deseja cadastrar?</label>
+										<label>Quantas amostras deseja cadastrar?</label><br />
+										<label style={{color:'red'}}>No máximo 20 amostrar por solicitação</label>
 										<input type="number" className="form-control" name="quantity" onChange={(e) => this._onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={1} max={20} />
 										
 									</div>

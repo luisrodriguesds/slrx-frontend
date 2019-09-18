@@ -933,7 +933,7 @@ select.form-control:not([size]):not([multiple]) {
   padding: 10px 15px; }
 .table.table-bordered td, .table.table-bordered th {
   border-color: #f6f6f6; }
-
+.table .width-fixed{ width:280px; }
 .table-links {
   color: #34395e;
   font-size: 12px;
@@ -950,8 +950,11 @@ table tr:hover .table-links {
   background-color: rgba(0, 0, 0, 0.02); }
 
 @media (max-width: 575.98px) {
+  .table .width-fixed{ width:350px; }
+
   .table-responsive table {
-    min-width: 800px; } }
+    min-width: 800px; } 
+}
 /* 3.7 Tooltip */
 .tooltip {
   font-size: 12px; }
