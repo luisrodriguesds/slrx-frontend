@@ -90,20 +90,11 @@ export default class solicitations extends React.Component {
 				if (res.data.error == true) {
 					alert(`${res.data.message}`);
 				}else{
-					console.log(res.data.solicitation);
 					alert(`${res.data.message}`);
 					window.location=window.location.href;
-					// let solicitations = this.state.solicitations.data;
-					// for (let i = 0; i < solicitations.length; i++) {
-					// 	if (solicitations[i].name == res.data.solicitation.name) {
-					// 		solicitations[i].status = res.data.solicitation.status;
-					// 	}
-					// }
-					// console.log(solicitations);
-
-					// this.setState({solicitations:{data:solicitations, ...this.state.solicitations}});
-
-					// console.log(this.state);
+					
+					let load = await getSolicitation({page:1});
+					this.setState({solicitations:load.data, selectSol:[]});
 				}
 			}catch(error){
 				// alert(`Algo Inesperado aconteceu, sua página será recarregada.`);
@@ -119,7 +110,12 @@ export default class solicitations extends React.Component {
 		}else{
 			if (window.confirm(`Você tem certeza que deseja cancelar as amostras selecionadas?`)) {
 				await destroyAllSolicitation(this.state.selectSol);
+				alert(`Amostras deletadas com sucesso`);
 				window.location=window.location.href;
+
+				let load = await getSolicitation({page:1});
+				this.setState({solicitations:load.data, selectSol:[]});
+				console.log(this.state);
 			}
 		}
 	}

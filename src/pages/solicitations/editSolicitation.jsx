@@ -61,12 +61,12 @@ export default class addSolicitation extends React.Component {
         //Pegar a solicitação
         try {
             const res = await showSolicitation({name});
-            
+			console.log(res.data);
             if (res.data[0].method === 'DRX') {
                 this.setState({
                     data:res.data[0], 
                     equiSelect:res.data[0].equipment_id,
-                    setting_drx:res.data[0].setting,
+                    setting_drx:res.data[0].settings,
                 });
             }else{
                 this.setState({
@@ -94,7 +94,7 @@ export default class addSolicitation extends React.Component {
       const data = {...this.state.data};
       data[e.target.name] = value;
 	  this.setState({data});
-	  // console.log(this.state);
+	  console.log(this.state);
 	}
 	
 	handleCheckbox = (e) => {
@@ -103,14 +103,15 @@ export default class addSolicitation extends React.Component {
 	  
 		const data = {...this.state.data};
 		data[e.target.name] = value;
-		// this.setState({data});
+		this.setState({data});
 	}
 
 	handleDRX = (e) => {
 		let value = e.target.value;
 		const setting_drx = {...this.state.setting_drx};
 		setting_drx[e.target.name] = value;
-		// this.setState({setting_drx});
+		this.setState({setting_drx});
+		console.log(this.state);
 	}
 
 	handleFRX = (e) => {
@@ -119,7 +120,7 @@ export default class addSolicitation extends React.Component {
 		setting_frx[e.target.name] = value;
 		console.log(setting_frx);
 		this.setState({setting_frx});
-		// console.log(this.state);
+		console.log(this.state);
 	}
 
 	onSubmit = async e => {
@@ -136,11 +137,11 @@ export default class addSolicitation extends React.Component {
 		//Check em outros erros
 		try {
 			let data = {...this.state.data}
-				data.settings = (data.method === 'DRX') ? this.state.setting_drx : this.state.setting_frx;
+				data.settings = (data.method == 'DRX') ? this.state.setting_drx : this.state.setting_frx;
 				data.equipment_id = this.state.equiSelect;
-            const res = await editSolicitation(data);
-            
-			if (res.data.error === true) {
+			
+			const res = await editSolicitation(data);
+			if (res.data.error == true) {
 				window.scroll(0,0);
 				alert(`${res.data.message}`);       			
 			}else{
@@ -302,27 +303,27 @@ export default class addSolicitation extends React.Component {
 									<div className="control-label">Segurança</div>
 									<div className="custom-switches-stacked mt-2">
 										<label className="custom-switch">
-										<input type="checkbox" name="flammable" checked={(this.state.data.flammable === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="flammable" checked={(this.state.data.flammable == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Inflamável</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="toxic" checked={(this.state.data.toxic === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="toxic" checked={(this.state.data.toxic == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Tóxico</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="hygroscopic" checked={(this.state.data.hygroscopic === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="hygroscopic" checked={(this.state.data.hygroscopic == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Higroscópico</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="corrosive" checked={(this.state.data.corrosive === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="corrosive" checked={(this.state.data.corrosive == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Corrosivo</span>
 										</label>
 										<label className="custom-switch">
-										<input type="checkbox" name="radioactive" checked={(this.state.data.radioactive === 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
+										<input type="checkbox" name="radioactive" checked={(this.state.data.radioactive == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
 										<span className="custom-switch-indicator"></span>
 										<span className="custom-switch-description">Radioativo</span>
 										</label>
