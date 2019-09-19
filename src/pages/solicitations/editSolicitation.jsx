@@ -60,9 +60,8 @@ export default class addSolicitation extends React.Component {
 	handleEdit = async (name) => {
         //Pegar a solicitação
         try {
-            const res = await showSolicitation({name});
-			console.log(res.data);
-            if (res.data[0].method === 'DRX') {
+            const res = await showSolicitation(name);
+            if (res.data[0].method == 'DRX') {
                 this.setState({
                     data:res.data[0], 
                     equiSelect:res.data[0].equipment_id,
@@ -75,7 +74,6 @@ export default class addSolicitation extends React.Component {
                     setting_frx:res.data[0].settings,
                 });
             }
-            // console.log(this.state);
         } catch (error) {
             alert(`Amostra não encontrada.`);
         }

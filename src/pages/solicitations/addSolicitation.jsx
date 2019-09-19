@@ -219,8 +219,6 @@ export default class addSolicitation extends React.Component {
 			                      </div>
 			                    </div>
 								<div className="full-form" style={{display:(this.state.method != '') ? 'block': 'none'}}>
-
-								
 									<div className="form-group">
 										<label>Equipamento</label>
 										<select className="form-control" value={this.state.equiSelect} onChange={(e) => this._onChange(e)} name="equipment_id" required>
@@ -304,27 +302,21 @@ export default class addSolicitation extends React.Component {
 										</label>
 									</div>
 									</div>
-
 									<div className="form-divider"><strong>Configurações da análise</strong></div>
 									{this.state.method == 'DRX' ? this.DRXrender() : ''}
 									{this.state.method == 'FRX' ? this.FRXrender() : ''}
-					
 									<div className="form-divider"><strong>Observações Gerais</strong></div>
 									<div className="form-group">
 										<label>Observações</label>
 										<textarea className="form-control" name="note" onChange={(e) => this._onChange(e)} defaultValue={""} />
-										
 									</div>
 									<div className="form-divider"><strong>Range de Amostras</strong></div>
 									<div className="form-group">
 										<label>Quantas amostras deseja cadastrar?</label><br />
 										<label style={{color:'red'}}>No máximo 20 amostrar por solicitação</label>
 										<input type="number" className="form-control" name="quantity" onChange={(e) => this._onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={1} max={20} />
-										
 									</div>
-								
 								</div>
-								
 					          </div>
 					          <div className="card-footer text-right">
 	                             <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Solicitar" loadName="Solicitando..."></Button>

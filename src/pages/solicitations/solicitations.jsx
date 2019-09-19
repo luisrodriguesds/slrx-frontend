@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import store from '../../store/store';
-import {getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation} from '../../services/api';
+import {getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation, nextStepSolicitation, nextStepAllSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
 
@@ -49,7 +49,7 @@ export default class solicitations extends React.Component {
 
 	handleSearch = async (e) => {
 		const filter = e.target.value;
-		const res = await searchSolicitation({filter});
+		const res = await searchSolicitation(filter);
 		let solicitations = res.data;
 		this.setState({solicitations});
 
@@ -86,20 +86,19 @@ export default class solicitations extends React.Component {
 	handleDelete = async (name) => {
 		if (window.confirm("Você deseja realizar o cancelamento desta amostra?")) {
 			try{
-				const res = await destroySolicitation({name});
+				const res = await destroySolicitation(name);
 				if (res.data.error == true) {
 					alert(`${res.data.message}`);
 				}else{
 					alert(`${res.data.message}`);
-					window.location=window.location.href;
-					
+
 					let load = await getSolicitation({page:1});
 					this.setState({solicitations:load.data, selectSol:[]});
 				}
 			}catch(error){
 				// alert(`Algo Inesperado aconteceu, sua página será recarregada.`);
 				//Recarregar a página aqui
-				console.log(error);
+				// console.log(error);
 			}
 		}
 	}
@@ -113,7 +112,8 @@ export default class solicitations extends React.Component {
 				alert(`Amostras deletadas com sucesso`);
 				window.location=window.location.href;
 
-				let load = await getSolicitation({page:1});
+				const {page} = this.state.solicitations;
+				let load = await getSolicitation({page});
 				this.setState({solicitations:load.data, selectSol:[]});
 				console.log(this.state);
 			}
@@ -121,11 +121,36 @@ export default class solicitations extends React.Component {
 	}
 
 	handlePaginate = async (page) => {
-		let res = await getSolicitation({page});
-		let solicitations = res.data;
-		
-		this.setState({solicitations});
-		window.scroll(0,0);
+		try {
+			let res = await getSolicitation({page});
+			let solicitations = res.data;
+			
+			this.setState({solicitations});
+			window.scroll(0,0);
+			
+		} catch (error) {
+			alert(`Algo de errado aconteceu, contate o suporte técnico.`);
+		}
+	}
+
+	handleNextStep = async (id) => {
+		if (window.confirm("Você deseja realizar a autorização dessa amostra?")) {
+			try {
+				const res = await nextStepSolicitation(id);
+				if (res.data.error == true) {
+					alert(`${res.data.message}`);
+				}else{
+					alert(`${res.data.message}`);
+					const {page} = this.state.solicitations;
+					let load = await getSolicitation({page});
+					let solicitations = load.data;
+					
+					this.setState({solicitations});
+				}
+			} catch (error) {
+				alert(`Algo de errado aconteceu, contate o suporte técnico.`);			
+			}
+		}
 	}
 
 	renderPaginate(){
@@ -183,7 +208,7 @@ export default class solicitations extends React.Component {
 			              <div className="card-header-form">
 			                <div className="option-group">
 			                	<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-				            	{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+				            	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
 				            	<button data-toggle="tooltip" title="Cancelar" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
 			                </div>
 			                <form>
@@ -240,7 +265,7 @@ export default class solicitations extends React.Component {
 			                      <td>{new Date(solicitation.created_at).toLocaleString('pt-BR')}</td>
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-										{(this.state.user.permission) && <button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+										{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" title="Passar para a próxima fase" onClick={() => this.handleNextStep(solicitation.id)} className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}
 			                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-warning" title="Editar"> <i className="fas fa-edit"></i> </Link>
 			                      		<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(solicitation.name)}> <i className="fas fa-trash"></i> </button>
 									</div>

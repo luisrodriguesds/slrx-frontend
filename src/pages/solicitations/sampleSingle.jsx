@@ -28,7 +28,7 @@ export default class sampleSingle extends React.Component {
 	async componentDidMount(){
 		const name = this.props.computedMatch.params.id;
 		try{
-			const res = await showSolicitation({name});
+			const res = await showSolicitation(name);
 			const phase = this.state.status.filter((value) => value.number == res.data[0].status)[0].descripiton
 			
 			this.setState({solicitation:res.data[0], phase})
