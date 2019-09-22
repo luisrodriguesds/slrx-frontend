@@ -5,7 +5,7 @@ import store from '../../store/store';
 import {getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation, nextStepSolicitation, nextStepAllSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
-
+import LoadingPage from '../../components/events/LoadingPage';
 export default class solicitations extends React.Component {
 	//SALVAR AS MARCAÇÕES 
 
@@ -43,7 +43,7 @@ export default class solicitations extends React.Component {
 
 		let res = await getSolicitation({page:1});
 		let solicitations = res.data;
-
+		console.log(solicitations);
 		this.setState({solicitations, loadpage:false})
 	}
 
@@ -134,6 +134,7 @@ export default class solicitations extends React.Component {
 	}
 
 	handleNextStep = async (id) => {
+		this.setState({loadpage:true});
 		if (window.confirm("Você deseja realizar a autorização dessa amostra?")) {
 			try {
 				const res = await nextStepSolicitation(id);
@@ -151,6 +152,7 @@ export default class solicitations extends React.Component {
 				alert(`Algo de errado aconteceu, contate o suporte técnico.`);			
 			}
 		}
+		this.setState({loadpage:false});
 	}
 
 	renderPaginate(){
@@ -222,6 +224,8 @@ export default class solicitations extends React.Component {
 			              </div>
 			            </div>
 			            <div className="card-body p-0">
+						  <LoadingPage loading={this.state.loadpage} />
+
 			              <div className="table-responsive">
 			                <table className="table table-striped">
 			                	<thead>
@@ -249,7 +253,7 @@ export default class solicitations extends React.Component {
                                           <label className="custom-control-label" htmlFor={`checkbox-${i}`}>&nbsp;</label>
                                      </div>
 			                      </td>
-			                      <td>
+			                      <td className="weight">
 			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
 			                      </td>
 			                      <td className="align-middle">{solicitation.equipment.name}</td>
