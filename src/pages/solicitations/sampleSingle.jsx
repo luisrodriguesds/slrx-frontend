@@ -120,13 +120,20 @@ export default class sampleSingle extends React.Component {
 			                        <span id="detalhe_Corrosao"></span><br />
 			                    </p>
 			                    <p>
-			                    	{(this.state.user.permission == true && solicitation.download != null) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : (((solicitation.status == 7) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : '')) }
-			                    	
+			                    	{(this.state.user.permission == true && solicitation.status == 6) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : (((solicitation.status == 7) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : '')) }
 			                    </p>
-
 			                </div>
 		                  </div>
 		                </div>
+						<div class="bloco relativo" id="UploadResultado" style={{display:((solicitation.status == 5) ? 'block' : 'none')}}>
+							<div class="progress"></div>
+							<h3>Enviar Resultado</h3>
+							<form id="frmUploadResultado" name="frmUploadResultado" action="#/UploadResultado" method="post" enctype="multipart/form-data" class="disabled-with-errors has-validation-callback">
+								<label class="uploadResultado" for="arquivoUploadResultado">Selecionar arquivo</label>
+								<input type="file" id="arquivoUploadResultado" name="arquivoUploadResultado" required="" data-validation="size required required required" data-validation-max-size="1M" data-validation-event="keyup change" />
+								<input type="submit" value="enviar" class="disabled" disabled="disabled" />
+							</form>
+						</div>
 					</div>
 					<div className="col-12 col-sm-12 col-lg-6">
 						<div className="activities">

@@ -25,9 +25,7 @@ class Login extends Component {
         e.preventDefault();
         //Set loading
         this.setState({loading:true});
-        setTimeout(() => {
-            this.setState({loading:false});
-        }, 1000);
+        
         const auth = this.state.data;
         const res = await userLogin(auth);
         if (res.data.error == true) {
@@ -38,7 +36,10 @@ class Login extends Component {
             // this.props.history.push("/");
 			window.location=window.location.href;    
         }
-        
+
+        setTimeout(() => {
+            this.setState({loading:false});
+        }, 1000);
     }
 
   render() {
