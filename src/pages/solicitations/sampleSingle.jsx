@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import store from '../../store/store';
 import {getUser, showSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
@@ -20,6 +21,7 @@ export default class sampleSingle extends React.Component {
 			{number:6, descripiton:'Análise concluída. Aguardando recolhimento da amostra'},
 			{number:7, descripiton:'Solicitação Finalizada'},
 		],
+		user:{},
 		phase:'',
 		loading:false,
 	  	loadpage:true
@@ -27,16 +29,29 @@ export default class sampleSingle extends React.Component {
 	
 	async componentDidMount(){
 		const name = this.props.computedMatch.params.id;
+
 		try{
 			const res = await showSolicitation(name);
 			const phase = this.state.status.filter((value) => value.number == res.data[0].status)[0].descripiton
 			
 			this.setState({solicitation:res.data[0], phase})
-			console.log(this.state);
 		}catch(error){
 			alert(`Algo de errado acomteceu ou você não tem permissão para acessar esta página.`);
 			this.props.history.push('/solicitacoes')
 		}
+
+		store.subscribe(() =>{
+			this.setState({
+				user:store.getState().user.user
+			})
+		});
+		store.dispatch({
+			type:'REQUEST_USER'
+		});
+		console.log(this.state);
+	}
+
+	handleDownload = async () => {
 
 	}
 	
@@ -53,7 +68,7 @@ export default class sampleSingle extends React.Component {
 		                  <div className="card-body">
 		                    <div className="ScrollStyle">
 		                    	<p>
-			                        <strong>Status: </strong> <span id="status" style={{color:(solicitation.status < 1) ? 'red' : 'blue'}}>{this.state.phase}</span><br />
+			                        <strong>Status: </strong> <span id="status" style={{color:(solicitation.status < 1) ? 'red' : ((solicitation.status == 7) ? 'green' : 'blue')}}><strong>{this.state.phase}</strong></span><br />
 			                    </p>
 			                    <p>
 			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to="/usuarios/ver-perfil/1">{solicitation.user.name}</Link></span><br />
@@ -103,6 +118,10 @@ export default class sampleSingle extends React.Component {
 			                        <br />
 			                        <strong>Observações: </strong><span id="detalhe_Observacoes">{solicitation.note}</span><br />
 			                        <span id="detalhe_Corrosao"></span><br />
+			                    </p>
+			                    <p>
+			                    	{(this.state.user.permission == true && solicitation.download != null) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : (((solicitation.status == 7) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : '')) }
+			                    	
 			                    </p>
 
 			                </div>
