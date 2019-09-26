@@ -34,6 +34,7 @@ export const editSolicitation = (data) => api.put('/solictation/update/', data);
 export const destroySolicitation = (name) => api.delete('/solictation/destroy/'+name);
 export const destroyAllSolicitation = (array) => api.delete('/solictation/destroy-all', { data: { array } });
 export const nextStepSolicitation = (id) => api.post('/solictation/next-step', {id});
-export const nextStepAllSolicitation = (array) => api.post('/solictation/next-step-all', array);
+export const nextStepSolicitationFiveToSex = (form, config) => api.post('/solictation/next-step', form, config);
+export const nextStepAllSolicitation = (array) => api.post('/solictation/next-step-all', {array});
 
 export default api;

@@ -2,7 +2,8 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import store from '../../store/store';
-import {getUser, showSolicitation} from '../../services/api';
+import {getUser, showSolicitation, nextStepSolicitationFiveToSex} from '../../services/api';
+import axios, { post } from 'axios';
 
 import Main from '../../components/template/Main';
 
@@ -23,12 +24,13 @@ export default class sampleSingle extends React.Component {
 		],
 		user:{},
 		phase:'',
+		file:null,
 		loading:false,
 	  	loadpage:true
 	}
 	
 	async componentDidMount(){
-		const name = this.props.computedMatch.params.id;
+		const name = this.props.match.params.id;
 
 		try{
 			const res = await showSolicitation(name);
@@ -51,9 +53,53 @@ export default class sampleSingle extends React.Component {
 		console.log(this.state);
 	}
 
-	handleDownload = async () => {
+	handleSubmit = async (e) => {
+		e.preventDefault();
+		
+		if (this.state.file == null) {
+			alert("Campo Enviar resultado obrigatório")
+			return false;
+		}
+		
+		try{
+			let res = await this.fileUpload(this.state.file);
+			if (res.data.error == true) {
+				alert(res.data.message);
+			}else{
+				alert(res.data.message);
+				//Atualizar estado
+				window.scroll(0,0);
+				const name = this.props.match.params.id;
+
+				res = await showSolicitation(name);
+				const phase = this.state.status.filter((value) => value.number == res.data[0].status)[0].descripiton
+				
+				this.setState({solicitation:res.data[0], phase})
+			}
+		}catch(e){
+			alert("Algo de errado aconteceu, por favor recarrege sua página");
+			console.log(e);
+		}
 
 	}
+
+	onChange(e) {
+	    this.setState({file:e.target.files[0]})
+	}
+
+	fileUpload = async (file) => {
+	    const formData = new FormData();
+	    formData.append('id', this.state.solicitation.id)
+	    formData.append('sample', file)
+	    const config = {
+	        headers: {
+	            'content-type': 'multipart/form-data'
+	        }
+	    }
+	    return await nextStepSolicitationFiveToSex(formData, config)
+	 }
+
+
 	
 	render() {
 		const {solicitation} = this.state; 
@@ -120,20 +166,31 @@ export default class sampleSingle extends React.Component {
 			                        <span id="detalhe_Corrosao"></span><br />
 			                    </p>
 			                    <p>
-			                    	{(this.state.user.permission == true && solicitation.status == 6) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : (((solicitation.status == 7) ? <a href={solicitation.download} className="btn btn-danger" onClick={this.handleDownload}>Download da medida</a> : '')) }
+			                    	{(this.state.user.permission == true && solicitation.status == 6) ? <a href={solicitation.download} className="btn btn-danger">Download da medida</a> : (((solicitation.status == 7) ? <a href={solicitation.download} className="btn btn-danger">Download da medida</a> : '')) }
 			                    </p>
 			                </div>
 		                  </div>
 		                </div>
-						<div class="bloco relativo" id="UploadResultado" style={{display:((solicitation.status == 5) ? 'block' : 'none')}}>
-							<div class="progress"></div>
-							<h3>Enviar Resultado</h3>
-							<form id="frmUploadResultado" name="frmUploadResultado" action="#/UploadResultado" method="post" enctype="multipart/form-data" class="disabled-with-errors has-validation-callback">
-								<label class="uploadResultado" for="arquivoUploadResultado">Selecionar arquivo</label>
-								<input type="file" id="arquivoUploadResultado" name="arquivoUploadResultado" required="" data-validation="size required required required" data-validation-max-size="1M" data-validation-event="keyup change" />
-								<input type="submit" value="enviar" class="disabled" disabled="disabled" />
-							</form>
-						</div>
+
+		                	
+						<div className="bloco relativo" id="UploadResultado" style={{display:((solicitation.status == 5) ? 'block' : 'none')}}>
+		                	<div className="card card-primary">
+		                  		<div className="card-body">
+
+									{/*
+										<div className="progress">
+										  <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+										</div>
+									*/}
+									<h3>Enviar Resultado</h3>
+									<form name="result_upload" method="post" encType="multipart/form-data" onSubmit={(e) => this.handleSubmit(e)} className="disabled-with-errors has-validation-callback">
+										<input type="file" id="result_file" name="result_file" required=""  onChange={(e) => this.onChange(e)} data-validation="size required required required" data-validation-max-size="1M" data-validation-event="keyup change" />
+										<input type="submit" value="Enviar" className="btn btn-primary" />
+									</form>
+								</div>
+							</div>
+		                </div>
+
 					</div>
 					<div className="col-12 col-sm-12 col-lg-6">
 						<div className="activities">

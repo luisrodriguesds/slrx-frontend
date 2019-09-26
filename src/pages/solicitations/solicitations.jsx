@@ -43,8 +43,11 @@ export default class solicitations extends React.Component {
 
 		let res = await getSolicitation({page:1});
 		let solicitations = res.data;
-		console.log(solicitations);
-		this.setState({solicitations, loadpage:false})
+		if (res.data.data.length > 0) {
+			this.setState({solicitations, loadpage:false})
+		}else{
+			this.setState({loadpage:false})
+		}
 	}
 
 	handleSearch = async (e) => {
@@ -98,7 +101,7 @@ export default class solicitations extends React.Component {
 			}catch(error){
 				// alert(`Algo Inesperado aconteceu, sua página será recarregada.`);
 				//Recarregar a página aqui
-				// console.log(error);
+				console.log(error);
 			}
 		}
 	}
@@ -120,6 +123,7 @@ export default class solicitations extends React.Component {
 		}
 	}
 
+	
 	handlePaginate = async (page) => {
 		try {
 			let res = await getSolicitation({page});
@@ -132,6 +136,26 @@ export default class solicitations extends React.Component {
 			alert(`Algo de errado aconteceu, contate o suporte técnico.`);
 		}
 	}
+
+	handleNextStepAll = async () => {
+		this.setState({loadpage:true});
+		if (this.state.selectSol.length == 0) {
+			alert(`Você precisa selecionar alguma amostra.`);
+		}else{
+			if (window.confirm(`Você tem certeza que deseja passar para a próxima fase as amostras selecionadas?`)) {
+				try{
+					const res = await nextStepAllSolicitation(this.state.selectSol);
+					alert(`Amostras atualizadas com sucesso`);
+					window.location=window.location.href;
+					
+				}catch(e){
+
+				}
+			}
+		}
+		this.setState({loadpage:false});
+	}
+
 
 	handleNextStep = async (id) => {
 		this.setState({loadpage:true});
@@ -177,16 +201,10 @@ export default class solicitations extends React.Component {
 	            {pages.map((value, i) => (
 		            <li key={i} className={((value == page) ? "page-item active" : "page-item")}>
 		            	<button className="page-link" onClick={() => this.handlePaginate(value)}>
-		            		{value} {/*<span className="sr-only">(current)</span>*/}
+		            		{value}
 		            	</button>
 		            </li>
 	            ))}
-	            {/*<li className="page-item">
-	              <button className="page-link">2</button>
-	            </li>
-	            <li className="page-item">
-	            	<button className="page-link">3</button>
-	            </li>*/}
 	            <li className={((page == lastPage) ? "page-item disabled" : "page-item")}>
 	              <button className="page-link" onClick={() => this.handlePaginate(page+1)}>
 	              	<i className="fas fa-chevron-right" />
@@ -210,7 +228,7 @@ export default class solicitations extends React.Component {
 			              <div className="card-header-form">
 			                <div className="option-group">
 			                	<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-				            	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+				            	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" onClick={() => this.handleNextStepAll()} title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
 				            	<button data-toggle="tooltip" title="Cancelar" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
 			                </div>
 			                <form>
@@ -277,67 +295,6 @@ export default class solicitations extends React.Component {
 			                    </tr>
 
 								))}
-			                    
-
-			                    {/*<tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-2" />
-			                          <label htmlFor="checkbox-2" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                     <td>
-			                      	<Link to="/solicitacoes/ver-amostra/1">MND298D006</Link>
-			                      </td>
-			                      <td className="align-middle">PANalytical X'Pert PRO</td>
-			                      <td>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando autorização">1</div>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando aprovação do Laboratório">2</div>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando confirmação da entrega da amostra">3</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Na fila do equipamento">4</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Em processo de análise">5</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Análise concluída. Aguardando recolhimento da amostra.">6</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Solicitação Finalizada">7</div>
-			                      </td>
-			                      <td>20/01/2018</td>
-			                      <td>
-								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
-			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
-									</div>
-			                      </td>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-4" />
-			                          <label htmlFor="checkbox-4" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>
-			                      	<Link to="/solicitacoes/ver-amostra/1">MND298D007</Link>
-			                      </td>
-			                      <td className="align-middle">PANalytical X'Pert PRO</td>
-			                      <td>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando autorização">1</div>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando aprovação do Laboratório">2</div>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando confirmação da entrega da amostra">3</div>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Na fila do equipamento">4</div>
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Em processo de análise">5</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Análise concluída. Aguardando recolhimento da amostra.">6</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Solicitação Finalizada">7</div>
-			                      </td>
-			                      <td>20/01/2018</td>
-			                      <td>
-								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-										<button data-toggle="tooltip" title="Passar para a próxima fase" className="btn btn-primary"><i className="fas fa-arrow-alt-circle-right"></i></button>
-			                      		<Link to="/solicitacoes/editar/1" className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      		<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
-									</div>
-			                      </td>
-			                    </tr>
-			                	*/}
 			                  </tbody>
 			                </table>
 			              </div>

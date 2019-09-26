@@ -8,6 +8,8 @@ import Eppendorf from '../../assets/img/eppendorf_1.5ml.jpg';
 import Main from '../../components/template/Main';
 import Button from '../../components/events/LoadingButtom';
 
+const Red = () => (<span style={{color:'red'}}>*</span>);
+
 export default class addSolicitation extends React.Component {
 	// "settings":{"tecnica":"DRX", "dois_theta_inicial":10, "dois_theta_final":100, "delta_dois_theta":0.013},
 	// "settings":{"tecnica":"FRX", "resultado":"oxidos", "medida":"semi-quantitativa"},
@@ -169,14 +171,14 @@ export default class addSolicitation extends React.Component {
 		return (
 			<React.Fragment>
 				<div className="form-group">
-					<label htmlFor="">Selecione o tipo de medida</label>
+					<label htmlFor="">Selecione o tipo de medida <Red /></label>
 					<div className="custom-control custom-radio">
 						<input type="radio" name="medida" defaultValue="semi-quantitativa" defaultChecked  onChange={(e) => this.handleFRX(e) } className="custom-control-input" id="medida" />
 						<label className="custom-control-label" htmlFor="medida">Semi-Quantitativa</label>
 					</div>
 				</div>
 				<div className="form-group">
-					<label htmlFor="">Selecione a forma dos resultados</label>
+					<label htmlFor="">Selecione a forma dos resultados <Red /></label>
 					<div className="custom-control custom-radio">
 						<input type="radio" name="resultado" defaultValue="oxidos" defaultChecked  onChange={(e) => this.handleFRX(e) } className="custom-control-input" id="resultado_1" />
 						<label className="custom-control-label" htmlFor="resultado_1">Óxidos</label>
@@ -204,7 +206,7 @@ export default class addSolicitation extends React.Component {
 					          <div className="card-body">
 					          <div className="form-divider">Tipo de Análise e Equipamento</div>
 					            <div className="form-group">
-			                      <div className="control-label">Selecione o tipo de análise</div>
+			                      <div className="control-label">Selecione o tipo de análise <Red /></div>
 			                      <div className="custom-switches-stacked mt-2">
 			                        <label className="custom-switch">
 			                          <input type="radio" name="method" value="DRX" onChange={(e) => (this._onChange(e) )} className="custom-switch-input" />
@@ -220,7 +222,7 @@ export default class addSolicitation extends React.Component {
 			                    </div>
 								<div className="full-form" style={{display:(this.state.method != '') ? 'block': 'none'}}>
 									<div className="form-group">
-										<label>Equipamento</label>
+										<label>Equipamento <Red /></label>
 										<select className="form-control" value={this.state.equiSelect} onChange={(e) => this._onChange(e)} name="equipment_id" required>
 											<option value=""> Selecione o Equipamento ...</option>
 											{this.state.equipments.map(equipment => {
@@ -246,7 +248,7 @@ export default class addSolicitation extends React.Component {
 									</div>
 									<div className="form-divider">Informações da Amostra</div>
 									<div className="form-group">
-										<label>Escolha o tipo da amostra</label>
+										<label>Escolha o tipo da amostra <Red /></label>
 										<select name="shape"  className="form-control" onChange={(e) => this._onChange(e)} required>
 											<option value="">Selecione o tipo da amostra ...</option>
 											<option selected value="Pó">Pó</option>
@@ -266,7 +268,7 @@ export default class addSolicitation extends React.Component {
 										<img src={Eppendorf} alt="Eppendorf de 1,5 ml"/>
 									</div>
 									<div className="form-group">
-									<label>Composição</label>
+									<label>Composição <Red /></label>
 									<input type="text" name="composition" onChange={(e) => this._onChange(e)} className="form-control" required />
 									<div className="invalid-feedback">
 										Campo Obirgatório!!
