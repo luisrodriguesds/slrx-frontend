@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import store from '../../store/store';
-import {getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation, nextStepSolicitation, nextStepAllSolicitation} from '../../services/api';
+import {filterhSolicitation, getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation, nextStepSolicitation, nextStepAllSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
 import LoadingPage from '../../components/events/LoadingPage';
@@ -26,6 +26,7 @@ export default class solicitations extends React.Component {
 		],
 		selectSol:[],
 		checkboxAll:false,
+		filter:'Filtro',
 		loading:false,
 	  	loadpage:true
 	}
@@ -57,6 +58,12 @@ export default class solicitations extends React.Component {
 		this.setState({solicitations});
 
 		// console.log(res, filter);
+	}
+
+	handleFilter = async (filter) => {
+		const res = await filterhSolicitation(filter);
+		console.log(res)
+		this.setState({filter, solicitations:res.data});
 	}
 
 	handleCheckboxAll = () => {
@@ -226,19 +233,25 @@ export default class solicitations extends React.Component {
 			            <div className="card-header">
 			              <h4>Amostras</h4>
 			              <div className="card-header-form">
-			              	<div class="dropdown">
-		                      <a href="#" class="dropdown-toggle btn btn-primary" data-toggle="dropdown">Filtro</a>
-		                      <div class="dropdown-menu dropdown-menu-right">
-		                        <button class="dropdown-item has-icon">Abertas</button>
-		                        <button class="dropdown-item has-icon">1</button>
-		                        <button class="dropdown-item has-icon">2</button>
-		                        <button class="dropdown-item has-icon">3</button>
-		                        <button class="dropdown-item has-icon">4</button>
-		                        <button class="dropdown-item has-icon">5</button>
-		                        <button class="dropdown-item has-icon">6</button>
-		                        <button class="dropdown-item has-icon">7</button>
-		                      </div>
-		                    </div>
+							  {this.state.user.permission == true && 
+							
+								<div class="dropdown">
+								<a href="#" class="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</a>
+								<div class="dropdown-menu dropdown-menu-right">
+									<button onClick={() => this.handleFilter('Filtro')} class="dropdown-item has-icon">Filtro</button>
+									<button onClick={() => this.handleFilter('Abertas')} class="dropdown-item has-icon">Abertas</button>
+									<button onClick={() => this.handleFilter('DRX')} class="dropdown-item has-icon">DRX</button>
+									<button onClick={() => this.handleFilter('FRX')} class="dropdown-item has-icon">FRX</button>
+									<button onClick={() => this.handleFilter('1')} class="dropdown-item has-icon">1</button>
+									<button onClick={() => this.handleFilter('2')} class="dropdown-item has-icon">2</button>
+									<button onClick={() => this.handleFilter('3')} class="dropdown-item has-icon">3</button>
+									<button onClick={() => this.handleFilter('4')} class="dropdown-item has-icon">4</button>
+									<button onClick={() => this.handleFilter('5')} class="dropdown-item has-icon">5</button>
+									<button onClick={() => this.handleFilter('6')} class="dropdown-item has-icon">6</button>
+									<button onClick={() => this.handleFilter('7')} class="dropdown-item has-icon">7</button>
+								</div>
+								</div>
+							}
 			                <div className="option-group">
 			                	<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
 				            	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" onClick={() => this.handleNextStepAll()} title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}

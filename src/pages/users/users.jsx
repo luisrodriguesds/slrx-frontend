@@ -101,7 +101,6 @@ export default class users extends React.Component {
 			                      <th>Nome</th>
 			                      <th>Tipo</th>
 			                      <th>Email</th>
-			                      <th>Data do Cadastro</th>
 			                      <th>Status</th>
 			                      <th>Ações</th>
 			                    </tr>
@@ -118,7 +117,6 @@ export default class users extends React.Component {
 				                      </td>
 				                      <td className="align-middle">{user.access_level}</td>
 				                      <td>{user.email}</td>
-				                      <td>{new Date(user.created_at).toLocaleString('pt-BR')}</td>
 				                      <td>
 				                      	{user.status == 1 ? <div className="badge badge-success">Ativo</div> : <div className="badge badge-danger">Inativo</div>}
 				                      </td>
