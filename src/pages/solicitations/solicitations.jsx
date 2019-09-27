@@ -226,6 +226,19 @@ export default class solicitations extends React.Component {
 			            <div className="card-header">
 			              <h4>Amostras</h4>
 			              <div className="card-header-form">
+			              	<div class="dropdown">
+		                      <a href="#" class="dropdown-toggle btn btn-primary" data-toggle="dropdown">Filtro</a>
+		                      <div class="dropdown-menu dropdown-menu-right">
+		                        <button class="dropdown-item has-icon">Abertas</button>
+		                        <button class="dropdown-item has-icon">1</button>
+		                        <button class="dropdown-item has-icon">2</button>
+		                        <button class="dropdown-item has-icon">3</button>
+		                        <button class="dropdown-item has-icon">4</button>
+		                        <button class="dropdown-item has-icon">5</button>
+		                        <button class="dropdown-item has-icon">6</button>
+		                        <button class="dropdown-item has-icon">7</button>
+		                      </div>
+		                    </div>
 			                <div className="option-group">
 			                	<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
 				            	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" onClick={() => this.handleNextStepAll()} title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}

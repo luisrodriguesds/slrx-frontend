@@ -19,6 +19,9 @@ export const userRegister = (register) => api.post('/user', register);
 export const userUpdate = (update) => api.put('/user', update);
 export const changePass = (update) => api.put('/user/change-pass', update);
 export const getUser = () => api.get('/user/token');
+export const getUsers = () => api.get('/user/index');
+export const searchUsers = (filter) => api.get('/user/filter?filter='+filter);
+export const filterUsers = (filter) => api.get('/user/filterby?filter='+filter);
 
 //Menu
 export const getMenu = () => api.get('/menu/show');
