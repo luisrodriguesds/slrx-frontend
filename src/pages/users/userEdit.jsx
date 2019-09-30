@@ -10,7 +10,7 @@ import Button from '../../components/events/LoadingButtom';
 // import {user} from '../../services/auth';
 // import {useSelector} from 'react-redux';
 // import {URL_BASE} from '../../services/routesBackend';
-import api, {userUpdate} from '../../services/api';
+import api, {userUpdate, getUserById} from '../../services/api';
 import store from '../../store/store';
 
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
@@ -44,13 +44,10 @@ export default class editAccount extends React.Component {
 
 	async componentDidMount(){
 		const {id} = this.props.match.params;
-		console.log(id);
-		store.subscribe(() => {
-			this.loadDataForm(store.getState().user.user);
-		});
-		store.dispatch({
-			type:'REQUEST_USER'
-		})
+		const res = await getUserById(id);
+		this.loadDataForm(res.data);
+		console.log(res.data);
+		
 	}
 
 	loadDataForm = async (user) =>{
@@ -64,8 +61,9 @@ export default class editAccount extends React.Component {
 		
 		const cities = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${st}/municipios`);
 		this.setState({cities:cities.data});
-			
+		
 		this.setState({data:{user_id:this.state.user.id, ...this.state.user, ...this.state.user.academic, ...this.state.user.company[0], ...this.state.user.address, type_company:this.state.user.access_level_slug}});
+	
 		
 		//if estudante - get no email do professor
 		if (this.state.user.access_level_slug == 'aluno') {			
