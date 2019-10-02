@@ -45,8 +45,8 @@ export default class editAccount extends React.Component {
 	async componentDidMount(){
 		const {id} = this.props.match.params;
 		const res = await getUserById(id);
-		this.loadDataForm(res.data);
-		console.log(res.data);
+		await this.loadDataForm(res.data);
+		console.log(this.state);
 		
 	}
 
@@ -68,7 +68,7 @@ export default class editAccount extends React.Component {
 		//if estudante - get no email do professor
 		if (this.state.user.access_level_slug == 'aluno') {			
 			const professor = await api.get(`/professor-studant/show?studant_id=${this.state.user.id}`);
-			this.setState({professor:`${professor.data.name} - ${professor.data.email}`});
+			this.setState({professor:`${professor.data.name}`, professor_email:`${professor.data.email}`, data:{email_leader:professor.data.email, ...this.state.data}});
 		}else if (this.state.user.access_level_slug == 'professor') {
 			
 		}else if (this.state.user.access_level_slug == 'financeiro' || this.state.user.access_level_slug == 'tecnico') {
@@ -162,6 +162,7 @@ export default class editAccount extends React.Component {
 	  } catch (error) {
 		alert(`Algo de errado aconteceu, procure o suporte técnico.`);
 	  }
+
       setTimeout(() => {
         this.setState({loading:false});
       }, 1000);
@@ -354,9 +355,15 @@ export default class editAccount extends React.Component {
 	renderStudent(){
 		return (
 		  <div className="row">
-			  <div className="form-group col-12">
-				  <label htmlFor="email_leader" className="d-block">Orientador</label>
-				  <input id="email_leader" type="email" disabled defaultValue={this.state.professor} className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
+			  <div className="form-group col-6">
+				  <label htmlFor="email_leader" className="d-block">Email Orientador</label>
+				  <input id="email_leader" type="email" defaultValue={this.state.professor_email} className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
+				  <div className="invalid-feedback">
+				  </div>
+			  </div>
+			  <div className="form-group col-6">
+				  <label htmlFor="name_leader" className="d-block">Orientador</label>
+				  <input id="name_leader" type="text" disabled defaultValue={this.state.professor} className="form-control" name="name_leader" />
 				  <div className="invalid-feedback">
 				  </div>
 			  </div>
