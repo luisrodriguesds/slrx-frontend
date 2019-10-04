@@ -49,6 +49,42 @@ export default class users extends React.Component {
 		console.log(res, filter);
 	}
 
+	renderPaginate(){
+		const {lastPage, page, total, perPage} = this.state.users;
+		if (total <= perPage) {
+			return;
+		}
+
+		let pages = [];
+		for (let i = 1; i <= lastPage; i++) {
+			pages.push(i);
+		}
+
+		return (
+			<nav className="d-inline-block">
+	          <ul className="pagination mb-0">
+	            <li className={((page == 1) ? "page-item disabled" : "page-item")}>
+		            <button className="page-link" tabIndex={-1} onClick={() => this.handlePaginate(page-1)}>
+		              <i className="fas fa-chevron-left" />
+		            </button>
+	            </li>
+	            {pages.map((value, i) => (
+		            <li key={i} className={((value == page) ? "page-item active" : "page-item")}>
+		            	<button className="page-link" onClick={() => this.handlePaginate(value)}>
+		            		{value}
+		            	</button>
+		            </li>
+	            ))}
+	            <li className={((page == lastPage) ? "page-item disabled" : "page-item")}>
+	              <button className="page-link" onClick={() => this.handlePaginate(page+1)}>
+	              	<i className="fas fa-chevron-right" />
+	              </button>
+	            </li>
+	          </ul>
+	        </nav>
+		)
+	}
+
 	render() {
 		const {users} = this.state;
 		return (
@@ -134,21 +170,7 @@ export default class users extends React.Component {
 			              </div>
 			            </div>
 					      <div className="card-footer text-right">
-					        <nav className="d-inline-block">
-					          <ul className="pagination mb-0">
-					            <li className="page-item disabled">
-					              <Link className="page-link" to="#" tabIndex={-1}><i className="fas fa-chevron-left" /></Link>
-					            </li>
-					            <li className="page-item active"><Link className="page-link" to="#">1 <span className="sr-only">(current)</span></Link></li>
-					            <li className="page-item">
-					              <Link className="page-link" to="#">2</Link>
-					            </li>
-					            <li className="page-item"><Link className="page-link" to="#">3</Link></li>
-					            <li className="page-item">
-					              <Link className="page-link" to="#"><i className="fas fa-chevron-right" /></Link>
-					            </li>
-					          </ul>
-					        </nav>
+						  {this.renderPaginate()}
 					      </div>
 			          </div>
 			        </div>
