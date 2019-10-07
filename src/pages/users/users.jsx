@@ -158,7 +158,7 @@ export default class users extends React.Component {
 				                      </td>
 				                      <td>
 				                      	<div className="btn-group" role="group" aria-label="Exemplo básico">
-					                      	<Link to={`/solicitacoes/filtro/${user.id}`} className="btn btn-dark mr-1" title="Ver Amostras"> <i className="fas fa-vial"></i> </Link>
+					                      	<Link to={`/usuarios/ver-perfil/${user.id}`} className="btn btn-dark mr-1" title="Ver Amostras"> <i className="fas fa-vial"></i> </Link>
 					                      	<Link to={`/usuarios/editar/${user.id}`} className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
 					                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
 				                      	</div>

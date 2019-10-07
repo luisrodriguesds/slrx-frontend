@@ -24,6 +24,8 @@ export const getUsers = () => api.get('/user/index');
 export const searchUsers = (filter) => api.get('/user/filter?filter='+filter);
 export const filterUsers = (filter) => api.get('/user/filterby?filter='+filter);
 
+export const getProfessorStudant = (studant_id, professor_id=null) => api.get('/professor-studant/show?studant_id='+studant_id+'&professor_id='+professor_id);
+
 //Menu
 export const getMenu = () => api.get('/menu/show');
 
@@ -33,6 +35,7 @@ export const getEquipment = () => api.get('/equipment');
 export const postSolicitation = (data) => api.post('/solictation', data);
 export const getSolicitation = ({page}) => api.get('/solictation/all?page='+page);
 export const searchSolicitation = (filter) => api.get('/solictation/filter?filter='+filter);
+export const searchSolicitationByUser = (filter, id) => api.get('/solictation/filter/user?filter='+filter+'&user_id='+id);
 export const filterhSolicitation = (filter) => api.get('/solictation/filterby?filter='+filter);
 export const showSolicitation = (name) => api.get('/solictation/show/'+name);
 export const editSolicitation = (data) => api.put('/solictation/update/', data);

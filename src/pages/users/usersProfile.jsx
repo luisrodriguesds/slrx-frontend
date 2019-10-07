@@ -2,12 +2,265 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import Main from '../../components/template/Main';
+import store from '../../store/store';
+import {getUserById, getProfessorStudant, searchSolicitationByUser} from '../../services/api';
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 
 export default class usersProfile extends React.Component {
+	state = {
+		userSingle:{},
+		user:{},
+		status:[
+			{number:-3, descripiton:'Cancelada por falta de entrega da amostra.'},
+			{number:-2, descripiton:'Cancelada pelo operador.'},
+			{number:-1, descripiton:'Cancelada pelo responsável.'},
+			{number:1, descripiton:'Aguardando autorização'},
+			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
+			{number:3, descripiton:'Aguardando confirmação da entrega da amostra'},
+			{number:4, descripiton:'Na fila do equipamento'},
+			{number:5, descripiton:'Em processo de análise'},
+			{number:6, descripiton:'Análise concluída. Aguardando recolhimento da amostra'},
+			{number:7, descripiton:'Solicitação Finalizada'},
+		],
+		selectSol:[],
+		solicitations:[],
+		professor:null,
+		studants:[],
+		company:null,
+		employees:[],
+		user_id:'',
+		loading:false,
+	  	loadpage:true
+	}
+
+	async componentDidMount(){
+		store.subscribe(() =>{
+			this.setState({
+				user:store.getState().user.user
+			})
+			console.log(this.state)
+		});
+		store.dispatch({
+			type:'REQUEST_USER'
+		});
+
+		try{
+			const {id} = this.props.match.params;
+			const res = await getUserById(id);
+
+			let obs = ``, studants;
+			switch(res.data.access_level_slug){
+				case "aluno":
+					obs = `${res.data.academic.laboratory}`;
+					let professor = await getProfessorStudant(res.data.id);
+					this.setState({professor:professor.data})
+					console.log(professor);
+				break;
+				case "professor":
+					obs = `${res.data.academic.laboratory}`;
+					studants = await getProfessorStudant(null,	res.data.id);
+					this.setState({studants:studants.data});
+					console.log(studants);
+				break;
+				case "tecnico":
+				case "financeiro":
+					obs = `${res.data.company[0].fantasy_name}`;
+					this.setState({company:res.data.company[0]});
+				break;
+				case "autonomo":
+				case "operador":
+
+				break;
+				case "administrador":
+					// obs = `${res.data.academic.laboratory}`;
+					studants = await getProfessorStudant(null,	res.data.id);
+					this.setState({studants:studants.data});
+					console.log(studants);
+				break;
+				case "empresa":
+					obs = `${res.data.cnpj}`;
+					this.setState({employees:res.data.employees});
+				break;
+			}
+
+			this.setState({userSingle:{obs, ...res.data}, solicitations:res.data.solicitations, user_id:id});
+
+		}catch(e){
+			alert("Error no servidor, por favor procurar o suporte técnico.");			
+		}
+	}
+
+	handleCheckbox = (id) => {
+		//Não consegue desmarcar enquanto todos estão marcados
+		let {selectSol} = this.state;
+		//Isolate sections
+	    let check = selectSol.filter((v,i) => selectSol.indexOf(id) === i);
+    	if(check.length >= 1){
+	    	selectSol = selectSol.filter((v,i) => selectSol.indexOf(id) !== i);
+	    	this.setState({selectSol});
+	    	// console.log(selectSol);
+    	}else{		
+	    	selectSol.push(id);
+		    this.setState({selectSol});
+	    	// console.log(selectSol);
+    	}
+	}
+
+	handleSearch = async (e) => {
+		const filter = e.target.value;
+		const res = await searchSolicitationByUser(filter, this.state.user_id);
+		let solicitations = res.data;
+		this.setState({solicitations});
+	}
+
+	renderProfessor(){
+		const {professor} = this.state;
+		const badge = professor.status !=1 ? "danger" : "primary";
+		return (
+			<div className="card">
+              <div className="card-header">
+                <h4 className="d-inline">Orientador</h4>
+                {/*<div className="card-header-action">
+                  <Link to="#" className="btn btn-primary">Ver todas</Link>
+                </div>*/}
+              </div>
+              <div className="card-body">             
+                <ul className="list-unstyled list-unstyled-border">
+                  <li className="media">
+                    <div className="custom-control custom-checkbox">
+                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
+                      <label className="custom-control-label" htmlFor="cbx-1" />
+                    </div>
+                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <div className="media-body">
+                      <div className={`badge badge-pill badge-${badge} mb-1 float-right`}>{professor.status == 1 ? "Ativo" : "Inativo"}</div>
+                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${professor.id}`}>{professor.name}</a></h6>
+                      <div className="text-small text-muted">{professor.phone1} <div className="bullet" /> {professor.email} </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div className="card-footer pt-0">
+                {/*<button className="btn btn-primary">Aprovar</button>*/}
+              </div>
+            </div>
+		);
+	}
+
+	renderStudants(){
+		const {studants} = this.state;
+
+		return (
+			<div className="card">
+              <div className="card-header">
+                <h4 className="d-inline">Alunos</h4>
+                {/*<div className="card-header-action">
+                  <Link to="#" className="btn btn-primary">Ver todas</Link>
+                </div>*/}
+              </div>
+              <div className="card-body">             
+                <ul className="list-unstyled list-unstyled-border">
+                {studants.map((studant,i) => (
+                  <li className="media" key={i}>
+                    <div className="custom-control custom-checkbox">
+                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
+                      <label className="custom-control-label" htmlFor="cbx-1" />
+                    </div>
+                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <div className="media-body">
+                      <div className={`badge badge-pill badge-${studant.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{studant.status == 1 ? 'Ativo' : 'Inativo'}</div>
+                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${studant.id}`}>{studant.name}</a></h6>
+                      <div className="text-small text-muted">{studant.phone1} <div className="bullet" /> {studant.email}</div>
+                    </div>
+                  </li>
+                ))}
+                </ul>
+              </div>
+              <div className="card-footer pt-0">
+                {/*<button className="btn btn-primary">Aprovar</button>*/}
+              </div>
+          </div>
+		)
+	}
+
+	renderCompany(){
+		const {company} = this.state;
+		const badge = company.status !=1 ? "danger" : "primary";
+
+		return (
+			<div className="card">
+              <div className="card-header">
+                <h4 className="d-inline">Empresa</h4>
+                {/*<div className="card-header-action">
+                  <Link to="#" className="btn btn-primary">Ver todas</Link>
+                </div>*/}
+              </div>
+              <div className="card-body">             
+                <ul className="list-unstyled list-unstyled-border">
+                  <li className="media">
+                    <div className="custom-control custom-checkbox">
+                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
+                      <label className="custom-control-label" htmlFor="cbx-1" />
+                    </div>
+                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <div className="media-body">
+                      <div className={`badge badge-pill badge-${badge} mb-1 float-right`}>{company.status == 1 ? "Ativo" : "Inativo"}</div>
+                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/company-${company.id}`}>{company.fantasy_name}</a></h6>
+                      <div className="text-small text-muted">{company.company_phone} <div className="bullet" /> {company.company_email} </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div className="card-footer pt-0">
+                {/*<button className="btn btn-primary">Aprovar</button>*/}
+              </div>
+            </div>
+		)
+	}
+
+	renderEmployees(){
+		const {employees} = this.state;
+
+		return (
+			<div className="card">
+              <div className="card-header">
+                <h4 className="d-inline">Alunos</h4>
+                {/*<div className="card-header-action">
+                  <Link to="#" className="btn btn-primary">Ver todas</Link>
+                </div>*/}
+              </div>
+              <div className="card-body">             
+                <ul className="list-unstyled list-unstyled-border">
+                {employees.map((employee,i) => (
+                  <li className="media" key={i}>
+                    <div className="custom-control custom-checkbox">
+                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
+                      <label className="custom-control-label" htmlFor="cbx-1" />
+                    </div>
+                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <div className="media-body">
+                      <div className={`badge badge-pill badge-${employee.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{employee.status == 1 ? 'Ativo' : 'Inativo'}</div>
+                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${employee.id}`}>{employee.name}</a></h6>
+                      <div className="text-small text-muted">{employee.phone1} <div className="bullet" /> {employee.email}</div>
+                    </div>
+                  </li>
+                ))}
+                </ul>
+              </div>
+              <div className="card-footer pt-0">
+                {/*<button className="btn btn-primary">Aprovar</button>*/}
+              </div>
+          </div>
+		)
+	}
+
 
 	render() {
+		const {userSingle} = this.state;
+		const {solicitations} = this.state;
+
+
 		return (
 			<Main title="Perfil do Usuário">
 				<div className="row">
@@ -19,24 +272,33 @@ export default class usersProfile extends React.Component {
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>
-				              <div className="profile-widget-item-value">187</div>
+				              <div className="profile-widget-item-value">{solicitations.length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Analisadas</div>
-				              <div className="profile-widget-item-value">45</div>
+				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status == 7).length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Pendentes</div>
-				              <div className="profile-widget-item-value">0</div>
+				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status != 7).length}</div>
 				            </div>
 				          </div>
 				        </div>
 				        <div className="profile-widget-description pb-0">
-				          <div className="profile-widget-name">Luis Rodrigues <div className="text-muted d-inline font-weight-normal"><div className="slash" /> Graduando <div className="slash" /> Laboratório de Raio X</div> </div>
-				          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-				            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-				            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-				            consequat.</p>
+				          <div className="profile-widget-name"> 
+				          	  {userSingle.name} 
+					          <div className="text-muted d-inline font-weight-normal">
+						          <div className="slash" /> 
+						          {userSingle.access_level} 
+						          <div className="slash" /> 
+						          {userSingle.obs}
+						          <div className="slash" /> 
+						          {userSingle.email}
+						          <div className="slash" /> 
+						          {userSingle.phone1}
+						       </div> 
+				          </div>
+				          <p><i>Sem descrição</i></p>
 				        </div>
 				        <div className="card-footer text-center pt-0">
 				          
@@ -46,13 +308,15 @@ export default class usersProfile extends React.Component {
 			            <div className="card-header">
 			              <h4>Amostras</h4>
 			              <div className="card-header-form">
-			                <div className="option-group">
-			                	<Link to="/usuarios/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
-			                </div>
+			                	{(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro' || userSingle.access_level_slug == 'empresa') && 
+			                		<div className="option-group">
+			                			<Link to="/usuarios/cadastro" title="Gerar Proposta pelo LRX" className="btn btn-primary ml-1 mr-1">Proposta LRX {/*<i className="fas fa-edit ml-1"></i>*/}</Link>
+				            			<button title="Gerar Ordem de Serviço pela Astef" className="btn btn-danger mr-1">Ordem de Serviço {/*<i className="fas fa-trash"></i>*/}</button>
+			                		</div>
+			                	}
 			                <form>
 			                  <div className="input-group">
-			                    <input type="text" className="form-control" placeholder="Pesquisar" />
+			                    <input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
 			                    <div className="input-group-btn">
 			                      <button className="btn btn-primary"><i className="fas fa-search" /></button>
 			                    </div>
@@ -63,102 +327,63 @@ export default class usersProfile extends React.Component {
 			            <div className="card-body p-0">
 			              <div className="table-responsive">
 			                <table className="table table-striped">
-			                  <tbody><tr>
-			                      <th>
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
-			                          <label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </th>
-			                      <th>Código</th>
-			                      <th>Equipamento</th>
-			                      <th>Status</th>
-			                      <th>Data da Solicitação</th>
-			                      <th>Ações</th>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>
-			                      	<Link to="/usuarios/ver-perfil/1">MND298D005</Link>
-			                      </td>
-			                      <td className="align-middle">PANalytical X'Pert PRO</td>
-			                      <td>
-			                      	{/*<div className="badge badge-success" data-toggle="tooltip" title="Aguardando autorização">1</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Aguardando aprovação do Laboratório">2</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Aguardando confirmação da entrega da amostra">3</div>*/}
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Na fila do equipamento">4</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Em processo de análise">5</div>
-			                      	{/*<div className="badge badge-danger" data-toggle="tooltip" title="Análise concluída. Aguardando recolhimento da amostra.">6</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Solicitação Finalizada">7</div>*/}
-			                      </td>
-			                      <td>20/01/2018</td>
-			                      <td>
-			                      	<Link to="/usuarios/editar/1" className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
-			                      </td>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-2" />
-			                          <label htmlFor="checkbox-2" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                     <td>
-			                      	<Link to="/usuarios/ver-perfil/1">MND298D006</Link>
-			                      </td>
-			                      <td className="align-middle">PANalytical X'Pert PRO</td>
-			                      <td>
-			                      	{/*<div className="badge badge-success" data-toggle="tooltip" title="Aguardando autorização">1</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Aguardando aprovação do Laboratório">2</div>*/}
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando confirmação da entrega da amostra">3</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Na fila do equipamento">4</div>
-			                      	{/*<div className="badge badge-danger" data-toggle="tooltip" title="Em processo de análise">5</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Análise concluída. Aguardando recolhimento da amostra.">6</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Solicitação Finalizada">7</div>*/}
-			                      </td>
-			                      <td>20/01/2018</td>
-			                      <td>
-			                      	<Link to="/usuarios/editar/1" className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
-			                      </td>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-4" />
-			                          <label htmlFor="checkbox-4" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>
-			                      	<Link to="/usuarios/ver-perfil/1">MND298D007</Link>
-			                      </td>
-			                      <td className="align-middle">PANalytical X'Pert PRO</td>
-			                      <td>
-			                      	{/*<div className="badge badge-success" data-toggle="tooltip" title="Aguardando autorização">1</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Aguardando aprovação do Laboratório">2</div>*/}
-			                      	<div className="badge badge-success" data-toggle="tooltip" title="Aguardando confirmação da entrega da amostra">3</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Na fila do equipamento">4</div>
-			                      	{/*<div className="badge badge-danger" data-toggle="tooltip" title="Em processo de análise">5</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Análise concluída. Aguardando recolhimento da amostra.">6</div>
-			                      	<div className="badge badge-danger" data-toggle="tooltip" title="Solicitação Finalizada">7</div>*/}
-			                      </td>
-			                      <td>20/01/2018</td>
-			                      <td>
-			                      	<Link to="/usuarios/editar/1" className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-			                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
-			                      </td>
-			                    </tr>
-			                  </tbody>
+			                	<thead>
+			                		<tr>
+										<th>
+											<div className="custom-checkbox custom-control">
+												<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
+												<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
+											</div>
+										</th>
+										<th>Código</th>
+										<th className="width-fixed">Status</th>
+										<th>Data da Solicitação</th>
+									</tr>
+			                	</thead>
+				                  <tbody>
+									
+									{solicitations.map((solicitation, i) => (
+									<tr key={i}>
+				                      <td className="p-0 text-center">
+				                      	<div className="custom-control custom-checkbox">
+	                                          <input type="checkbox" data-checkboxes="mygroup" onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
+	                                          <label className="custom-control-label" htmlFor={`checkbox-${i}`}>&nbsp;</label>
+	                                     </div>
+				                      </td>
+				                      <td className="weight">
+				                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
+				                      </td>
+				                      <td title={this.state.status.filter((value) => value.number == solicitation.status)[0].descripiton}>
+				                      {this.state.status.map((value, i) => {
+				                      	if (value.number >= 1) {		                      		
+					                      	return (
+					                      		<div className={((value.number <= solicitation.status) ? "badge badge-success" : "badge badge-danger")} key={`status-${i}`} data-toggle="tooltip" title={value.descripiton}>{(solicitation.status < 1) ? <i className="fa fa-times" aria-hidden="true"></i> : value.number}</div>
+					                      	)
+				                      	}
+				                      })}
+				                      </td>
+				                      <td>{new Date(solicitation.created_at).toLocaleString('pt-BR')}</td>
+				                      {/*
+				                      	<td>
+									  	<div className="btn-group" role="group" aria-label="Exemplo básico">
+											{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" title="Passar para a próxima fase" onClick={() => this.handleNextStep(solicitation.id)} className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+				                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-warning" title="Editar"> <i className="fas fa-edit"></i> </Link>
+				                      		<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(solicitation.name)}> <i className="fas fa-trash"></i> </button>
+										</div>
+				                      </td>
+				                      */}
+				                    </tr>
+
+									))}
+				                  </tbody>
 			                </table>
 			              </div>
 			            </div>
-					      <div className="card-footer text-right">
+					      	<div className="card-footer text-left">
+					      		<p>({solicitations.length})</p>
+					      	</div>
+					      {/*
+					      	<div className="card-footer text-right">
 					        <nav className="d-inline-block">
 					          <ul className="pagination mb-0">
 					            <li className="page-item disabled">
@@ -175,6 +400,8 @@ export default class usersProfile extends React.Component {
 					          </ul>
 					        </nav>
 					      </div>
+		
+					      */}
 			          </div>
 
 					</div>
@@ -217,7 +444,12 @@ export default class usersProfile extends React.Component {
 					          </div>
 					        </form>
 					      </div>
-					      <div className="card">
+					      {userSingle.access_level_slug == 'aluno' && this.renderProfessor() }
+					      {(userSingle.access_level_slug == 'professor' || userSingle.access_level_slug == 'administrador') && this.renderStudants() }
+					      {(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderCompany() }
+					      {userSingle.access_level_slug == 'empresa' && this.renderEmployees() }
+
+					      {/*<div className="card">
 				              <div className="card-header">
 				                <h4 className="d-inline">Alunos</h4>
 				                <div className="card-header-action">
@@ -231,7 +463,7 @@ export default class usersProfile extends React.Component {
 				                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
 				                      <label className="custom-control-label" htmlFor="cbx-1" />
 				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-4.png" alt="avatar" />
+				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-danger mb-1 float-right">Incompleto</div>
 				                      <h6 className="media-title"><Link to="#">Redesign header</Link></h6>
@@ -240,10 +472,10 @@ export default class usersProfile extends React.Component {
 				                  </li>
 				                  <li className="media">
 				                    <div className="custom-control custom-checkbox">
-				                      <input type="checkbox" className="custom-control-input" id="cbx-2" defaultChecked />
+				                      <input type="checkbox" className="custom-control-input" id="cbx-2" />
 				                      <label className="custom-control-label" htmlFor="cbx-2" />
 				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-5.png" alt="avatar" />
+				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-primary mb-1 float-right">Completo</div>
 				                      <h6 className="media-title"><Link to="#">Add a new component</Link></h6>
@@ -255,7 +487,7 @@ export default class usersProfile extends React.Component {
 				                      <input type="checkbox" className="custom-control-input" id="cbx-3" />
 				                      <label className="custom-control-label" htmlFor="cbx-3" />
 				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-2.png" alt="avatar" />
+				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-warning mb-1 float-right">Em progresso</div>
 				                      <h6 className="media-title"><Link to="#">Fix modal window</Link></h6>
@@ -267,7 +499,7 @@ export default class usersProfile extends React.Component {
 				                      <input type="checkbox" className="custom-control-input" id="cbx-4" />
 				                      <label className="custom-control-label" htmlFor="cbx-4" />
 				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-1.png" alt="avatar" />
+				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
 				                    <div className="media-body">
 				                      <div className="badge badge-pill badge-danger mb-1 float-right">Incompleto</div>
 				                      <h6 className="media-title"><Link to="#">Remove unwanted classes</Link></h6>
@@ -277,9 +509,9 @@ export default class usersProfile extends React.Component {
 				                </ul>
 				              </div>
 				              <div className="card-footer pt-0">
-				                {/*<button className="btn btn-primary">Aprovar</button>*/}
+				                <button className="btn btn-primary">Aprovar</button>
 				              </div>
-				            </div>
+				          </div>*/}
 					</div>
 				</div>
 			</Main>

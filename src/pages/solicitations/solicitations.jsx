@@ -235,20 +235,20 @@ export default class solicitations extends React.Component {
 			              <div className="card-header-form">
 							  {this.state.user.permission == true && 
 							
-								<div class="dropdown">
-								<a href="#" class="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</a>
-								<div class="dropdown-menu dropdown-menu-right">
-									<button onClick={() => this.handleFilter('Filtro')} class="dropdown-item has-icon">Filtro</button>
-									<button onClick={() => this.handleFilter('Abertas')} class="dropdown-item has-icon">Abertas</button>
-									<button onClick={() => this.handleFilter('DRX')} class="dropdown-item has-icon">DRX</button>
-									<button onClick={() => this.handleFilter('FRX')} class="dropdown-item has-icon">FRX</button>
-									<button onClick={() => this.handleFilter('1')} class="dropdown-item has-icon">1</button>
-									<button onClick={() => this.handleFilter('2')} class="dropdown-item has-icon">2</button>
-									<button onClick={() => this.handleFilter('3')} class="dropdown-item has-icon">3</button>
-									<button onClick={() => this.handleFilter('4')} class="dropdown-item has-icon">4</button>
-									<button onClick={() => this.handleFilter('5')} class="dropdown-item has-icon">5</button>
-									<button onClick={() => this.handleFilter('6')} class="dropdown-item has-icon">6</button>
-									<button onClick={() => this.handleFilter('7')} class="dropdown-item has-icon">7</button>
+								<div className="dropdown">
+								<a href="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</a>
+								<div className="dropdown-menu dropdown-menu-right">
+									<button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
+									<button onClick={() => this.handleFilter('Abertas')} className="dropdown-item has-icon">Abertas</button>
+									<button onClick={() => this.handleFilter('DRX')} className="dropdown-item has-icon">DRX</button>
+									<button onClick={() => this.handleFilter('FRX')} className="dropdown-item has-icon">FRX</button>
+									<button onClick={() => this.handleFilter('1')} className="dropdown-item has-icon">1</button>
+									<button onClick={() => this.handleFilter('2')} className="dropdown-item has-icon">2</button>
+									<button onClick={() => this.handleFilter('3')} className="dropdown-item has-icon">3</button>
+									<button onClick={() => this.handleFilter('4')} className="dropdown-item has-icon">4</button>
+									<button onClick={() => this.handleFilter('5')} className="dropdown-item has-icon">5</button>
+									<button onClick={() => this.handleFilter('6')} className="dropdown-item has-icon">6</button>
+									<button onClick={() => this.handleFilter('7')} className="dropdown-item has-icon">7</button>
 								</div>
 								</div>
 							}
