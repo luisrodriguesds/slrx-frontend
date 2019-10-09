@@ -121,7 +121,7 @@ export default class sampleSingle extends React.Component {
 			                    </p>
 			                    <p>
 			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">{solicitation.created_at}</span><br />
-			                        {solicitation.received_date != null && <React.Fragment> <strong>Data do Recebimento: </strong><span id="detalhe_DataRecebimento">{new Date(solicitation.received_date).toLocaleString('pt-BR')}</span> </React.Fragment>}
+			                        {solicitation.received_date != null && <React.Fragment> <strong>Data do Recebimento: </strong><span id="detalhe_DataRecebimento">{new Date(solicitation.received_date).toLocaleString('pt-BR')}</span> <br /> </React.Fragment>}
 			                        {solicitation.conclusion_date != null && <React.Fragment> <strong>Data da Conclusão: </strong><span id="detalhe_DataConclusao">{new Date(solicitation.conclusion_date).toLocaleString('pt-BR')}</span> </React.Fragment>}
 			                    </p>
 			                    <p>

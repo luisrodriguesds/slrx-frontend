@@ -6,7 +6,7 @@ import store from '../../store/store';
 import {getUserById, getProfessorStudant, searchSolicitationByUser} from '../../services/api';
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
-
+import ModalProposta from '../../components/events/ModalProposta';
 export default class usersProfile extends React.Component {
 	state = {
 		userSingle:{},
@@ -29,6 +29,8 @@ export default class usersProfile extends React.Component {
 		studants:[],
 		company:null,
 		employees:[],
+		showProposta:false,
+		showOrdem:false,
 		user_id:'',
 		loading:false,
 	  	loadpage:true
@@ -113,6 +115,14 @@ export default class usersProfile extends React.Component {
 		let solicitations = res.data;
 		this.setState({solicitations});
 	}
+
+	handleCloseProposta = () => this.setState({showProposta:false});
+	handleShowProposta = () => {
+		this.setState({showProposta:true})
+		console.log(this.state);
+	};
+
+	
 
 	renderProfessor(){
 		const {professor} = this.state;
@@ -225,7 +235,7 @@ export default class usersProfile extends React.Component {
 		return (
 			<div className="card">
               <div className="card-header">
-                <h4 className="d-inline">Alunos</h4>
+                <h4 className="d-inline">Funcionários</h4>
                 {/*<div className="card-header-action">
                   <Link to="#" className="btn btn-primary">Ver todas</Link>
                 </div>*/}
@@ -310,7 +320,7 @@ export default class usersProfile extends React.Component {
 			              <div className="card-header-form">
 			                	{(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro' || userSingle.access_level_slug == 'empresa') && 
 			                		<div className="option-group">
-			                			<Link to="/usuarios/cadastro" title="Gerar Proposta pelo LRX" className="btn btn-primary ml-1 mr-1">Proposta LRX {/*<i className="fas fa-edit ml-1"></i>*/}</Link>
+										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} />
 				            			<button title="Gerar Ordem de Serviço pela Astef" className="btn btn-danger mr-1">Ordem de Serviço {/*<i className="fas fa-trash"></i>*/}</button>
 			                		</div>
 			                	}
@@ -449,69 +459,6 @@ export default class usersProfile extends React.Component {
 					      {(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderCompany() }
 					      {userSingle.access_level_slug == 'empresa' && this.renderEmployees() }
 
-					      {/*<div className="card">
-				              <div className="card-header">
-				                <h4 className="d-inline">Alunos</h4>
-				                <div className="card-header-action">
-				                  <Link to="#" className="btn btn-primary">Ver todas</Link>
-				                </div>
-				              </div>
-				              <div className="card-body">             
-				                <ul className="list-unstyled list-unstyled-border">
-				                  <li className="media">
-				                    <div className="custom-control custom-checkbox">
-				                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
-				                      <label className="custom-control-label" htmlFor="cbx-1" />
-				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
-				                    <div className="media-body">
-				                      <div className="badge badge-pill badge-danger mb-1 float-right">Incompleto</div>
-				                      <h6 className="media-title"><Link to="#">Redesign header</Link></h6>
-				                      <div className="text-small text-muted">Alfa Zulkarnain <div className="bullet" /> <span className="text-primary">Now</span></div>
-				                    </div>
-				                  </li>
-				                  <li className="media">
-				                    <div className="custom-control custom-checkbox">
-				                      <input type="checkbox" className="custom-control-input" id="cbx-2" />
-				                      <label className="custom-control-label" htmlFor="cbx-2" />
-				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
-				                    <div className="media-body">
-				                      <div className="badge badge-pill badge-primary mb-1 float-right">Completo</div>
-				                      <h6 className="media-title"><Link to="#">Add a new component</Link></h6>
-				                      <div className="text-small text-muted">Serj Tankian <div className="bullet" /> 4 Min</div>
-				                    </div>
-				                  </li>
-				                  <li className="media">
-				                    <div className="custom-control custom-checkbox">
-				                      <input type="checkbox" className="custom-control-input" id="cbx-3" />
-				                      <label className="custom-control-label" htmlFor="cbx-3" />
-				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
-				                    <div className="media-body">
-				                      <div className="badge badge-pill badge-warning mb-1 float-right">Em progresso</div>
-				                      <h6 className="media-title"><Link to="#">Fix modal window</Link></h6>
-				                      <div className="text-small text-muted">Ujang Maman <div className="bullet" /> 8 Min</div>
-				                    </div>
-				                  </li>
-				                  <li className="media">
-				                    <div className="custom-control custom-checkbox">
-				                      <input type="checkbox" className="custom-control-input" id="cbx-4" />
-				                      <label className="custom-control-label" htmlFor="cbx-4" />
-				                    </div>
-				                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
-				                    <div className="media-body">
-				                      <div className="badge badge-pill badge-danger mb-1 float-right">Incompleto</div>
-				                      <h6 className="media-title"><Link to="#">Remove unwanted classes</Link></h6>
-				                      <div className="text-small text-muted">Farhan A Mujib <div className="bullet" /> 21 Min</div>
-				                    </div>
-				                  </li>
-				                </ul>
-				              </div>
-				              <div className="card-footer pt-0">
-				                <button className="btn btn-primary">Aprovar</button>
-				              </div>
-				          </div>*/}
 					</div>
 				</div>
 			</Main>

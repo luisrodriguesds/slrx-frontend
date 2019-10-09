@@ -246,7 +246,7 @@ class Register extends Component {
         </div>
         <div className="row">
             <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                <label htmlFor="company_phone">Fone <Red /> </label>
+                <label htmlFor="company_phone">Fone <Red />  <i className="fab fa-whatsapp"></i> </label>
                 <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" name="company_phone" value={this.state.company.company_phone} onChange={(e) => this._onChange(e) } />
                 <div className="invalid-feedback">
                   como? Não entendi.
@@ -553,7 +553,7 @@ class Register extends Component {
                                   </div>
                                   <div className="row">
                                       <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-                                          <label htmlFor="phone1" className="d-block">Fone <Red /></label>
+                                          <label htmlFor="phone1" className="d-block">Fone <Red /> <i title="Whatsapp" style={{fontSize:'16px', color:'green'}} className="fab fa-whatsapp"></i></label>
                                           <InputMask id="phone1" type="text" className="form-control" name="phone1" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
                                           <div className="invalid-feedback">
                                             como? Não entendi.
