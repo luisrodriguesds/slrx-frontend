@@ -31,6 +31,7 @@ export default class usersProfile extends React.Component {
 		employees:[],
 		showProposta:false,
 		showOrdem:false,
+		propostas:[],
 		user_id:'',
 		loading:false,
 	  	loadpage:true
@@ -265,6 +266,42 @@ export default class usersProfile extends React.Component {
 		)
 	}
 
+	renderPropostas(){
+		const {propostas} = this.state;
+
+		return (
+			<div className="card">
+              <div className="card-header">
+                <h4 className="d-inline">Propostas</h4>
+                {/*<div className="card-header-action">
+                  <Link to="#" className="btn btn-primary">Ver todas</Link>
+                </div>*/}
+              </div>
+              <div className="card-body">             
+                <ul className="list-unstyled list-unstyled-border">
+                {propostas.map((employee,i) => (
+                  <li className="media" key={i}>
+                    <div className="custom-control custom-checkbox">
+                      <input type="checkbox" className="custom-control-input" id="cbx-1" />
+                      <label className="custom-control-label" htmlFor="cbx-1" />
+                    </div>
+                    {/*<img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />*/}
+                    <div className="media-body">
+                      <div className={`badge badge-pill badge-${employee.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{employee.status == 1 ? 'Ativo' : 'Inativo'}</div>
+                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${employee.id}`}>{employee.name}</a></h6>
+                      <div className="text-small text-muted">{employee.phone1} <div className="bullet" /> {employee.email}</div>
+                    </div>
+                  </li>
+                ))}
+                </ul>
+              </div>
+              <div className="card-footer pt-0">
+                {/*<button className="btn btn-primary">Aprovar</button>*/}
+              </div>
+          </div>
+		)
+	}
+
 
 	render() {
 		const {userSingle} = this.state;
@@ -320,8 +357,7 @@ export default class usersProfile extends React.Component {
 			              <div className="card-header-form">
 			                	{(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro' || userSingle.access_level_slug == 'empresa') && 
 			                		<div className="option-group">
-										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} />
-				            			<button title="Gerar Ordem de Serviço pela Astef" className="btn btn-danger mr-1">Ordem de Serviço {/*<i className="fas fa-trash"></i>*/}</button>
+										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
 			                		</div>
 			                	}
 			                <form>
@@ -458,6 +494,7 @@ export default class usersProfile extends React.Component {
 					      {(userSingle.access_level_slug == 'professor' || userSingle.access_level_slug == 'administrador') && this.renderStudants() }
 					      {(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderCompany() }
 					      {userSingle.access_level_slug == 'empresa' && this.renderEmployees() }
+					      {(userSingle.access_level_slug == 'empresa' || userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderPropostas() }
 
 					</div>
 				</div>

@@ -1,10 +1,12 @@
 import {Modal, Button} from 'react-bootstrap';
-import React, { useState, useEffect}  from 'react';
+import React, { useState}  from 'react';
 
-import {propostaSolicitation} from '../../services/api';
+import {propostaSolicitation, postProposta} from '../../services/api';
 
 function ModalProposta(props) {
     const [show, setShow] = useState(false);
+    const [sendProp, setSendProp] = useState(true);
+    const [proposta, setProposta] = useState({url:null, user_id:null});
     const [state, setState] = useState({
       preparacaoDeAmostras:null,
       qtdPreparacaoDeAmostras:null,
@@ -21,6 +23,7 @@ function ModalProposta(props) {
       dataPrazo:null,
       observacoesProposta:null
     });
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const onChange = (e) => {
@@ -28,7 +31,7 @@ function ModalProposta(props) {
       const data = {...state};
       data[e.target.name] = value;
       setState(data)
-      console.log(state);
+      // console.log(state);
     }
 
     const handleSubmit = async () => {
@@ -40,20 +43,37 @@ function ModalProposta(props) {
         return false;
       }
 
-      const data = { ...state, solicitations:props.solicitations};
+      let data = { ...state, solicitations:props.solicitations};
+      console.log(data)
        try {
-         const res = await propostaSolicitation(data);
-         console.log(res);
-
+          data = encodeURIComponent(JSON.stringify(data)); 
+          // const res = await propostaSolicitation(data);
+          window.open(`http://127.0.0.1:3333/api/solictation/proposta?data=${data}`, '_blank'); //Mudar isso ai
+          setProposta({url:data, user_id:props.user_id});
+          setSendProp(false);
+          // console.log(proposta);
        } catch (error) {
          
        }
 
     }
-  
-    useEffect(() => {
-      console.log(props);
-    }, []);
+
+    const handleSendProposta = async () => {
+      try{
+        const res = await postProposta(proposta);
+        if (res.data.error ==true) {
+          alert(`${res.data.message}`);
+        }else{
+          alert(`${res.data.message}`);
+          setSendProp(true);
+          setShow(false);
+        }
+
+      }catch(error){
+
+      }
+      console.log(proposta);
+    }
     
     return (
       <React.Fragment>
@@ -159,6 +179,9 @@ function ModalProposta(props) {
             </Button>
             <Button variant="primary" onClick={handleSubmit}>
               Gerar
+            </Button>
+            <Button variant="danger" hidden={sendProp} onClick={handleSendProposta}>
+              Enviar Proposta
             </Button>
           </Modal.Footer>
         </Modal>
