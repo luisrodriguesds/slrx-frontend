@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 import Main from '../../components/template/Main';
 import store from '../../store/store';
-import {getUserById, getProfessorStudant, searchSolicitationByUser} from '../../services/api';
+import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta} from '../../services/api';
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 import ModalProposta from '../../components/events/ModalProposta';
@@ -52,24 +52,24 @@ export default class usersProfile extends React.Component {
 			const {id} = this.props.match.params;
 			const res = await getUserById(id);
 
-			let obs = ``, studants;
+			let obs = ``, studants, propostas;
 			switch(res.data.access_level_slug){
 				case "aluno":
 					obs = `${res.data.academic.laboratory}`;
 					let professor = await getProfessorStudant(res.data.id);
-					this.setState({professor:professor.data})
-					console.log(professor);
+					this.setState({professor:professor.data});
 				break;
 				case "professor":
 					obs = `${res.data.academic.laboratory}`;
 					studants = await getProfessorStudant(null,	res.data.id);
 					this.setState({studants:studants.data});
-					console.log(studants);
 				break;
 				case "tecnico":
 				case "financeiro":
 					obs = `${res.data.company[0].fantasy_name}`;
-					this.setState({company:res.data.company[0]});
+					propostas = await getProposta(res.data.id);
+					console.log(propostas)
+					this.setState({company:res.data.company[0], propostas:propostas.data});
 				break;
 				case "autonomo":
 				case "operador":
@@ -83,7 +83,8 @@ export default class usersProfile extends React.Component {
 				break;
 				case "empresa":
 					obs = `${res.data.cnpj}`;
-					this.setState({employees:res.data.employees});
+					propostas = await getProposta(res.data.employees[0].id);
+					this.setState({employees:res.data.employees, propostas:propostas.data});
 				break;
 			}
 
@@ -268,7 +269,7 @@ export default class usersProfile extends React.Component {
 
 	renderPropostas(){
 		const {propostas} = this.state;
-
+		console.log(propostas)
 		return (
 			<div className="card">
               <div className="card-header">
@@ -279,17 +280,20 @@ export default class usersProfile extends React.Component {
               </div>
               <div className="card-body">             
                 <ul className="list-unstyled list-unstyled-border">
-                {propostas.map((employee,i) => (
+                {propostas.map((proposta,i) => (
                   <li className="media" key={i}>
                     <div className="custom-control custom-checkbox">
                       <input type="checkbox" className="custom-control-input" id="cbx-1" />
                       <label className="custom-control-label" htmlFor="cbx-1" />
                     </div>
-                    {/*<img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />*/}
+                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
                     <div className="media-body">
-                      <div className={`badge badge-pill badge-${employee.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{employee.status == 1 ? 'Ativo' : 'Inativo'}</div>
-                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${employee.id}`}>{employee.name}</a></h6>
-                      <div className="text-small text-muted">{employee.phone1} <div className="bullet" /> {employee.email}</div>
+                      <div className={`badge badge-pill badge-${proposta.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{proposta.status == 1 ? 'Ativo' : 'Inativo'}</div>
+                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${proposta.user.id}`}>Por: {proposta.user.name}</a></h6> { new Date(proposta.created_at).toLocaleString('pt-BR')}
+                  {/*TROCAR ESSE LINK*/} 
+                  	<div className="text-small text-muted"> 
+                  		<button variant="danger" className="btn btn-danger ml-1 mr-1" onClick={() => window.open(`http://127.0.0.1:3333/api/solictation/ordem?data=${proposta.url}`, '_blank') }> Ordem de Serviço  </button>  
+                  		<button className="btn btn-primary ml-1 mr-1" onClick={() => window.open(`http://127.0.0.1:3333/api/solictation/proposta?data=${proposta.url}`, '_blank') }> Ver Proposta </button> </div>
                     </div>
                   </li>
                 ))}
