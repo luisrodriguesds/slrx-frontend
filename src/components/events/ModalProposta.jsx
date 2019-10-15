@@ -65,6 +65,7 @@ function ModalProposta(props) {
           alert(`${res.data.message}`);
         }else{
           alert(`${res.data.message}`);
+          window.location=window.location.href; //Usar Redux depois para informar que a proposta deve aparecer em tela
           setSendProp(true);
           setShow(false);
         }
