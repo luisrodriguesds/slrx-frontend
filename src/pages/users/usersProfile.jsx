@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 
 import Main from '../../components/template/Main';
 import store from '../../store/store';
-import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta} from '../../services/api';
+import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta, deleteProposta} from '../../services/api';
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 import ModalProposta from '../../components/events/ModalProposta';
@@ -68,7 +68,6 @@ export default class usersProfile extends React.Component {
 				case "financeiro":
 					obs = `${res.data.company[0].fantasy_name}`;
 					propostas = await getProposta(res.data.id);
-					console.log(propostas)
 					this.setState({company:res.data.company[0], propostas:propostas.data});
 				break;
 				case "autonomo":
@@ -79,7 +78,6 @@ export default class usersProfile extends React.Component {
 					// obs = `${res.data.academic.laboratory}`;
 					studants = await getProfessorStudant(null,	res.data.id);
 					this.setState({studants:studants.data});
-					console.log(studants);
 				break;
 				case "empresa":
 					obs = `${res.data.cnpj}`;
@@ -118,11 +116,28 @@ export default class usersProfile extends React.Component {
 		this.setState({solicitations});
 	}
 
-	handleCloseProposta = () => this.setState({showProposta:false});
-	handleShowProposta = () => {
-		this.setState({showProposta:true})
-		console.log(this.state);
-	};
+	deleteProposta = async (id) => {
+		if (window.confirm("Deseja excluir esta proposta?")) {
+			try {
+				const res = await deleteProposta(id);
+				if (res.data.error == true) {
+					alert(res.data.message)
+				}else{
+					alert(res.data.message);
+					let propostas;
+					if (this.state.employees.length > 0) {
+						propostas = await getProposta(this.state.employees[0].id);						
+					}else{
+						propostas = await getProposta(this.props.match.params.id);
+					}
+
+					this.setState({propostas:propostas.data});
+				}
+			} catch (error) {
+				
+			}
+		}
+	}
 
 	
 
@@ -291,9 +306,11 @@ export default class usersProfile extends React.Component {
                       <div className={`badge badge-pill badge-${proposta.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{proposta.status == 1 ? 'Ativo' : 'Inativo'}</div>
                       <h6 className="media-title"><a href={`/usuarios/ver-perfil/${proposta.user.id}`}>Por: {proposta.user.name}</a></h6> { new Date(proposta.created_at).toLocaleString('pt-BR')}
                   {/*TROCAR ESSE LINK*/} 
-                  	<div className="text-small text-muted"> 
-                  		<button variant="danger" className="btn btn-danger ml-1 mr-1" onClick={() => window.open(`http://127.0.0.1:3333/api/solictation/ordem?data=${proposta.url}`, '_blank') }> Ordem de Serviço  </button>  
-                  		<button className="btn btn-primary ml-1 mr-1" onClick={() => window.open(`http://127.0.0.1:3333/api/solictation/proposta?data=${proposta.url}`, '_blank') }> Ver Proposta </button> </div>
+						<div className="text-small text-muted"> 
+							<a href={`http://127.0.0.1:3333/api/solictation/ordem?data=${proposta.url}`} className="mr-2 text-warning" target="_blank">Ordem de Serviço</a>
+							<a href={`http://127.0.0.1:3333/api/solictation/proposta?data=${proposta.url}`} className="mr-2 color-primary" target="_blank">Ver Proposta</a>
+							<a onClick={() => this.deleteProposta(proposta.id)} className="mr-2 text-danger">Excluir</a>
+						</div>
                     </div>
                   </li>
                 ))}

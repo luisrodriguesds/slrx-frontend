@@ -49,6 +49,7 @@ export const propostaSolicitation = (data) => api.get('/solictation/proposta?dat
 //Documents
 export const postProposta = (data) => api.post('/documents/proposta', data);
 export const getProposta = (user_id) => api.get('/documents/proposta?user_id='+user_id);
+export const deleteProposta = (id) => api.delete('/documents/proposta?id='+id);
 
 
 export default api;
