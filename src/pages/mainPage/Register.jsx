@@ -167,6 +167,7 @@ class Register extends Component {
       const data = {...this.state.data};
       data[e.target.name] = value;
       this.setState({data});
+      console.log(this.state.data)
     }
 
     onSubmit = async e => {
@@ -582,7 +583,7 @@ class Register extends Component {
                                       </div>
                                       <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                                           <label htmlFor="password2" className="d-block">Confirmar Senha <Red /></label>
-                                          <input id="password2" type="password" className="form-control" name="password-confirm" onChange={(e) => this._onChange(e) } />
+                                          <input id="password2" type="password" className="form-control" name="password_confirm" onChange={(e) => this._onChange(e) } />
                                       </div>
                                   </div>
                                    {(this.state.tipoSlug == 'aluno') ? this.renderStudent() : ""} 

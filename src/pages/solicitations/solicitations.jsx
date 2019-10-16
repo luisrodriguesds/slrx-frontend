@@ -325,8 +325,15 @@ export default class solicitations extends React.Component {
 			                </table>
 			              </div>
 			            </div>
-					      <div className="card-footer text-right">
-					        {this.renderPaginate()}
+					      <div className="card-footer">
+							  <div className="row">
+								  <div className="col-6 text-left">
+								  	({this.state.solicitations.data.length}/{this.state.solicitations.total})
+								  </div>
+								  <div className="col-6 text-right">
+					        		{this.renderPaginate()}
+								  </div>
+							  </div>
 					      </div>
 			          </div>
 			        </div>

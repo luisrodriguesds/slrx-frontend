@@ -12,7 +12,9 @@ const Choose = () => {
                 <div className="row justify-content-md-center mb-5">
                     <div className="col-12 col-sm-12 col-lg-7">
                         <div className="login-brand">
-                          <img src={Logo} alt="logo" width="300" className="" />
+                          <Link to="/" >
+                            <img src={Logo} alt="logo" width="300" className="" />
+                          </Link>
                         </div>
                         <div className="card card-primary">
                             <div className="card-header">
