@@ -84,8 +84,8 @@ export default class editAccount extends React.Component {
 				this.setState({data:{address_id:this.state.user.address.id, ...this.state.data}});
 			}
 		}
-		this.setState({loadpage:false});		
-		// console.log(this.state);
+		this.setState({loadpage:false, data:{...this.state.data, status:this.state.user.status}});		
+		console.log(user);
 	}
 
 	handleCNPJ = async (e) => {
@@ -541,6 +541,62 @@ export default class editAccount extends React.Component {
 											<label htmlFor="password" className="d-block">Tipo de Usuário <Red /></label>
 											<input id="access_level" type="text" className="form-control" name="access_level" defaultValue={(this.state.user.access_level_slug == 'tecnico' || this.state.user.access_level_slug == 'financeiro') ? 'Empresa' : this.state.user.access_level} disabled />
 	                                    </div>
+	                                  </div>
+									  <div className="row">
+	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+	                                          <label htmlFor="confirm" className="d-block">Confirmação <Red /></label>
+	                                          <select className="form-control" name="confirm" value={this.state.data.confirm} required onChange={(e) => this._onChange(e) }>
+	                                            <option value="">Selecione a confirmação ...</option>
+	                                            <option value={1}>Confirmado</option>
+	                                            <option value={0}>Não Confirmado</option>
+	                                          </select>
+											  <div className="invalid-feedback">
+	                                          </div>
+	                                      </div>
+	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+	                                          <label htmlFor="confirm_email" className="d-block">Confirmação do Email <Red /></label>
+											  <select className="form-control" name="confirm_email" value={this.state.data.confirm_email} required onChange={(e) => this._onChange(e) }>
+	                                            <option value="">Selecione a confirmação ...</option>
+	                                            <option value={1}>Confirmado</option>
+	                                            <option value={0}>Não Confirmado</option>
+	                                          </select>
+	                                      </div>
+	                                  </div>
+									  <div className="row">
+	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+	                                          <label htmlFor="drx_permission" className="d-block">Permissão DRX <Red /></label>
+	                                          <select className="form-control" name="drx_permission" value={this.state.data.drx_permission} required onChange={(e) => this._onChange(e) }>
+	                                            <option value="">Selecione a Permissão ...</option>
+	                                            <option value={1}>Permitido</option>
+	                                            <option value={0}>Não Permitido</option>
+	                                          </select>
+											  <div className="invalid-feedback">
+	                                          </div>
+	                                      </div>
+	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+	                                          <label htmlFor="frx_permission" className="d-block">Permissão FRX <Red /></label>
+											  <select className="form-control" name="frx_permission" value={this.state.data.frx_permission} required onChange={(e) => this._onChange(e) }>
+											  	<option value="">Selecione a Permissão ...</option>
+	                                            <option value={1}>Permitido</option>
+	                                            <option value={0}>Não Permitido</option>
+	                                          </select>
+	                                      </div>
+	                                  </div>
+									  <div className="row">
+	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+	                                          <label htmlFor="status" className="d-block">Status do Usuário <Red /></label>
+	                                          <select className="form-control" name="status" value={this.state.data.status} required onChange={(e) => this._onChange(e) }>
+	                                            <option value="">Selecione o status ...</option>
+	                                            <option value={1}>Ativo</option>
+	                                            <option value={0}>Inativo</option>
+	                                          </select>
+											  <div className="invalid-feedback">
+	                                          </div>
+	                                      </div>
+	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+	                                          <label htmlFor="limit" className="d-block">Limite de Amostras <Red /></label>
+											  <input id="limit" type="text" className="form-control" value={this.state.data.limit} name="limit" onChange={(e) => this._onChange(e) } />
+	                                      </div>
 	                                  </div>
 									  <div className="form-group">
 	                                      <div className="custom-control custom-checkbox">

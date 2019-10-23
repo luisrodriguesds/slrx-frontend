@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import Main from '../../components/template/Main';
-import {getUsers, searchUsers, filterUsers} from '../../services/api';
+import {getUsers, searchUsers, filterUsers, deleteUser, deleteUserAll} from '../../services/api';
 import LoadingPage from '../../components/events/LoadingPage';
 import store from '../../store/store';
 
@@ -47,6 +47,64 @@ export default class users extends React.Component {
 		this.setState({users});
 
 		console.log(res, filter);
+	}
+
+	handleDelete = async (id) => {
+		if (window.confirm(`Você deseja desativar este usuário?`)) {
+			try {
+				const res = await deleteUser(id);
+				window.location=window.location.href;
+
+				//O QUE ESTÁ ACONTECENDO COM ESSE PEDAÇO DE CÓDIGO, NÃO ESTÁ FUNCIONANDO APÓS A EXECUÇÃO DO deleteUser
+				// console.log(res)
+				alert(`${res.error.message}`);
+				const users = await getUsers();
+				this.setState({users:users.data});
+
+				if (res.data.error == true) {
+					alert(`${res.data.message}`)
+				console.log(res.data.message)
+
+				}else{
+					alert(`${res.error.message}`);
+					const users = await getUsers();
+					this.setState({users:users.data});
+					console.log(res.data.message)
+
+				}
+			} catch (error) {
+				
+			}
+		}
+	}
+
+	handleDeleteAll = async () => {
+		if (this.state.selectUsers.length == 0) {
+			alert(`Você precisa selecionar alguma amostra.`);
+		}else{
+			if (window.confirm(`Você tem certeza que deseja desativar este(s) usuário(s)`)) {
+				await deleteUserAll(this.state.selectUsers);
+				alert(`Ação solicitada com sucesso!`);
+				window.location=window.location.href;
+
+			}
+		}
+	}
+
+	handleCheckbox = (id) => {
+		//Não consegue desmarcar enquanto todos estão marcados
+		let {selectUsers} = this.state;
+		//Isolate sections
+	    let check = selectUsers.filter((v,i) => selectUsers.indexOf(id) === i);
+    	if(check.length >= 1){
+	    	selectUsers = selectUsers.filter((v,i) => selectUsers.indexOf(id) !== i);
+	    	this.setState({selectUsers});
+	    	console.log(selectUsers);
+    	}else{		
+	    	selectUsers.push(id);
+		    this.setState({selectUsers});
+	    	console.log(selectUsers);
+    	}
 	}
 
 	renderPaginate(){
@@ -110,7 +168,7 @@ export default class users extends React.Component {
 		                    </div>
 			                <div className="option-group">
 			                	<Link to="/usuarios/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
+				            	<button data-toggle="tooltip" title="Excluir" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
 			                </div>
 			                <form>
 			                  <div className="input-group">
@@ -144,8 +202,8 @@ export default class users extends React.Component {
 				                    <tr key={i}>
 				                      <td className="p-0 text-center">
 				                        <div className="custom-checkbox custom-control">
-				                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-				                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+				                          <input type="checkbox" data-checkboxes="mygroup" onClick={() => this.handleCheckbox(user.id)} className="custom-control-input" id={`checkbox-${user.id}`} />
+				                          <label htmlFor={`checkbox-${user.id}`} className="custom-control-label">&nbsp;</label>
 				                        </div>
 				                      </td>
 				                      <td>
@@ -160,7 +218,7 @@ export default class users extends React.Component {
 				                      	<div className="btn-group" role="group" aria-label="Exemplo básico">
 					                      	<Link to={`/usuarios/ver-perfil/${user.id}`} className="btn btn-dark mr-1" title="Ver Amostras"> <i className="fas fa-vial"></i> </Link>
 					                      	<Link to={`/usuarios/editar/${user.id}`} className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
-					                      	<button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>
+					                      	<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(user.id)}> <i className="fas fa-trash"></i> </button>
 				                      	</div>
 				                      </td>
 				                    </tr>

@@ -23,6 +23,8 @@ export const getUserById = (id) => api.get('/user/show?id='+id);
 export const getUsers = () => api.get('/user/index');
 export const searchUsers = (filter) => api.get('/user/filter?filter='+filter);
 export const filterUsers = (filter) => api.get('/user/filterby?filter='+filter);
+export const deleteUser = (id) => api.delete('/user/delete?id='+id);
+export const deleteUserAll = (array) => api.delete('/user/delete-all', { data: { array } });
 
 export const getProfessorStudant = (studant_id, professor_id=null) => api.get('/professor-studant/show?studant_id='+studant_id+'&professor_id='+professor_id);
 
