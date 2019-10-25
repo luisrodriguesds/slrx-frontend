@@ -193,8 +193,15 @@ export default class solicitations extends React.Component {
 		}
 
 		let pages = [];
-		for (let i = 1; i <= lastPage; i++) {
-			pages.push(i);
+		if (lastPage > 5) {
+			for (let i = 1; i <= 5; i++) {
+				pages.push(i);
+			}
+			pages.push(lastPage);
+		}else{
+			for (let i = 1; i <= lastPage; i++) {
+				pages.push(i);
+			}
 		}
 
 		return (
@@ -300,7 +307,7 @@ export default class solicitations extends React.Component {
 			                      <td className="weight">
 			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
 			                      </td>
-			                      <td className="align-middle">{solicitation.equipment.name}</td>
+			                      <td className="align-middle">{solicitation.equipment == null ? '' : solicitation.equipment.name}</td>
 			                      <td title={this.state.status.filter((value) => value.number == solicitation.status)[0].descripiton}>
 			                      {this.state.status.map((value, i) => {
 			                      	if (value.number >= 1) {		                      		
@@ -328,7 +335,7 @@ export default class solicitations extends React.Component {
 					      <div className="card-footer">
 							  <div className="row">
 								  <div className="col-6 text-left">
-								  	({this.state.solicitations.data.length}/{this.state.solicitations.total})
+								  	({this.state.solicitations.data.length*(this.state.solicitations.page)}/{this.state.solicitations.total})
 								  </div>
 								  <div className="col-6 text-right">
 					        		{this.renderPaginate()}

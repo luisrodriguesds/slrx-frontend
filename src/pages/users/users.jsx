@@ -9,7 +9,7 @@ import store from '../../store/store';
 export default class users extends React.Component {
 	state = {
 		user:{},
-		users:{data:[], lastPage:'', page:'', total:'', perPage:''},
+		users:{data:[], lastPage:'', page:1, total:'', perPage:''},
 		selectUsers:[],
 		filter:'Filtro',
 		loading:false,
@@ -105,6 +105,19 @@ export default class users extends React.Component {
 		    this.setState({selectUsers});
 	    	console.log(selectUsers);
     	}
+	}
+
+	handlePaginate = async (page) => {
+		try {
+			const res = await getUsers(page);
+			let users = res.data;
+			
+			this.setState({users});
+			window.scroll(0,0);
+			
+		} catch (error) {
+			alert(`Algo de errado aconteceu, contate o suporte técnico.`);
+		}
 	}
 
 	renderPaginate(){
@@ -230,7 +243,7 @@ export default class users extends React.Component {
 						<div className="card-footer">
 							  <div className="row">
 								  <div className="col-6 text-left">
-								  	({this.state.users.data.length}/{this.state.users.total})
+								  	({this.state.users.data.length*(this.state.users.page == null ? 1 : this.state.users.page)}/{this.state.users.total})
 								  </div>
 								  <div className="col-6 text-right">
 					        		{this.renderPaginate()}

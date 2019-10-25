@@ -55,12 +55,12 @@ export default class usersProfile extends React.Component {
 			let obs = ``, studants, propostas;
 			switch(res.data.access_level_slug){
 				case "aluno":
-					obs = `${res.data.academic.laboratory}`;
+					obs = (res.data.academic == null ? '' : `${res.data.academic.laboratory}`);
 					let professor = await getProfessorStudant(res.data.id);
 					this.setState({professor:professor.data});
 				break;
 				case "professor":
-					obs = `${res.data.academic.laboratory}`;
+					obs = (res.data.academic == null ? '' : `${res.data.academic.laboratory}`);
 					studants = await getProfessorStudant(null,	res.data.id);
 					this.setState({studants:studants.data});
 				break;

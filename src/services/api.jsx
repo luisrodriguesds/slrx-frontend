@@ -20,7 +20,7 @@ export const userUpdate = (update) => api.put('/user', update);
 export const changePass = (update) => api.put('/user/change-pass', update);
 export const getUser = () => api.get('/user/token');
 export const getUserById = (id) => api.get('/user/show?id='+id);
-export const getUsers = () => api.get('/user/index');
+export const getUsers = (page=null) => api.get('/user/index?page='+page);
 export const searchUsers = (filter) => api.get('/user/filter?filter='+filter);
 export const filterUsers = (filter) => api.get('/user/filterby?filter='+filter);
 export const deleteUser = (id) => api.delete('/user/delete?id='+id);
