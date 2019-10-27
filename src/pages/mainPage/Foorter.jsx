@@ -15,7 +15,7 @@ const Foorter = () => {
                 <div className="footer-logo">
                   <a href="#"><img src={Logo} alt="" /></a>
                   <p style={{marginTop: '15px'}}>
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi doloribus beatae sunt natus assumenda? Cum totam modi voluptatum eaque eos eveniet quae!                              
+                    Desde 1996 o coordenador do Laboratório de raios-X vem se dedicando na formação de pessoal qualificado no uso das técnicas de difração com o uso de fonte convencional de raios-X e de luz síncrotron.
                   </p>
                   <ol className="flat-list">
                     <li><a href="#" target="_blank"><i className="fab fa-facebook-f" /></a></li>
@@ -58,8 +58,8 @@ const Foorter = () => {
                     </li>
                     <li>
                       <p>
-                          Fechado: <br />
-                          Sábado e Domundo            
+                          <strong>Endereço:</strong> <br />
+                          Departamento de Fisica, Universidade Federal do Ceara – UFC - Ac. Público, 926 - Pici, Fortaleza - CE, 60440-970           
                       </p>
                     </li>
                   </ul>

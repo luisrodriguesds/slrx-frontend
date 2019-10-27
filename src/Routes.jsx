@@ -64,6 +64,8 @@ function Routes(props){
       	<PrivateRoute path='/usuarios/editar/:id' component={UserEdit} />
         <PrivateRoute path='/usuarios/ver-perfil/:id' component={UsersProfile} />
 
+      	<PrivateRoute exact path='/meus-alunos' component={Users} />
+
         <PrivateRoute exact path='/solicitacoes' component={Solicitations} />
         <PrivateRoute exact path='/solicitacoes/cadastro' component={addSolicitation} />
       	<PrivateRoute path='/solicitacoes/ver-amostra/:id' component={SampleSingle} />

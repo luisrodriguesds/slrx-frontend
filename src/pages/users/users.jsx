@@ -28,8 +28,8 @@ export default class users extends React.Component {
 
 		try{
 			const users = await getUsers();
-			this.setState({users:users.data, loadpage:false});
 			console.log(users);
+			this.setState({users:users.data, loadpage:false});
 		}catch(e){
 
 		}
