@@ -6,6 +6,8 @@ import {filterhSolicitation, getSolicitation, searchSolicitation, destroySolicit
 
 import Main from '../../components/template/Main';
 import LoadingPage from '../../components/events/LoadingPage';
+import ModalSolicitation from '../../components/events/ModalSolicitationClass';
+
 export default class solicitations extends React.Component {
 	//SALVAR AS MARCAÇÕES 
 
@@ -306,7 +308,8 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td className="weight">
 			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
-			                      </td>
+									{/* <ModalSolicitation solicitation={solicitation} user={this.state.user}>{solicitation.name}</ModalSolicitation> */}
+								  </td>
 			                      <td className="align-middle">{solicitation.equipment == null ? '' : solicitation.equipment.name}</td>
 			                      <td title={this.state.status.filter((value) => value.number == solicitation.status)[0].descripiton}>
 			                      {this.state.status.map((value, i) => {

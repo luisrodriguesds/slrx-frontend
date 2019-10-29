@@ -14,6 +14,10 @@ body{
     font-size: 18px;
 }
 
+.table .weight a:hover{
+	text-decoration: underline;
+}
+
 .main-footer{
 	background: #fff;
 }
