@@ -348,7 +348,7 @@ export default class usersProfile extends React.Component {
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Pendentes</div>
-				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status != 7).length}</div>
+				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status >= 1 && v.status < 7).length}</div>
 				            </div>
 				          </div>
 				        </div>

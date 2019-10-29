@@ -167,20 +167,24 @@ export default class users extends React.Component {
 			              <h4>Usuários</h4>
 			              <div className="card-header-form">
 			              
-		                  	<div className="dropdown">
-		                      <Link to="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</Link>
-		                      <div className="dropdown-menu dropdown-menu-right">
-		                        <button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
-		                        <button onClick={() => this.handleFilter('Professores')} className="dropdown-item has-icon">Professores</button>
-		                        <button onClick={() => this.handleFilter('Alunos')} className="dropdown-item has-icon">Alunos</button>
-		                        <button onClick={() => this.handleFilter('Operadores')} className="dropdown-item has-icon">Operadores</button>
-		                        <button onClick={() => this.handleFilter('Empresas')} className="dropdown-item has-icon">Empresas</button>
-		                        <button onClick={() => this.handleFilter('Funcionários')} className="dropdown-item has-icon">Funcionários</button>
-		                        <button onClick={() => this.handleFilter('Usuários Pendentes')} className="dropdown-item has-icon">Usuários Pendentes</button>
-		                      </div>
-		                    </div>
+							  {this.state.user.access_level_slug != 'professor' &&
+								<div className="dropdown">
+								<Link to="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</Link>
+										<div className="dropdown-menu dropdown-menu-right">
+										<button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
+										<button onClick={() => this.handleFilter('Professores')} className="dropdown-item has-icon">Professores</button>
+										<button onClick={() => this.handleFilter('Alunos')} className="dropdown-item has-icon">Alunos</button>
+										<button onClick={() => this.handleFilter('Operadores')} className="dropdown-item has-icon">Operadores</button>
+										<button onClick={() => this.handleFilter('Empresas')} className="dropdown-item has-icon">Empresas</button>
+										<button onClick={() => this.handleFilter('Funcionários')} className="dropdown-item has-icon">Funcionários</button>
+										<button onClick={() => this.handleFilter('Usuários Pendentes')} className="dropdown-item has-icon">Usuários Pendentes</button>
+									</div>
+								</div>
+								}
 			                <div className="option-group">
-			                	<Link to="/usuarios/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
+								{ this.state.user.access_level_slug != 'professor' &&
+			                		<Link to="/usuarios/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
+								}
 				            	<button data-toggle="tooltip" title="Excluir" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
 			                </div>
 			                <form>
@@ -230,7 +234,7 @@ export default class users extends React.Component {
 				                      <td>
 				                      	<div className="btn-group" role="group" aria-label="Exemplo básico">
 					                      	<Link to={`/usuarios/ver-perfil/${user.id}`} className="btn btn-dark mr-1" title="Ver Amostras"> <i className="fas fa-vial"></i> </Link>
-					                      	<Link to={`/usuarios/editar/${user.id}`} className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>
+					                      	{this.state.user.access_level_slug != 'professor' && <Link to={`/usuarios/editar/${user.id}`} className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>}
 					                      	<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(user.id)}> <i className="fas fa-trash"></i> </button>
 				                      	</div>
 				                      </td>
