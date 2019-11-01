@@ -5,6 +5,8 @@ import {getHead, filterUsers, postPedding, getAccessLevel, postEmail} from '../.
 import store from '../../store/store';
 
 import Main from '../../components/template/Main';
+import Button from '../../components/events/LoadingButtom';
+
 
 export default class dashboard extends React.Component {
 	state = {
@@ -13,7 +15,8 @@ export default class dashboard extends React.Component {
 		users:{data:[]},
 		access:[],
 		email:{subject:'', message:''},
-		to:[]
+		to:[],
+		loading:false
 	}
 
 	async componentDidMount(){
@@ -287,6 +290,52 @@ export default class dashboard extends React.Component {
 		              </div>
 		            </form>
 		          </div>
+				  {/* ADD ALUNO */}
+				  <div className="col-lg-6 col-md-6 col-12" style={{display:(user.access_level_slug == 'professor' ? 'block' : 'none')}}>
+		            <div className="card">
+		              <div className="card-header">
+		                <h4 className="d-inline">Cadastrar Aluno</h4>
+		                <div className="card-header-action">
+		                  {/* <a href="#" className="btn btn-primary">Ver todas</a> */}
+		                </div>
+		              </div>
+		              <div className="card-body"> 
+					  	<form method="post" className="needs-validation" noValidate onSubmit={this.onSubmit} autoComplete="off">
+						  	<div className="row">
+								<div className="form-group col-12 col-sm-12 col-md-12 col-lg-12">
+									<label htmlFor="name">Email </label>
+									<input id="email" type="email" placeholder="Digite o email de um aluno já cadastrado no sistema" className="form-control" name="email" required />
+									<div className="invalid-feedback">
+									</div>
+								</div>
+							</div>
+							<div className="form-group">
+								<Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Cadastrar" loadName="Cadastrando..."></Button>
+							</div>
+						</form>
+		                <ul className="list-unstyled list-unstyled-border">
+							{/* {users.data.map((user,i) => (
+								<li className="media" key={i}>
+									<div className="custom-control custom-checkbox">
+										<input type="checkbox" className="custom-control-input" id={`cbx-${i}`} />
+										<label className="custom-control-label" htmlFor={`cbx-${i}`} />
+									</div>
+									<img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-4.png" alt="avatar" />
+									<div className="media-body">
+										<div className="badge badge-pill badge-success mb-1 float-right" style={{cursor:'pointer'}} onClick={() => this.handleApprove(user.id)}>Aprovar</div>
+										<h6 className="media-title"><Link to={`/usuarios/ver-perfil/${user.id}`}>{user.name}</Link></h6>
+										<div className="text-small text-muted">{user.access_level} <div className="bullet" /> <span className="text-primary">{this.date_diff(user.updated_at)} </span> <div className="bullet" /> <span className="text-danger">{(user.confirm == 0) ? 'Não Autorizado' : (user.confirm_email == 0) ? 'Email não confirmado' : 'Não confirmado' }</span> </div>
+									</div>
+								</li>
+							))} */}
+		                </ul>
+		              </div>
+		              <div className="card-footer pt-0">
+		                {/* <button className="btn btn-primary">Aprovar</button> */}
+		              </div>
+		            </div>
+		          </div>
+		        
 		          {/* Pendências de aprovações */}
 		          <div className="col-lg-6 col-md-6 col-12" style={{display:(user.permission == true || user.access_level_slug == 'professor' ? 'block' : 'none')}}>
 		            <div className="card">
