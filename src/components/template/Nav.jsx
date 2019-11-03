@@ -245,7 +245,7 @@ function Nav(){
                   <i className="fas fa-cog" /> Editar Conta
                 </Link>
                 <div className="dropdown-divider" />
-                <Link to="/logout" onClick={() => {logout(); window.location=URL_BASE; } } className="dropdown-item has-icon text-danger">
+                <Link to="/logout" onClick={() => {logout(); window.location=process.env.REACT_APP_HOME_URL; } } className="dropdown-item has-icon text-danger">
                     <i className="fas fa-sign-out-alt" /> Sair
                 </Link>
               </div>
