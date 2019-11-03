@@ -307,8 +307,8 @@ export default class usersProfile extends React.Component {
                       <h6 className="media-title"><a href={`/usuarios/ver-perfil/${proposta.user.id}`}>Por: {proposta.user.name}</a></h6> { new Date(proposta.created_at).toLocaleString('pt-BR')}
                   {/*TROCAR ESSE LINK*/} 
 						<div className="text-small text-muted"> 
-							<a href={`http://127.0.0.1:3333/api/solictation/ordem?data=${proposta.url}`} className="mr-2 text-warning" target="_blank">Ordem de Serviço</a>
-							<a href={`http://127.0.0.1:3333/api/solictation/proposta?data=${proposta.url}`} className="mr-2 color-primary" target="_blank">Ver Proposta</a>
+							<a href={`${process.env.REACT_APP_API_URL}/solictation/ordem?data=${proposta.url}`} className="mr-2 text-warning" target="_blank">Ordem de Serviço</a>
+							<a href={`${process.env.REACT_APP_API_URL}/solictation/proposta?data=${proposta.url}`} className="mr-2 color-primary" target="_blank">Ver Proposta</a>
 							<a onClick={() => this.deleteProposta(proposta.id)} className="mr-2 text-danger">Excluir</a>
 						</div>
                     </div>
