@@ -2764,8 +2764,8 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
     display: block; }
 
   .main-content {
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 0px;
+    padding-right: 0px;
     width: 100% !important; }
 
   .main-footer {

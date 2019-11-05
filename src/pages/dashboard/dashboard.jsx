@@ -98,12 +98,14 @@ export default class dashboard extends React.Component {
 		const res = await storeProfessorStudant(email);
 		console.log(res);
 		if (res.data.error == true) {
-			alert(res.data.error);
+			alert(res.data.message);
 		}else{
 			//alert
+			alert(`${res.data.message}`);
 
 			//Recarregar pendencias
-
+			const pedding = await filterUsers('pendentes', 1, 8);
+			this.setState({users:pedding.data});
 		}
 		console.log(res);
 	}
