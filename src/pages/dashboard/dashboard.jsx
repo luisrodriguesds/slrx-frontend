@@ -290,9 +290,11 @@ export default class dashboard extends React.Component {
 		              </div>
 		            </form>
 		          </div>
+								
+		        
+		          <div className="col-lg-6 col-md-6 col-12" style={{display:(user.permission == true || user.access_level_slug == 'professor' ? 'block' : 'none')}}>
 				  {/* ADD ALUNO */}
-				  <div className="col-lg-6 col-md-6 col-12" style={{display:(user.access_level_slug == 'professor' ? 'block' : 'none')}}>
-		            <div className="card">
+				  <div className="card">
 		              <div className="card-header">
 		                <h4 className="d-inline">Cadastrar Aluno</h4>
 		                <div className="card-header-action">
@@ -334,11 +336,9 @@ export default class dashboard extends React.Component {
 		                {/* <button className="btn btn-primary">Aprovar</button> */}
 		              </div>
 		            </div>
-		          </div>
-		        
+
 		          {/* Pendências de aprovações */}
-		          <div className="col-lg-6 col-md-6 col-12" style={{display:(user.permission == true || user.access_level_slug == 'professor' ? 'block' : 'none')}}>
-		            <div className="card">
+					<div className="card">
 		              <div className="card-header">
 		                <h4 className="d-inline">Pendências de Cadastro</h4>
 		                <div className="card-header-action">

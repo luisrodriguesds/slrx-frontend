@@ -11,6 +11,7 @@ import Avatar from '../../assets/img/avatar/avatar-1.png';
 function Nav(){
 
   const [user, setUser] = useState({});
+  const [active, setActive] = useState({});
   useEffect(()=> {
     store.subscribe(() => {
       const getUser = store.getState().user.user;
@@ -19,6 +20,7 @@ function Nav(){
     store.dispatch({
       type:'REQUEST_USER'
     })
+
     // dispatch(requestUser())
   }, []);
 

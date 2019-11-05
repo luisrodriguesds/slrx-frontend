@@ -21,10 +21,15 @@ import Profile from './pages/profile/profile';
 import ChangePass from './pages/changePass/changePass';
 import editAccount from './pages/editAccount/editAccount';
 
+import Files  from './pages/files/files';
+
 import NotFound from './pages/notFound';
 
 import { isAuthenticated } from "./services/auth";
 // import {useSelector} from 'react-redux';
+
+import store from './store/store';
+
 
 const renderMergedProps = (component, ...rest) => {
   const finalProps = Object.assign({}, ...rest);
@@ -32,7 +37,7 @@ const renderMergedProps = (component, ...rest) => {
 };
 
 const PrivateRoute = ({ component: Component,...rest }) => {
-
+  store.dispatch({ type:'SELECT_MENU', url:rest.computedMatch.url});
   return (
     <Route
       {...rest}
@@ -49,6 +54,7 @@ const PrivateRoute = ({ component: Component,...rest }) => {
 
 function Routes(props){
   // const user = useSelector(state => state.user.user);
+  
   return (
     <React.Fragment>
       <ScrollToTop />
@@ -74,6 +80,9 @@ function Routes(props){
       	<PrivateRoute exact path='/perfil' component={Profile} />
       	<PrivateRoute exact path='/alterar-senha' component={ChangePass} />
       	<PrivateRoute exact path='/editar-conta' component={editAccount} />
+
+      	<PrivateRoute exact path='/arquivos-uteis' component={Files} />
+      	<PrivateRoute exact path='/arquivos-uteis/enviar' component={Files} />
 
       	<PrivateRoute exact path='/404' component={NotFound} />
       	<Redirect from="*" to='/' />

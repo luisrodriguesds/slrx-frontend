@@ -2,10 +2,12 @@ import React,{useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {getMenu} from '../../services/api';
-
+import store from '../../store/store';
 const Sidebar = (props) => {
   const [menu, setMenu] = useState([]);
+  const [active, setActive] = useState({});
   const user = useSelector(state => state.user.user);
+
   useEffect(() => {
     async function callMenu() {
       try {
@@ -17,7 +19,13 @@ const Sidebar = (props) => {
       }
     }
     callMenu();  
+    console.log(active);
   }, [])
+
+  useEffect(() => {
+    setActive({url:store.getState().menu.url})
+    console.log(store.getState().menu.url);
+  }, []);
   
   return (
       <div className="main-sidebar sidebar-style-2">
@@ -35,9 +43,19 @@ const Sidebar = (props) => {
             </li>
             <li className="menu-header">Menus</li>
             {menu && menu.map(section => {
-
+              let act = "";
+              const t = section.itens.filter((v,i) => v.url == store.getState().menu.url);
+              
+              // console.log(t)
+              // console.log(store.getState().menu)
+              if (t.length > 0) {
+                act = "dropdown active";
+                console.log("Active: ", t);
+              }else{
+                act = "dropdown";
+              }
               return (
-              <li className="dropdown" key={section.id}>
+              <li className={act} key={section.id}>
                 <Link to="#" className="nav-link has-dropdown" data-toggle="dropdown"><i className={section.icon} /> 
                   <span>{section.section}</span>
                 </Link>
