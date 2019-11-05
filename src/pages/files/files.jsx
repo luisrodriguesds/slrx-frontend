@@ -47,8 +47,8 @@ export default class equipment extends React.Component {
 			                    <tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-0" />
+			                          <label htmlFor="checkbox-0" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </td>
 			                      <td>Xpert_366.zip</td>
@@ -83,8 +83,8 @@ export default class equipment extends React.Component {
 								<tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-2" />
+			                          <label htmlFor="checkbox-2" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </td>
 			                      <td>Xpert_456 - 1-4.zip</td>
@@ -101,8 +101,8 @@ export default class equipment extends React.Component {
 								<tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-3" />
+			                          <label htmlFor="checkbox-3" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </td>
 			                      <td>Fenda-1_4.rar</td>
@@ -119,8 +119,8 @@ export default class equipment extends React.Component {
 								<tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-4" />
+			                          <label htmlFor="checkbox-4" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </td>
 			                      <td>Xpert_0250.zip</td>
@@ -137,8 +137,8 @@ export default class equipment extends React.Component {
 								<tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
+			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-5" />
+			                          <label htmlFor="checkbox-5" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </td>
 			                      <td>Xpert_0132_Si.zip</td>

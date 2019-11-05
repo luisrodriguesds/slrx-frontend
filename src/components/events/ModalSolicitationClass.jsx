@@ -54,7 +54,7 @@ export default class events extends Component {
         store.dispatch({
             type:'REQUEST_USER'
         });
-        console.log(this.state);     
+        // console.log(this.state);     
    }
 
   handleShow = () => this.setState({show:true});
@@ -74,6 +74,7 @@ export default class events extends Component {
                 alert(res.data.message);
             }else{
                 alert(res.data.message);
+                window.location=window.location.href;
                 //Atualizar estado
                 window.scroll(0,0);
                 //Avisar ao redux

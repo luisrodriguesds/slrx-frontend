@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {getHead, filterUsers, postPedding, getAccessLevel, postEmail} from '../../services/api';
+import {getHead, filterUsers, postPedding, getAccessLevel, postEmail, storeProfessorStudant} from '../../services/api';
 import store from '../../store/store';
 
 import Main from '../../components/template/Main';
@@ -36,7 +36,7 @@ export default class dashboard extends React.Component {
 		const access = await getAccessLevel();
 		
 		this.setState({users:res.data, data:data.data, access:access.data});
-		console.log(this.state);
+		// console.log(this.state);
 	}
 
 	handleApprove = async (id) => {
@@ -81,6 +81,31 @@ export default class dashboard extends React.Component {
 		} catch (error) {
 			
 		}
+	}
+
+	onSubmitEmailStudant = async (e) => {
+		e.preventDefault();
+		const email = e.target.email_studant.value;
+		if (email == '') {
+			alert('Campo Email vazio');
+			return false;
+		}else if (email == this.state.user.email) {
+			alert('Mesmo email');			
+			return false;
+		}
+
+		//Send
+		const res = await storeProfessorStudant(email);
+		console.log(res);
+		if (res.data.error == true) {
+			alert(res.data.error);
+		}else{
+			//alert
+
+			//Recarregar pendencias
+
+		}
+		console.log(res);
 	}
 
 	_onChange = (e) => {
@@ -302,35 +327,19 @@ export default class dashboard extends React.Component {
 		                </div>
 		              </div>
 		              <div className="card-body"> 
-					  	<form method="post" className="needs-validation" noValidate onSubmit={this.onSubmit} autoComplete="off">
+					  	<form method="post" className="needs-validation" noValidate onSubmit={this.onSubmitEmailStudant} autoComplete="off">
 						  	<div className="row">
 								<div className="form-group col-12 col-sm-12 col-md-12 col-lg-12">
-									<label htmlFor="name">Email </label>
-									<input id="email" type="email" placeholder="Digite o email de um aluno já cadastrado no sistema" className="form-control" name="email" required />
+									<label htmlFor="name">Email <span style={{color:'red'}}>*</span> </label>
+									<input id="email" type="email" placeholder="Digite o email de um aluno já cadastrado no sistema" className="form-control" name="email_studant" required />
 									<div className="invalid-feedback">
 									</div>
 								</div>
 							</div>
 							<div className="form-group">
-								<Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Cadastrar" loadName="Cadastrando..."></Button>
+								<Button type="submit" className="btn btn-primary btn-lg" loading={this.state.loading} name="Cadastrar" loadName="Cadastrando..."></Button>
 							</div>
 						</form>
-		                <ul className="list-unstyled list-unstyled-border">
-							{/* {users.data.map((user,i) => (
-								<li className="media" key={i}>
-									<div className="custom-control custom-checkbox">
-										<input type="checkbox" className="custom-control-input" id={`cbx-${i}`} />
-										<label className="custom-control-label" htmlFor={`cbx-${i}`} />
-									</div>
-									<img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-4.png" alt="avatar" />
-									<div className="media-body">
-										<div className="badge badge-pill badge-success mb-1 float-right" style={{cursor:'pointer'}} onClick={() => this.handleApprove(user.id)}>Aprovar</div>
-										<h6 className="media-title"><Link to={`/usuarios/ver-perfil/${user.id}`}>{user.name}</Link></h6>
-										<div className="text-small text-muted">{user.access_level} <div className="bullet" /> <span className="text-primary">{this.date_diff(user.updated_at)} </span> <div className="bullet" /> <span className="text-danger">{(user.confirm == 0) ? 'Não Autorizado' : (user.confirm_email == 0) ? 'Email não confirmado' : 'Não confirmado' }</span> </div>
-									</div>
-								</li>
-							))} */}
-		                </ul>
 		              </div>
 		              <div className="card-footer pt-0">
 		                {/* <button className="btn btn-primary">Aprovar</button> */}

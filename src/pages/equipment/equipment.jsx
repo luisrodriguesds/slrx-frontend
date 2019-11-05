@@ -3,7 +3,13 @@ import {Link} from 'react-router-dom';
 
 import Main from '../../components/template/Main';
 
+// import {getMenu} from '../../services/api';
+
 export default class equipment extends React.Component {
+	
+	async componentDidMount(){
+		// const menu = await getMenu();
+	}
 
 	render() {
 		return (

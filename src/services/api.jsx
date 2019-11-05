@@ -62,4 +62,8 @@ export const deleteProposta = (id) => api.delete('/documents/proposta?id='+id);
 //Envio de email
 export const postEmail = (data) => api.post('/documents/email', data);
 
+//Professor Aluno
+export const storeProfessorStudant = (email) => api.post('/professor-studant/store', {email});
+
+
 export default api;

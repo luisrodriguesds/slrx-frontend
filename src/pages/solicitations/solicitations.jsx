@@ -64,7 +64,7 @@ export default class solicitations extends React.Component {
 
 	handleFilter = async (filter) => {
 		const res = await filterhSolicitation(filter);
-		console.log(res)
+		// console.log(res)
 		this.setState({filter, solicitations:res.data});
 	}
 
@@ -87,11 +87,11 @@ export default class solicitations extends React.Component {
     	if(check.length >= 1){
 	    	selectSol = selectSol.filter((v,i) => selectSol.indexOf(id) !== i);
 	    	this.setState({selectSol});
-	    	console.log(selectSol);
+	    	// console.log(selectSol);
     	}else{		
 	    	selectSol.push(id);
 		    this.setState({selectSol});
-	    	console.log(selectSol);
+	    	// console.log(selectSol);
     	}
 	}
 
