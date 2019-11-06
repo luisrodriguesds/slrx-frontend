@@ -307,8 +307,8 @@ export default class solicitations extends React.Component {
                                      </div>
 			                      </td>
 			                      <td className="weight">
-			                      	{/* <Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link> */}
-									<ModalSolicitation solicitation={solicitation} user={this.state.user}>{solicitation.name}</ModalSolicitation>
+			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
+									{/* <ModalSolicitation solicitation={solicitation} user={this.state.user}>{solicitation.name}</ModalSolicitation> */}
 								  </td>
 			                      <td className="align-middle">{solicitation.equipment == null ? '' : solicitation.equipment.name}</td>
 			                      <td title={this.state.status.filter((value) => value.number == solicitation.status)[0].descripiton}>
