@@ -6,6 +6,7 @@ import {getUser, showSolicitation, nextStepSolicitationFiveToSex} from '../../se
 import axios, { post } from 'axios';
 
 import Main from '../../components/template/Main';
+import LoadingPage from '../../components/events/LoadingPage';
 
 export default class sampleSingle extends React.Component {
 	state = {
@@ -51,6 +52,7 @@ export default class sampleSingle extends React.Component {
 			type:'REQUEST_USER'
 		});
 		console.log(this.state);
+		this.setState({loadpage:false});
 	}
 
 	handleSubmit = async (e) => {
@@ -105,7 +107,9 @@ export default class sampleSingle extends React.Component {
 		const {solicitation} = this.state; 
 		return (
 			<Main title="Amostra">
-				<div className="row">
+				<LoadingPage loading={this.state.loadpage} />
+				
+				<div className="row" style={{display:(this.state.loadpage ? 'none': 'flex')}}>
 					<div className="col-12 col-sm-12 col-lg-6">
 						<div className="card card-primary">
 		                  <div className="card-header">

@@ -7,6 +7,8 @@ import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta,
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 import ModalProposta from '../../components/events/ModalProposta';
+import LoadingPage from '../../components/events/LoadingPage';
+
 export default class usersProfile extends React.Component {
 	state = {
 		userSingle:{},
@@ -86,7 +88,7 @@ export default class usersProfile extends React.Component {
 				break;
 			}
 
-			this.setState({userSingle:{obs, ...res.data}, solicitations:res.data.solicitations, user_id:id});
+			this.setState({userSingle:{obs, ...res.data}, solicitations:res.data.solicitations, user_id:id, loadpage:false});
 
 		}catch(e){
 			alert("Error no servidor, por favor procurar o suporte técnico.");			
@@ -331,7 +333,8 @@ export default class usersProfile extends React.Component {
 
 		return (
 			<Main title="Perfil do Usuário">
-				<div className="row">
+				<LoadingPage loading={this.state.loadpage} />
+				<div className="row" style={{display:(this.state.loadpage ? 'none': 'flex')}}>
 					<div className="col-12 col-sm-12 col-lg-7">
 
 					  <div className="card profile-widget">
