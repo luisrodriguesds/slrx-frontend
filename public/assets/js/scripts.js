@@ -82,26 +82,17 @@ $(function() {
     setTimeout(function() {
       clearInterval(a);
     }, 600);
+    
   }
 
   var sidebar_dropdown = function() {
     if($(".main-sidebar").length) {
       $(".main-sidebar").niceScroll(sidebar_nicescroll_opts);
       sidebar_nicescroll = $(".main-sidebar").getNiceScroll();
-      // console.log(sidebar_nicescroll);
-      // $(".main-sidebar .sidebar-menu li a.has-dropdown").off('click').on('click', function() {
-      //   var me = $(this);
-      //   console.log(me);
-      //   me.parent().find('> .dropdown-menu').slideToggle(500, function() {
-      //     update_sidebar_nicescroll();
-      //     return false;
-      //   });
-      //   return false;
-      // });
-
-      $('body').off('click').on('click', ".main-sidebar .sidebar-menu li a.has-dropdown", function() {
+      console.log(sidebar_nicescroll);
+      $(".main-sidebar .sidebar-menu li a.has-dropdown").off('click').on('click', function() {
         var me = $(this);
-        // console.log(me);
+        console.log(me);
         me.parent().find('> .dropdown-menu').slideToggle(500, function() {
           update_sidebar_nicescroll();
           return false;
@@ -109,9 +100,25 @@ $(function() {
         return false;
       });
 
+      $('body').off('click').on('click', ".main-sidebar .sidebar-menu li a.has-dropdown", function() {
+        var me = $(this);
+        console.log(me);
+        // me.parent().find('> .dropdown-menu').slideToggle(500, function() {
+        //   update_sidebar_nicescroll();
+        //   return false;
+        // });
+        // return false;
+      });
+
     }
   }
-  sidebar_dropdown();
+
+  setTimeout(function (){
+    sidebar_dropdown();
+
+  }, 1000);
+
+  // sidebar_dropdown();
 
   if($("#top-5-scroll").length) {
     $("#top-5-scroll").css({
@@ -235,10 +242,9 @@ $(function() {
       });
 
       update_sidebar_nicescroll();
-      sidebar_dropdown();
 
-      console.log("ksdbjshbvsbdjvbdv")
       if(now_layout_class == 'layout-3') {
+        console.log("ksdbjshbvsbdjvbdv")
         let nav_second_classes = $(".navbar-secondary").attr('class'),
           nav_second = $(".navbar-secondary");
 
