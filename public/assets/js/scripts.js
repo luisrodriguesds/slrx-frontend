@@ -20,6 +20,11 @@ if(window.Dropzone) {
   Dropzone.autoDiscover = false;
 }
 
+//MIST
+$('.sidebar-menu .nav-link').click(function (){
+  console.log("Teste");
+})
+
 // Basic confirm box
 $('[data-confirm]').each(function() {
   var me = $(this),
@@ -210,6 +215,7 @@ $(function() {
     }
 
     if(w.outerWidth() <= 1024) {
+      
       if($('body').hasClass('sidebar-mini')) {
         toggle_sidebar_mini(false);
         $('.main-sidebar').niceScroll(sidebar_nicescroll_opts);
@@ -229,7 +235,9 @@ $(function() {
       });
 
       update_sidebar_nicescroll();
+      sidebar_dropdown();
 
+      console.log("ksdbjshbvsbdjvbdv")
       if(now_layout_class == 'layout-3') {
         let nav_second_classes = $(".navbar-secondary").attr('class'),
           nav_second = $(".navbar-secondary");

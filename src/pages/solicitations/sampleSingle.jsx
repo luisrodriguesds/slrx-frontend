@@ -51,7 +51,7 @@ export default class sampleSingle extends React.Component {
 		store.dispatch({
 			type:'REQUEST_USER'
 		});
-		console.log(this.state);
+		// console.log(this.state);
 		this.setState({loadpage:false});
 	}
 
@@ -80,7 +80,7 @@ export default class sampleSingle extends React.Component {
 			}
 		}catch(e){
 			alert("Algo de errado aconteceu, por favor recarrege sua página");
-			console.log(e);
+			// console.log(e);
 		}
 
 	}
@@ -121,7 +121,7 @@ export default class sampleSingle extends React.Component {
 			                        <strong>Status: </strong> <span id="status" style={{color:(solicitation.status < 1) ? 'red' : ((solicitation.status == 7) ? 'green' : 'blue')}}><strong>{this.state.phase}</strong></span><br />
 			                    </p>
 			                    <p>
-			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`/usuarios/ver-perfil/${solicitation.user.id}`}>{solicitation.user.name}</Link></span><br />
+			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`/usuarios/ver-perfil/${solicitation.user && solicitation.user.id}`}>{solicitation.user && solicitation.user.name}</Link></span><br />
 			                    </p>
 			                    <p>
 			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">{new Date(solicitation.created_at).toLocaleString('pt-BR')}</span><br />

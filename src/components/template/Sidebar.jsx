@@ -70,7 +70,6 @@ const Sidebar = (props) => {
               </li>
               )
             })}
-
             {/* <li className="dropdown">
               <Link to="#" className="nav-link has-dropdown" data-toggle="dropdown"><i className="fas fa-file-alt" /> 
                 <span>Arquivos Úteis</span>

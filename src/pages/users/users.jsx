@@ -28,7 +28,7 @@ export default class users extends React.Component {
 
 		try{
 			const users = await getUsers();
-			console.log(users);
+			// console.log(users);
 			this.setState({users:users.data, loadpage:false});
 		}catch(e){
 
@@ -46,7 +46,7 @@ export default class users extends React.Component {
 		let users = res.data;
 		this.setState({users});
 
-		console.log(res, filter);
+		// console.log(res, filter);
 	}
 
 	handleDelete = async (id) => {
@@ -63,13 +63,13 @@ export default class users extends React.Component {
 
 				if (res.data.error == true) {
 					alert(`${res.data.message}`)
-				console.log(res.data.message)
+				// console.log(res.data.message)
 
 				}else{
 					alert(`${res.error.message}`);
 					const users = await getUsers();
 					this.setState({users:users.data});
-					console.log(res.data.message)
+					// console.log(res.data.message)
 
 				}
 			} catch (error) {
@@ -99,11 +99,11 @@ export default class users extends React.Component {
     	if(check.length >= 1){
 	    	selectUsers = selectUsers.filter((v,i) => selectUsers.indexOf(id) !== i);
 	    	this.setState({selectUsers});
-	    	console.log(selectUsers);
+	    	// console.log(selectUsers);
     	}else{		
 	    	selectUsers.push(id);
 		    this.setState({selectUsers});
-	    	console.log(selectUsers);
+	    	// console.log(selectUsers);
     	}
 	}
 

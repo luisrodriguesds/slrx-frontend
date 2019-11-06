@@ -54,6 +54,12 @@
 /* 3. Bootstrap Override */
 /* 3.1 Misc */
 
+/* MISTO */
+/* .dropdown-menu,.show{
+  position: absolute;
+  transform: translate3d(5px, 50px, 0px);
+
+} */
 /*CORES*/
 /*Primary - #41b6ad */
 .btn:focus,

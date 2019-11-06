@@ -44,7 +44,7 @@ export default class usersProfile extends React.Component {
 			this.setState({
 				user:store.getState().user.user
 			})
-			console.log(this.state)
+			// console.log(this.state)
 		});
 		store.dispatch({
 			type:'REQUEST_USER'
@@ -286,7 +286,7 @@ export default class usersProfile extends React.Component {
 
 	renderPropostas(){
 		const {propostas} = this.state;
-		console.log(propostas)
+		// console.log(propostas)
 		return (
 			<div className="card">
               <div className="card-header">

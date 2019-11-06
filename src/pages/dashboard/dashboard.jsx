@@ -99,7 +99,7 @@ export default class dashboard extends React.Component {
 
 		//Send
 		const res = await storeProfessorStudant(email);
-		console.log(res);
+		// console.log(res);
 		if (res.data.error == true) {
 			alert(res.data.message);
 		}else{
@@ -110,7 +110,7 @@ export default class dashboard extends React.Component {
 			const pedding = await filterUsers('pendentes', 1, 8);
 			this.setState({users:pedding.data});
 		}
-		console.log(res);
+		// console.log(res);
 	}
 
 	_onChange = (e) => {
@@ -118,7 +118,7 @@ export default class dashboard extends React.Component {
 		const email = {...this.state.email};
 		email[e.target.name] = value;
 		this.setState({email});
-		console.log(this.state);
+		// console.log(this.state);
 	}
 
 	handleCheckbox = (id) => {
@@ -133,7 +133,7 @@ export default class dashboard extends React.Component {
 	    	to.push(id);
 		    this.setState({to});
 		}
-		console.log(to);	
+		// console.log(to);	
 	}
 
 	date_diff = (date) => {

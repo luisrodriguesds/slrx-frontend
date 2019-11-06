@@ -18,7 +18,7 @@ class Login extends Component {
         data[e.target.name] = value;
         this.setState({data, error:''});
         
-        console.log(this.state);
+        // console.log(this.state);
     }
 
     onSubmit = async e => {

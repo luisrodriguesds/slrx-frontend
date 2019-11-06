@@ -110,7 +110,7 @@ export default class solicitations extends React.Component {
 			}catch(error){
 				// alert(`Algo Inesperado aconteceu, sua página será recarregada.`);
 				//Recarregar a página aqui
-				console.log(error);
+				// console.log(error);
 			}
 		}
 	}
@@ -127,7 +127,7 @@ export default class solicitations extends React.Component {
 				const {page} = this.state.solicitations;
 				let load = await getSolicitation({page});
 				this.setState({solicitations:load.data, selectSol:[]});
-				console.log(this.state);
+				// console.log(this.state);
 			}
 		}
 	}
@@ -196,7 +196,7 @@ export default class solicitations extends React.Component {
 
 		let pages = [];
 		if (lastPage > 5) {
-			for (let i = 1; i <= 5; i++) {
+			for (let i = 1; i <= 4; i++) {
 				pages.push(i);
 			}
 			pages.push(lastPage);
@@ -337,10 +337,10 @@ export default class solicitations extends React.Component {
 			            </div>
 					      <div className="card-footer">
 							  <div className="row">
-								  <div className="col-6 text-left">
+								  <div className="col-lg-3 col-md-6 col-sm-6 col-12 text-left">
 								  	({this.state.solicitations.data.length*(this.state.solicitations.page)}/{this.state.solicitations.total})
 								  </div>
-								  <div className="col-6 text-right">
+								  <div className="col-lg-3 col-md-6 col-sm-6 col-12 text-right">
 					        		{this.renderPaginate()}
 								  </div>
 							  </div>

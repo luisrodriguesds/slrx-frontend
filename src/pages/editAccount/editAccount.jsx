@@ -96,7 +96,7 @@ export default class editAccount extends React.Component {
 		  const req = res.data;
 		  const data = {...this.state.data, ...req};
 		  this.setState({company:res.data, data, address:{localidade:req.company_city, uf:req.company_state, bairro:req.neighborhood, logradouro:req.street}});
-		  console.log(this.state);     
+		//   console.log(this.state);     
 		}
 	}
 
@@ -133,7 +133,7 @@ export default class editAccount extends React.Component {
       const data = {...this.state.data};
       data[e.target.name] = value;
 	  this.setState({data});
-	  console.log(this.state);
+	//   console.log(this.state);
     }
 
     handleStates = async (e) => {
@@ -167,7 +167,7 @@ export default class editAccount extends React.Component {
         this.setState({loading:false});
       }, 1000);
 
-      console.log(this.state);
+    //   console.log(this.state);
 	}
 	
 
