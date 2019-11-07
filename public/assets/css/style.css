@@ -939,7 +939,7 @@ select.form-control:not([size]):not([multiple]) {
   padding: 10px 15px; }
 .table.table-bordered td, .table.table-bordered th {
   border-color: #f6f6f6; }
-.table .width-fixed{ width:280px; }
+.table .width-fixed{ width:280px; padding-right: 200px !important; }
 .table-links {
   color: #34395e;
   font-size: 12px;

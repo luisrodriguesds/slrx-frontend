@@ -42,15 +42,7 @@ const Sidebar = (props) => {
               <Link to="/dashboard" className="nav-link"><i className="fas fa-fire" /><span>Dashboard</span></Link>
             </li>
             <li className="menu-header">Menus</li>
-            <li className="dropdown">
-              <Link to="#" className="nav-link has-dropdown" data-toggle="dropdown"><i className="fas fa-file-alt" /> 
-                <span>Arquivos Úteis</span>
-              </Link>
-              <ul className="dropdown-menu">
-                <li><Link className="nav-link" to="/arquivos-uteis/enviar">Enviar Arquivo</Link></li>
-                <li><Link className="nav-link" to="/arquivos-uteis">Ver Arquivos</Link></li>
-              </ul>
-            </li>
+            
             {menu && menu.map(section => {
               let act = "dropdown";
               // const t = section.itens.filter((v,i) => v.url == store.getState().menu.url);

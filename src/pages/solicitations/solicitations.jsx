@@ -242,38 +242,49 @@ export default class solicitations extends React.Component {
 			            <div className="card-header">
 			              <h4>Amostras</h4>
 			              <div className="card-header-form">
-							  {this.state.user.permission == true && 
+							  <div className="row" style={{width:'100%'}}>
+							  	<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left p-0">
+									
+
+									<div className="option-group">
+										{this.state.user.permission == true && 
+								
+											<div className="dropdown">
+											<a href="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</a>
+											<div className="dropdown-menu dropdown-menu-right">
+												<button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
+												<button onClick={() => this.handleFilter('Abertas')} className="dropdown-item has-icon">Abertas</button>
+												<button onClick={() => this.handleFilter('DRX')} className="dropdown-item has-icon">DRX</button>
+												<button onClick={() => this.handleFilter('FRX')} className="dropdown-item has-icon">FRX</button>
+												<button onClick={() => this.handleFilter('1')} className="dropdown-item has-icon">1</button>
+												<button onClick={() => this.handleFilter('2')} className="dropdown-item has-icon">2</button>
+												<button onClick={() => this.handleFilter('3')} className="dropdown-item has-icon">3</button>
+												<button onClick={() => this.handleFilter('4')} className="dropdown-item has-icon">4</button>
+												<button onClick={() => this.handleFilter('5')} className="dropdown-item has-icon">5</button>
+												<button onClick={() => this.handleFilter('6')} className="dropdown-item has-icon">6</button>
+												<button onClick={() => this.handleFilter('7')} className="dropdown-item has-icon">7</button>
+											</div>
+											</div>
+										}
+										<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
+										{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" onClick={() => this.handleNextStepAll()} title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+										<button data-toggle="tooltip" title="Cancelar" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
+									</div>
+								</div>
+								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
+									<form>
+										<div className="input-group">
+											<input type="text" className="form-control" placeholder="Pesquisar" onChange={(e) => this.handleSearch(e)} />
+											<div className="input-group-btn">
+											<button className="btn btn-primary"><i className="fas fa-search" /></button>
+											</div>
+										</div>
+									</form>
+								</div>
+							  </div>
+							  
+
 							
-								<div className="dropdown">
-								<a href="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</a>
-								<div className="dropdown-menu dropdown-menu-right">
-									<button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
-									<button onClick={() => this.handleFilter('Abertas')} className="dropdown-item has-icon">Abertas</button>
-									<button onClick={() => this.handleFilter('DRX')} className="dropdown-item has-icon">DRX</button>
-									<button onClick={() => this.handleFilter('FRX')} className="dropdown-item has-icon">FRX</button>
-									<button onClick={() => this.handleFilter('1')} className="dropdown-item has-icon">1</button>
-									<button onClick={() => this.handleFilter('2')} className="dropdown-item has-icon">2</button>
-									<button onClick={() => this.handleFilter('3')} className="dropdown-item has-icon">3</button>
-									<button onClick={() => this.handleFilter('4')} className="dropdown-item has-icon">4</button>
-									<button onClick={() => this.handleFilter('5')} className="dropdown-item has-icon">5</button>
-									<button onClick={() => this.handleFilter('6')} className="dropdown-item has-icon">6</button>
-									<button onClick={() => this.handleFilter('7')} className="dropdown-item has-icon">7</button>
-								</div>
-								</div>
-							}
-			                <div className="option-group">
-			                	<Link to="/solicitacoes/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-				            	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" onClick={() => this.handleNextStepAll()} title="Passar todas para a próxima fase" className="btn btn-info mr-1"><i className="fas fa-arrow-alt-circle-right"></i></button>}
-				            	<button data-toggle="tooltip" title="Cancelar" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
-			                </div>
-			                <form>
-			                  <div className="input-group">
-			                    <input type="text" className="form-control" placeholder="Pesquisar" onChange={(e) => this.handleSearch(e)} />
-			                    <div className="input-group-btn">
-			                      <button className="btn btn-primary"><i className="fas fa-search" /></button>
-			                    </div>
-			                  </div>
-			                </form>
 			              </div>
 			            </div>
 			            <div className="card-body p-0">
@@ -337,10 +348,10 @@ export default class solicitations extends React.Component {
 			            </div>
 					      <div className="card-footer">
 							  <div className="row">
-								  <div className="col-lg-3 col-md-6 col-sm-6 col-12 text-left">
+								  <div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left">
 								  	({this.state.solicitations.data.length*(this.state.solicitations.page)}/{this.state.solicitations.total})
 								  </div>
-								  <div className="col-lg-3 col-md-6 col-sm-6 col-12 text-right">
+								  <div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
 					        		{this.renderPaginate()}
 								  </div>
 							  </div>

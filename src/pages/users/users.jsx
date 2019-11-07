@@ -127,8 +127,15 @@ export default class users extends React.Component {
 		}
 
 		let pages = [];
-		for (let i = 1; i <= lastPage; i++) {
-			pages.push(i);
+		if (lastPage > 5) {
+			for (let i = 1; i <= 4; i++) {
+				pages.push(i);
+			}
+			pages.push(lastPage);
+		}else{
+			for (let i = 1; i <= lastPage; i++) {
+				pages.push(i);
+			}
 		}
 
 		return (
@@ -166,35 +173,43 @@ export default class users extends React.Component {
 			            <div className="card-header">
 			              <h4>Usuários</h4>
 			              <div className="card-header-form">
-			              
-							  {this.state.user.access_level_slug != 'professor' &&
-								<div className="dropdown">
-								<Link to="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</Link>
-										<div className="dropdown-menu dropdown-menu-right">
-										<button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
-										<button onClick={() => this.handleFilter('Professores')} className="dropdown-item has-icon">Professores</button>
-										<button onClick={() => this.handleFilter('Alunos')} className="dropdown-item has-icon">Alunos</button>
-										<button onClick={() => this.handleFilter('Operadores')} className="dropdown-item has-icon">Operadores</button>
-										<button onClick={() => this.handleFilter('Empresas')} className="dropdown-item has-icon">Empresas</button>
-										<button onClick={() => this.handleFilter('Funcionários')} className="dropdown-item has-icon">Funcionários</button>
-										<button onClick={() => this.handleFilter('Usuários Pendentes')} className="dropdown-item has-icon">Usuários Pendentes</button>
+						  	<div className="row" style={{width:'100%'}}>
+							  	<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left p-0">
+								  <div className="option-group">
+										{this.state.user.access_level_slug != 'professor' &&
+										<div className="dropdown">
+										<Link to="#" className="dropdown-toggle btn btn-primary" data-toggle="dropdown">{this.state.filter}</Link>
+												<div className="dropdown-menu dropdown-menu-right">
+												<button onClick={() => this.handleFilter('Filtro')} className="dropdown-item has-icon">Filtro</button>
+												<button onClick={() => this.handleFilter('Professores')} className="dropdown-item has-icon">Professores</button>
+												<button onClick={() => this.handleFilter('Alunos')} className="dropdown-item has-icon">Alunos</button>
+												<button onClick={() => this.handleFilter('Operadores')} className="dropdown-item has-icon">Operadores</button>
+												<button onClick={() => this.handleFilter('Empresas')} className="dropdown-item has-icon">Empresas</button>
+												<button onClick={() => this.handleFilter('Funcionários')} className="dropdown-item has-icon">Funcionários</button>
+												<button onClick={() => this.handleFilter('Usuários Pendentes')} className="dropdown-item has-icon">Usuários Pendentes</button>
+											</div>
+										</div>
+										}
+										{ this.state.user.access_level_slug != 'professor' &&
+											<Link to="/usuarios/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
+										}
+										<button data-toggle="tooltip" title="Excluir" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
 									</div>
+									
 								</div>
-								}
-			                <div className="option-group">
-								{ this.state.user.access_level_slug != 'professor' &&
-			                		<Link to="/usuarios/cadastro" title="Cadastrar" className="btn btn-primary ml-1 mr-1"><i className="fas fa-plus"></i></Link>
-								}
-				            	<button data-toggle="tooltip" title="Excluir" onClick={() => this.handleDeleteAll()} className="btn btn-danger mr-1"><i className="fas fa-trash"></i></button>
-			                </div>
-			                <form>
-			                  <div className="input-group">
-			                    <input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
-			                    <div className="input-group-btn">
-			                      <button className="btn btn-primary"><i className="fas fa-search" /></button>
-			                    </div>
-			                  </div>
-			                </form>
+								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
+									<form>
+										<div className="input-group">
+											<input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
+											<div className="input-group-btn">
+											<button className="btn btn-primary"><i className="fas fa-search" /></button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+							  
+			               
 			              </div>
 			            </div>
 			            <div className="card-body p-0">
@@ -209,7 +224,7 @@ export default class users extends React.Component {
 			                          <label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </th>
-			                      <th>Nome</th>
+			                      <th className="width-fixed">Nome</th>
 			                      <th>Tipo</th>
 			                      <th>Email</th>
 			                      <th>Status</th>
@@ -246,10 +261,10 @@ export default class users extends React.Component {
 			            </div>
 						<div className="card-footer">
 							  <div className="row">
-								  <div className="col-6 text-left">
+								  <div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left">
 								  	({this.state.users.data.length*(this.state.users.page == null ? 1 : this.state.users.page)}/{this.state.users.total})
 								  </div>
-								  <div className="col-6 text-right">
+								  <div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
 					        		{this.renderPaginate()}
 								  </div>
 							  </div>
