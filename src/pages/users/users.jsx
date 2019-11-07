@@ -224,7 +224,7 @@ export default class users extends React.Component {
 			                          <label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
 			                        </div>
 			                      </th>
-			                      <th className="width-fixed">Nome</th>
+			                      <th className="">Nome</th>
 			                      <th>Tipo</th>
 			                      <th>Email</th>
 			                      <th>Status</th>

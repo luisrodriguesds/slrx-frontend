@@ -84,10 +84,10 @@ $(function() {
     if($(".main-sidebar").length) {
       $(".main-sidebar").niceScroll(sidebar_nicescroll_opts);
       sidebar_nicescroll = $(".main-sidebar").getNiceScroll();
-      console.log(sidebar_nicescroll);
+      // console.log(sidebar_nicescroll);
       $(".main-sidebar .sidebar-menu li a.has-dropdown").off('click').on('click', function() {
         var me = $(this);
-        console.log(me);
+        // console.log(me);
         me.parent().find('> .dropdown-menu').slideToggle(500, function() {
           update_sidebar_nicescroll();
           return false;
@@ -96,7 +96,7 @@ $(function() {
       });
 
       $('body').on('click', ".main-sidebar .sidebar-menu .nav-link", function() {
-        console.log("Teste");
+        // console.log("Teste");
         // toggle_sidebar_mini(true);
         toggleLayout();
       });
@@ -119,10 +119,10 @@ $(function() {
     update_sidebar_nicescroll();
     
   }, 1000);
-  
+
   setInterval(function (){
     $('body').on('click', ".main-sidebar .sidebar-menu .nav-link", function() {
-      console.log("Teste");
+      // console.log("Teste");
       // toggle_sidebar_mini(true);
       toggleLayout();
     });
@@ -253,7 +253,7 @@ $(function() {
       update_sidebar_nicescroll();
 
       if(now_layout_class == 'layout-3') {
-        console.log("ksdbjshbvsbdjvbdv")
+        // console.log("ksdbjshbvsbdjvbdv")
         let nav_second_classes = $(".navbar-secondary").attr('class'),
           nav_second = $(".navbar-secondary");
 
