@@ -36,17 +36,17 @@ export default class users extends React.Component {
 	}
 
 	handleFilter = async (filter) => {
+		this.setState({loadpage:true});
 		const res = await filterUsers(filter);
-		this.setState({filter, users:res.data});
+		this.setState({filter, users:res.data, loadpage:false});
 	}
 
 	handleSearch = async (e) => {
+		this.setState({loadpage:true});
 		const filter = e.target.value;
 		const res = await searchUsers(filter);
 		let users = res.data;
-		this.setState({users});
-
-		// console.log(res, filter);
+		this.setState({users, loadpage:false});
 	}
 
 	handleDelete = async (id) => {
@@ -198,7 +198,7 @@ export default class users extends React.Component {
 									
 								</div>
 								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
-									<form>
+									<form method="post" onSubmit={(e) => e.preventDefault()}>
 										<div className="input-group">
 											<input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
 											<div className="input-group-btn">

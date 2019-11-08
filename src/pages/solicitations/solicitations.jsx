@@ -272,7 +272,7 @@ export default class solicitations extends React.Component {
 									</div>
 								</div>
 								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
-									<form>
+									<form method="post" onSubmit={(e) => e.preventDefault()}>
 										<div className="input-group">
 											<input type="text" className="form-control" placeholder="Pesquisar" onChange={(e) => this.handleSearch(e)} />
 											<div className="input-group-btn">

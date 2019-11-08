@@ -120,11 +120,25 @@ $(function() {
     
   }, 1000);
 
+  setTimeout(function (){
+    sidebar_dropdown();
+    update_sidebar_nicescroll();
+    
+  }, 2000);
+
   setInterval(function (){
     $('body').on('click', ".main-sidebar .sidebar-menu .nav-link", function() {
       // console.log("Teste");
       // toggle_sidebar_mini(true);
       toggleLayout();
+      var section = $(this).parents()[2];
+      if($(section).hasClass('dropdown')){
+        $('.active').removeClass('active');
+        $(section).addClass('active');
+      }else{
+        $('.active').removeClass('active');
+        $('.dashboard').addClass('active');
+      }
     });
   }, 1000)
   // sidebar_dropdown();

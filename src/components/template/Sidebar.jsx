@@ -38,23 +38,21 @@ const Sidebar = (props) => {
           </div>
           <ul className="sidebar-menu">
             <li className="menu-header">Dashboard</li>
-            <li className="dropdown active">
+            <li className={(store.getState().menu.url == '/dashboard') ? 'dropdown active dashboard' : 'dropdown dashboard'}>
               <Link to="/dashboard" className="nav-link"><i className="fas fa-fire" /><span>Dashboard</span></Link>
             </li>
             <li className="menu-header">Menus</li>
-            
             {menu && menu.map(section => {
               let act = "dropdown";
-              // const t = section.itens.filter((v,i) => v.url == store.getState().menu.url);
+              const t = section.itens.filter((v,i) => v.url == store.getState().menu.url);
               
-              // // console.log(t)
-              // // console.log(store.getState().menu)
-              // if (t.length > 0) {
-              //   act = "dropdown active";
-              //   console.log("Active: ", t);
-              // }else{
-              //   act = "dropdown";
-              // }
+              // console.log(t)
+              // console.log(store.getState().menu)
+              if (t.length > 0) {
+                act = "dropdown active";
+              }else{
+                act = "dropdown";
+              }
               return (
               <li className={act} key={section.id}>
                 <Link to="#" className="nav-link has-dropdown" data-toggle="dropdown"><i className={section.icon} /> 

@@ -384,7 +384,7 @@ export default class usersProfile extends React.Component {
 										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
 			                		</div>
 			                	}
-			                <form>
+			                <form method="post" onSubmit={(e) => e.preventDefault()}>
 			                  <div className="input-group">
 			                    <input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
 			                    <div className="input-group-btn">

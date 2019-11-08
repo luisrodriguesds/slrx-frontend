@@ -60,6 +60,11 @@
   transform: translate3d(5px, 50px, 0px);
 
 } */
+
+.search-element{
+  display: none; 
+  /* Depois ver o que fazer com essa pesquisa */
+}
 /*CORES*/
 /*Primary - #41b6ad */
 .btn:focus,
@@ -2770,10 +2775,19 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
     display: block; }
 
   .main-content {
-    padding-left: 0px;
-    padding-right: 0px;
+    /* padding-left: 0px;
+    padding-right: 0px; */
+    padding-left: 5px;
+    padding-right: 30px;
     width: 100% !important; }
-
+    
+    .section-header{
+      
+    }
+  .option-group{
+    margin-bottom: 15px;
+    margin-left: 10px;
+  }
   .main-footer {
     padding-left: 30px; }
 

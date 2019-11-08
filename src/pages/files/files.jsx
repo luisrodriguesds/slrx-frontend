@@ -57,7 +57,7 @@ export default class equipment extends React.Component {
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 			                      		
-			                      		<a href="https://drive.google.com/open?id=1pfAacXTjwpsBoAyKGzIkjeWulZhuy1Q_" target="_blank" className="btn btn-danger"> Download </a>
+			                      		<a href="https://drive.google.com/open?id=1pfAacXTjwpsBoAyKGzIkjeWulZhuy1Q_" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
 			                    </tr>
@@ -75,7 +75,7 @@ export default class equipment extends React.Component {
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 			                      		
-			                      		<a href="https://drive.google.com/open?id=1qC7fLL8PKml3QgpAakgE1goYu2uCmTpD" target="_blank" className="btn btn-danger"> Download </a>
+			                      		<a href="https://drive.google.com/open?id=1qC7fLL8PKml3QgpAakgE1goYu2uCmTpD" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
 			                    </tr>
@@ -93,7 +93,7 @@ export default class equipment extends React.Component {
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 			                      		
-			                      		<a href="https://drive.google.com/open?id=1w7FwLiN6kRZrTt73SOeUAJAYJkRrf6GJ" target="_blank" className="btn btn-danger"> Download </a>
+			                      		<a href="https://drive.google.com/open?id=1w7FwLiN6kRZrTt73SOeUAJAYJkRrf6GJ" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
 			                    </tr>
@@ -111,7 +111,7 @@ export default class equipment extends React.Component {
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 			                      		
-			                      		<a href="https://drive.google.com/open?id=1cfyfI7GARh6TNynfb46cWGwUqGQ1vxn8" target="_blank" className="btn btn-danger"> Download </a>
+			                      		<a href="https://drive.google.com/open?id=1cfyfI7GARh6TNynfb46cWGwUqGQ1vxn8" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
 			                    </tr>
@@ -129,7 +129,7 @@ export default class equipment extends React.Component {
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 			                      		
-			                      		<a href="https://drive.google.com/open?id=1EK8UDFprusmOpgLa-C4RAfUobKmAL-bC" target="_blank" className="btn btn-danger"> Download </a>
+			                      		<a href="https://drive.google.com/open?id=1EK8UDFprusmOpgLa-C4RAfUobKmAL-bC" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
 			                    </tr>
@@ -147,7 +147,7 @@ export default class equipment extends React.Component {
 			                      <td>
 								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
 			                      		
-			                      		<a href="https://drive.google.com/open?id=1uWeLT-wdzB9LHpznOGNySfL6StZkJ5kE" target="_blank" className="btn btn-danger"> Download </a>
+			                      		<a href="https://drive.google.com/open?id=1uWeLT-wdzB9LHpznOGNySfL6StZkJ5kE" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
 			                    </tr>

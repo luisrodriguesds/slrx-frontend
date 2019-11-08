@@ -1,4 +1,4 @@
-const init = {url: "/dashboard"}
+const init = {url: ""}
 
 export default function menu(state=init, action){
     switch(action.type){
