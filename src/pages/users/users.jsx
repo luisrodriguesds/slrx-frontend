@@ -12,6 +12,7 @@ export default class users extends React.Component {
 		users:{data:[], lastPage:'', page:1, total:'', perPage:''},
 		selectUsers:[],
 		filter:'Filtro',
+		edit:true,
 		loading:false,
 	  	loadpage:true
 	}
@@ -38,7 +39,11 @@ export default class users extends React.Component {
 	handleFilter = async (filter) => {
 		this.setState({loadpage:true});
 		const res = await filterUsers(filter);
-		this.setState({filter, users:res.data, loadpage:false});
+		if (filter == 'Empresas') {
+			this.setState({filter, users:res.data, loadpage:false, edit:false});
+		}else{
+			this.setState({filter, users:res.data, loadpage:false, edit:true});
+		}
 	}
 
 	handleSearch = async (e) => {
@@ -249,7 +254,7 @@ export default class users extends React.Component {
 				                      <td>
 				                      	<div className="btn-group" role="group" aria-label="Exemplo básico">
 					                      	<Link to={`/usuarios/ver-perfil/${user.id}`} className="btn btn-dark mr-1" title="Ver Amostras"> <i className="fas fa-vial"></i> </Link>
-					                      	{this.state.user.access_level_slug != 'professor' && <Link to={`/usuarios/editar/${user.id}`} className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link>}
+					                      	{this.state.user.access_level_slug != 'professor' && ( this.state.edit && <Link to={`/usuarios/editar/${user.id}`} className="btn btn-info mr-1" title="Editar"> <i className="fas fa-edit"></i> </Link> )}
 					                      	<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(user.id)}> <i className="fas fa-trash"></i> </button>
 				                      	</div>
 				                      </td>

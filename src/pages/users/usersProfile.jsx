@@ -8,6 +8,7 @@ import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta,
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 import ModalProposta from '../../components/events/ModalProposta';
 import LoadingPage from '../../components/events/LoadingPage';
+import SendPicture from '../profile/sendPicture';
 
 export default class usersProfile extends React.Component {
 	state = {
@@ -83,14 +84,17 @@ export default class usersProfile extends React.Component {
 				break;
 				case "empresa":
 					obs = `${res.data.cnpj}`;
-					propostas = await getProposta(res.data.employees[0].id);
-					this.setState({employees:res.data.employees, propostas:propostas.data});
+					if (res.data.employees.length > 0) {
+						propostas = await getProposta(res.data.employees[0].id);
+						this.setState({employees:res.data.employees, propostas:propostas.data});
+					}
 				break;
 			}
 
 			this.setState({userSingle:{obs, ...res.data}, solicitations:res.data.solicitations, user_id:id, loadpage:false});
 
 		}catch(e){
+			console.log(e);
 			alert("Error no servidor, por favor procurar o suporte técnico.");			
 		}
 	}
@@ -161,7 +165,7 @@ export default class usersProfile extends React.Component {
                       <input type="checkbox" className="custom-control-input" id="cbx-1" />
                       <label className="custom-control-label" htmlFor="cbx-1" />
                     </div>
-                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <img className="mr-3 rounded-circle" width={50} src={professor.photo} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${badge} mb-1 float-right`}>{professor.status == 1 ? "Ativo" : "Inativo"}</div>
                       <h6 className="media-title"><a href={`/usuarios/ver-perfil/${professor.id}`}>{professor.name}</a></h6>
@@ -196,7 +200,7 @@ export default class usersProfile extends React.Component {
                       <input type="checkbox" className="custom-control-input" id="cbx-1" />
                       <label className="custom-control-label" htmlFor="cbx-1" />
                     </div>
-                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <img className="mr-3 rounded-circle" width={50} src={studant.photo} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${studant.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{studant.status == 1 ? 'Ativo' : 'Inativo'}</div>
                       <h6 className="media-title"><a href={`/usuarios/ver-perfil/${studant.id}`}>{studant.name}</a></h6>
@@ -267,7 +271,7 @@ export default class usersProfile extends React.Component {
                       <input type="checkbox" className="custom-control-input" id="cbx-1" />
                       <label className="custom-control-label" htmlFor="cbx-1" />
                     </div>
-                    <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
+                    <img className="mr-3 rounded-circle" width={50} src={employee.photo} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${employee.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{employee.status == 1 ? 'Ativo' : 'Inativo'}</div>
                       <h6 className="media-title"><a href={`/usuarios/ver-perfil/${employee.id}`}>{employee.name}</a></h6>
@@ -339,7 +343,7 @@ export default class usersProfile extends React.Component {
 
 					  <div className="card profile-widget">
 				        <div className="profile-widget-header">                     
-				          <img alt="image" src={Avatar} className="rounded-circle profile-widget-picture" />
+				          <img alt="image" src={userSingle.photo} className="rounded-circle profile-widget-picture" />
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>
@@ -370,6 +374,9 @@ export default class usersProfile extends React.Component {
 						       </div> 
 				          </div>
 				          <p><i>Sem descrição</i></p>
+				          <p>
+				          	{this.state.user.access_level_slug == 'administrador' && <Link to={`/usuarios/editar/${userSingle.id}`} className="btn btn-info mr-1" title="Editar"> Editar Usuário </Link>}
+				          </p>
 				        </div>
 				        <div className="card-footer text-center pt-0">
 				          
@@ -476,44 +483,7 @@ export default class usersProfile extends React.Component {
 
 					</div>
 					<div className="col-12 col-sm-12 col-lg-5">
-						 <div className="card">
-					        <form className="needs-validation" id="" noValidate>
-					          <div className="card-header">
-					            <h4>Editar Perfil</h4>
-					          </div>
-					          <div className="card-body">
-					            <div className="form-group">
-					              <label>Como Gostaria de ser chamado?</label>
-					              <input type="text" className="form-control" required />
-					              <div className="invalid-feedback">
-					                Como? Não entendi.
-					              </div>
-					          {/*<div className="valid-feedback">
-					                Good job!
-					              </div>*/}
-					            </div>
-					            <div className="form-group">
-					              <label>Escolha uma foto de perfil</label>
-					              <div className="fallback">
-			                        <input name="file" type="file" required />
-			                      </div>
-					              <div className="invalid-feedback">
-					                Qual sua foto?
-					              </div>
-					            </div>
-					            <div className="form-group mb-0">
-					              <label>Fale um pouco sobre você</label>
-					              <textarea className="form-control" required defaultValue={""} />
-					              <div className="invalid-feedback">
-					                Como? Não entendi.
-					              </div>
-					            </div>
-					          </div>
-					          <div className="card-footer text-right">
-					            <button className="btn btn-primary">Salvar</button>
-					          </div>
-					        </form>
-					      </div>
+						 <SendPicture user={userSingle} />
 					      {userSingle.access_level_slug == 'aluno' && this.renderProfessor() }
 					      {(userSingle.access_level_slug == 'professor' || userSingle.access_level_slug == 'administrador') && this.renderStudants() }
 					      {(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderCompany() }

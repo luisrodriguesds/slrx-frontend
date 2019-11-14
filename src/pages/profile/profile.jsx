@@ -3,6 +3,8 @@ import React from 'react';
 import {getUserById} from '../../services/api';
 
 import Main from '../../components/template/Main';
+import SendPicture from './sendPicture';
+
 import store from '../../store/store';
 
 export default class profile extends React.Component {
@@ -34,8 +36,9 @@ export default class profile extends React.Component {
 				<div className="row">
 					<div className="col-12 col-sm-12 col-lg-7">
 					  <div className="card profile-widget">
-				        <div className="profile-widget-header">                     
-				          <img alt="image" src="assets/img/avatar/avatar-1.png" className="rounded-circle profile-widget-picture" />
+				        <div className="profile-widget-header">
+
+				          <img alt="image" src={user ? user.photo : `assets/img/avatar/avatar-1.png`} className="rounded-circle profile-widget-picture" />
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>
@@ -66,44 +69,7 @@ export default class profile extends React.Component {
 				      </div>
 					</div>
 					<div className="col-12 col-sm-12 col-lg-5">
-						 <div className="card">
-					        <form className="needs-validation" id="" noValidate>
-					          <div className="card-header">
-					            <h4>Editar Perfil</h4>
-					          </div>
-					          <div className="card-body">
-					            <div className="form-group">
-					              <label>Como Gostaria de ser chamado?</label>
-					              <input type="text" className="form-control" required />
-					              <div className="invalid-feedback">
-					                Como? Não entendi.
-					              </div>
-					          {/*<div className="valid-feedback">
-					                Good job!
-					              </div>*/}
-					            </div>
-					            <div className="form-group">
-					              <label>Escolha uma foto de perfil</label>
-					              <div className="fallback">
-			                        <input name="file" type="file" required />
-			                      </div>
-					              <div className="invalid-feedback">
-					                Qual sua foto?
-					              </div>
-					            </div>
-					            <div className="form-group mb-0">
-					              <label>Fale um pouco sobre você</label>
-					              <textarea className="form-control" required defaultValue={""} />
-					              <div className="invalid-feedback">
-					                Como? Não entendi.
-					              </div>
-					            </div>
-					          </div>
-					          <div className="card-footer text-right">
-					            <button className="btn btn-primary">Salvar</button>
-					          </div>
-					        </form>
-					      </div>
+						 <SendPicture user={user} />
 					</div>
 				</div>
 			</Main>

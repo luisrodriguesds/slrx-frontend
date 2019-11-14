@@ -25,6 +25,7 @@ export const searchUsers = (filter) => api.get('/user/filter?filter='+filter);
 export const filterUsers = (filter, page=null, perPage=null) => api.get('/user/filterby?filter='+filter+'&page='+page+'&perPage='+perPage);
 export const deleteUser = (id) => api.delete('/user/delete?id='+id);
 export const deleteUserAll = (array) => api.delete('/user/delete-all', { data: { array } });
+export const sendPicture = (form, config) => api.post('/user/picture', form, config);
 
 export const getProfessorStudant = (studant_id, professor_id=null) => api.get('/professor-studant/show?studant_id='+studant_id+'&professor_id='+professor_id);
 export const postPedding = (id) => api.post('/user/pedding?id='+id);

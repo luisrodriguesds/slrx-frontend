@@ -232,7 +232,7 @@ function Nav(){
             <li className="dropdown dropdown-list-toggle">
             {/* dropdown-toggle -> essa class está com problema, modificado arquivo script.js e ela parou de funcionar ???? */}
               <a href="#" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg nav-link-user">
-                <img alt="image" src={Avatar} className="rounded-circle mr-1" />
+                <img alt="carregando ..." src={user.photo} className="rounded-circle mr-1" />
                 <div className="d-sm-none d-lg-inline-block">Olá, {user.name}!</div></a>
               {/* Menus */}
               <div className="dropdown-menu dropdown-menu-right">

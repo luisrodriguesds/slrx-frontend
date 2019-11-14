@@ -370,7 +370,7 @@ export default class dashboard extends React.Component {
 											<input type="checkbox" className="custom-control-input" id={`cbx-${i}`} />
 											<label className="custom-control-label" htmlFor={`cbx-${i}`} />
 										</div>
-										<img className="mr-3 rounded-circle" width={50} src="assets/img/avatar/avatar-4.png" alt="avatar" />
+										<img className="mr-3 rounded-circle" width={50} src={user.photo} alt="avatar" />
 										<div className="media-body">
 											<div className="badge badge-pill badge-success mb-1 float-right" style={{cursor:'pointer'}} onClick={() => this.handleApprove(user.id)}>Aprovar</div>
 											<h6 className="media-title"><Link to={`/usuarios/ver-perfil/${user.id}`}>{user.name}</Link></h6>
