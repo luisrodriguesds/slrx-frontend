@@ -47,6 +47,23 @@ export default class equipment extends React.Component {
 			                    <tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
+			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-00" />
+			                          <label htmlFor="checkbox-00" className="custom-control-label">&nbsp;</label>
+			                        </div>
+			                      </td>
+			                      <td>Z00310.RAW</td>
+								  <td>LaB6, Tubo de cobre, fenda 1o, feito na data de 05/08/2015 Rigaku DMAXB.</td>
+			                      <td><div className="badge badge-success">Disponível</div></td>
+			                      <td>
+								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
+			                      		
+			                      		<a href="https://drive.google.com/open?id=1ECVvhKHMqdksXW3mS4vFxfYa-xokrVyq" target="_blank" className="btn btn-warning"> Download </a>
+									</div>
+			                      </td>
+			                    </tr>
+			                    <tr>
+			                      <td className="p-0 text-center">
+			                        <div className="custom-checkbox custom-control">
 			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-0" />
 			                          <label htmlFor="checkbox-0" className="custom-control-label">&nbsp;</label>
 			                        </div>
