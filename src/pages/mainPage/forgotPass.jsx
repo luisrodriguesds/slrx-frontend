@@ -33,7 +33,7 @@ export default class forgotPass extends React.Component {
         }else{
 			this.setState({error:''});
 			alert(res.data.message);
-            window.location=URL_BASE;
+            window.location=process.env.REACT_APP_HOME_URL;
         }
         setTimeout(() => {
             this.setState({loading:false});

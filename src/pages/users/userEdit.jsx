@@ -220,7 +220,7 @@ export default class editAccount extends React.Component {
 		  </div>
 		  <div className="row">
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="company_phone">Fone <Red /> </label>
+				  <label htmlFor="company_phone">Fone <Red /> <i className="fab fa-whatsapp"></i>  </label>
 				  <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" defaultValue={this.state.data.company_phone} name="company_phone"  onChange={(e) => this._onChange(e) } />
 				  <div className="invalid-feedback">
 					  Como? Não entendi.
@@ -518,7 +518,7 @@ export default class editAccount extends React.Component {
 	                                  </div>
 	                                  <div className="row">
 	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="phone1" className="d-block">Fone <Red /></label>
+	                                          <label htmlFor="phone1" className="d-block">Fone <Red /> <i className="fab fa-whatsapp"></i></label>  
 	                                          <InputMask id="phone1" type="text" className="form-control" value={this.state.data.phone1} name="phone1" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
 	                                          <div className="invalid-feedback">
 	                                          </div>
