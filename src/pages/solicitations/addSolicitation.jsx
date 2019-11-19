@@ -48,10 +48,10 @@ export default class addSolicitation extends React.Component {
 		const dois_theta_inicial = [];
 		const dois_theta_final = [];
 		for (let i = 3; i <= 119; i++) {
-			dois_theta_final.push(i+'°');
+			dois_theta_final.push(i);
 		}
 		for (let i = 4; i <= 120; i++) {
-			dois_theta_inicial.push(i+'°');
+			dois_theta_inicial.push(i);
 		}
 		this.setState({dois_theta_inicial, dois_theta_final, gaps:gaps.data, equipments:equipments.data});	
 	}
@@ -71,7 +71,7 @@ export default class addSolicitation extends React.Component {
       const data = {...this.state.data};
       data[e.target.name] = value;
 	  this.setState({data});
-	  console.log(this.state);
+	//   console.log(this.state);
 	}
 	
 	handleCheckbox = (e) => {
@@ -94,9 +94,9 @@ export default class addSolicitation extends React.Component {
 		let value = e.target.value;
 		const setting_frx = {...this.state.setting_frx};
 		setting_frx[e.target.name] = value;
-		console.log(setting_frx);
+		// console.log(setting_frx);
 		this.setState({setting_frx});
-		console.log(this.state);
+		// console.log(this.state);
 	}
 
 	onSubmit = async e => {
@@ -125,7 +125,7 @@ export default class addSolicitation extends React.Component {
 			}
 			// console.log(data);
 		} catch (error) {
-		  alert(`Algo inesperado aconteceu, sua pagina será recarregada`);        
+		  alert(`Algo inesperado aconteceu, informe ao suporte técnico e atualize sua página.`);        
 		//   this.props.history.push("/");        
 		}
 		
@@ -138,7 +138,7 @@ export default class addSolicitation extends React.Component {
 				<label>2θ inicial</label>
 				<select name="dois_theta_inicial" onChange={(e) => this.handleDRX(e)} className="form-control" required>									
 				{this.state.dois_theta_inicial.map((value, i) => (
-						<option key={i} value={value} selected={(value == '10') ? true : false}>{value}</option>
+						<option key={i} value={value} selected={(value == '10') ? true : false}>{value}°</option>
 					))}
 				</select>
 				<div className="invalid-feedback">
@@ -149,7 +149,7 @@ export default class addSolicitation extends React.Component {
 				<label>2θ final</label>
 				<select name="dois_theta_final" onChange={(e) => this.handleDRX(e)} className="form-control" required>								
 					{this.state.dois_theta_final.map((value, i) => (
-						<option key={i} value={value} selected={(value == '100') ? true : false}>{value}</option>
+						<option key={i} value={value} selected={(value == '100') ? true : false}>{value}°</option>
 					))}
 				</select>
 				<div className="invalid-feedback">
@@ -316,7 +316,7 @@ export default class addSolicitation extends React.Component {
 									<div className="form-group">
 										<label>Quantas amostras deseja cadastrar?</label><br />
 										<label style={{color:'red'}}>No máximo 20 amostrar por solicitação</label>
-										<input type="number" className="form-control" name="quantity" onChange={(e) => this._onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={1} max={20} />
+										<input type="text" className="form-control" name="quantity" onChange={(e) => this._onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={1} max={20} />
 									</div>
 								</div>
 					          </div>

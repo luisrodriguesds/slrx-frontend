@@ -45,10 +45,10 @@ export default class addSolicitation extends React.Component {
 		const dois_theta_inicial = [];
 		const dois_theta_final = [];
 		for (let i = 3; i <= 119; i++) {
-			dois_theta_final.push(i+'°');
+			dois_theta_final.push(i);
 		}
 		for (let i = 4; i <= 120; i++) {
-			dois_theta_inicial.push(i+'°');
+			dois_theta_inicial.push(i);
 		}
 		this.setState({...this.state, gaps:gaps.data, equipments:equipments.data, dois_theta_inicial, dois_theta_final});
 		if (this.props.computedMatch.params.name) {
@@ -159,7 +159,7 @@ export default class addSolicitation extends React.Component {
 				<label>2θ inicial</label>
 				<select name="dois_theta_inicial" onChange={(e) => this.handleDRX(e)} className="form-control" required>									
 				{this.state.dois_theta_inicial.map((value, i) => (
-						<option key={i} value={value} selected={(value === '10°') ? true : false}>{value}</option>
+						<option key={i} value={value} selected={(value == '10') ? true : false}>{value}°</option>
 					))}
 				</select>
 				<div className="invalid-feedback">
@@ -170,7 +170,7 @@ export default class addSolicitation extends React.Component {
 				<label>2θ final</label>
 				<select name="dois_theta_final" onChange={(e) => this.handleDRX(e)} className="form-control" required>								
 					{this.state.dois_theta_final.map((value, i) => (
-						<option key={i} value={value} selected={(value === '100°') ? true : false}>{value}</option>
+						<option key={i} value={value} selected={(value == '100') ? true : false}>{value}°</option>
 					))}
 				</select>
 				<div className="invalid-feedback">

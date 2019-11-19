@@ -121,7 +121,8 @@ export default class sampleSingle extends React.Component {
 			                        <strong>Status: </strong> <span id="status" style={{color:(solicitation.status < 1) ? 'red' : ((solicitation.status == 7) ? 'green' : 'blue')}}><strong>{this.state.phase}</strong></span><br />
 			                    </p>
 			                    <p>
-			                        <strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`/usuarios/ver-perfil/${solicitation.user && solicitation.user.id}`}>{solicitation.user && solicitation.user.name}</Link></span><br />
+			                        {this.state.user.permission == true && <React.Fragment><strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`/usuarios/ver-perfil/${solicitation.user && solicitation.user.id}`}>{solicitation.user && solicitation.user.name}</Link></span><br /> </React.Fragment>  }
+			                        {this.state.user.permission == false && <React.Fragment><strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`#`}>{solicitation.user && solicitation.user.name}</Link></span><br /> </React.Fragment>  }
 			                    </p>
 			                    <p>
 			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">{new Date(solicitation.created_at).toLocaleString('pt-BR')}</span><br />
@@ -177,7 +178,7 @@ export default class sampleSingle extends React.Component {
 		                </div>
 
 		                	
-						<div className="bloco relativo" id="UploadResultado" style={{display:((solicitation.status == 5) ? 'block' : 'none')}}>
+						<div className="bloco relativo" id="UploadResultado" style={{display:((solicitation.status == 5 && this.state.user.permission == true) ? 'block' : 'none')}}>
 		                	<div className="card card-primary">
 		                  		<div className="card-body">
 

@@ -21,7 +21,6 @@ export default class profile extends React.Component {
 			})
 			const solicitations = await getUserById(store.getState().user.user.id);
 			this.setState({solicitations:solicitations.data.solicitations});
-			
 		});
 		store.dispatch({
 			type:'REQUEST_USER'
@@ -42,15 +41,15 @@ export default class profile extends React.Component {
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>
-				              <div className="profile-widget-item-value">{solicitations.length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Analisadas</div>
-				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status == 7).length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.filter((v,i) => v.status == 7).length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Pendentes</div>
-				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status >= 1 && v.status < 7).length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.filter((v,i) => v.status >= 1 && v.status < 7).length}</div>
 				            </div>
 				          </div>
 				        </div>

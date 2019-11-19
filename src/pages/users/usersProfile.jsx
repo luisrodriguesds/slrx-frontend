@@ -334,7 +334,7 @@ export default class usersProfile extends React.Component {
 		const {userSingle} = this.state;
 		const {solicitations} = this.state;
 
-
+		console.log(solicitations);
 		return (
 			<Main title="Perfil do Usuário">
 				<LoadingPage loading={this.state.loadpage} />
@@ -347,15 +347,15 @@ export default class usersProfile extends React.Component {
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>
-				              <div className="profile-widget-item-value">{solicitations.length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Analisadas</div>
-				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status == 7).length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.filter((v,i) => v.status == 7).length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Pendentes</div>
-				              <div className="profile-widget-item-value">{solicitations.filter((v,i) => v.status >= 1 && v.status < 7).length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.filter((v,i) => v.status >= 1 && v.status < 7).length}</div>
 				            </div>
 				          </div>
 				        </div>

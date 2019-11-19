@@ -62,6 +62,16 @@ export default class solicitations extends React.Component {
 		// console.log(res, filter);
 	}
 
+	onSubmitSearch = async (e) => {
+		e.preventDefault();
+		const filter = e.target.search.value;
+		if (filter != '') {
+			const res = await searchSolicitation(filter);
+			let solicitations = res.data;
+			this.setState({solicitations});
+		}
+	}
+
 	handleFilter = async (filter) => {
 		const res = await filterhSolicitation(filter);
 		// console.log(res)
@@ -153,9 +163,23 @@ export default class solicitations extends React.Component {
 		}else{
 			if (window.confirm(`Você tem certeza que deseja passar para a próxima fase as amostras selecionadas?`)) {
 				try{
-					const res = await nextStepAllSolicitation(this.state.selectSol);
-					alert(`Amostras atualizadas com sucesso`);
-					window.location=window.location.href;
+					// const res = await nextStepAllSolicitation(this.state.selectSol);
+					// alert(`Amostras atualizadas com sucesso`);
+					// window.location=window.location.href;
+					//Mandar por FOR -> Precisará de uma promessa para enviar todos de uma vez
+					let req;
+					const res = await Promise.all(this.state.selectSol.map(async (id) => {
+						req = await nextStepSolicitation(id);
+					}));
+
+					const {page} = this.state.solicitations;
+					this.setState({solicitations:{data:[]}});
+					
+					alert("Amostra passadas com sucesso");
+					let load = await getSolicitation({page});
+					let solicitations = load.data;
+					
+					this.setState({solicitations, selectSol:[]});
 					
 				}catch(e){
 
@@ -241,7 +265,7 @@ export default class solicitations extends React.Component {
 			          <div className="card">
 			            <div className="card-header">
 			              <h4>Amostras</h4>
-			              <div className="card-header-form">
+			              <div className="card-header-form" style={{width:'100%'}}>
 							  <div className="row" style={{width:'100%'}}>
 							  	<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left p-0">
 									
@@ -272,9 +296,9 @@ export default class solicitations extends React.Component {
 									</div>
 								</div>
 								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
-									<form method="post" onSubmit={(e) => e.preventDefault()}>
+									<form method="post" onSubmit={(e) => this.onSubmitSearch(e)}>
 										<div className="input-group">
-											<input type="text" className="form-control" placeholder="Pesquisar" onChange={(e) => this.handleSearch(e)} />
+											<input type="text" className="form-control" name="search" placeholder="Pesquise pelo nome da amostra" onChange={(e) => this.handleSearch(e)} />
 											<div className="input-group-btn">
 											<button className="btn btn-primary"><i className="fas fa-search" /></button>
 											</div>

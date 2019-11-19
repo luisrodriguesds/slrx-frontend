@@ -177,7 +177,7 @@ export default class users extends React.Component {
 			          <div className="card">
 			            <div className="card-header">
 			              <h4>Usuários</h4>
-			              <div className="card-header-form">
+			              <div className="card-header-form" style={{width:'100%'}}>
 						  	<div className="row" style={{width:'100%'}}>
 							  	<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left p-0">
 								  <div className="option-group">
@@ -205,7 +205,7 @@ export default class users extends React.Component {
 								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
 									<form method="post" onSubmit={(e) => e.preventDefault()}>
 										<div className="input-group">
-											<input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
+											<input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquise pelo nome do usuário" />
 											<div className="input-group-btn">
 											<button className="btn btn-primary"><i className="fas fa-search" /></button>
 											</div>
