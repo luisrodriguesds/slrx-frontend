@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'SLRX-FRONTEND',
+      name: 'slrx-frontend',
       script: 'npm start',
       watch: true
     }
