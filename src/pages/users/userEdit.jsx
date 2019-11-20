@@ -345,7 +345,7 @@ export default class editAccount extends React.Component {
 			  <div className="row">
 				<div className="form-group col-12">
 				  <label htmlFor="description">Descrição da Pesquisa</label>
-				  <textarea className="form-control" name="description" required defaultValue={this.state.data.description} onChange={(e) => this._onChange(e)} />
+				  <textarea className="form-control" name="description" defaultValue={this.state.data.description} onChange={(e) => this._onChange(e)} />
 				</div>
 			  </div>
 			</div>
