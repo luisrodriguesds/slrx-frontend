@@ -48,7 +48,7 @@ function ModalProposta(props) {
        try {
           data = encodeURIComponent(JSON.stringify(data)); 
           // const res = await propostaSolicitation(data);
-          window.open(`http://127.0.0.1:3333/api/solictation/proposta?data=${data}`, '_blank'); //Mudar isso ai
+          window.open(`${process.env.REACT_APP_API_URL}/api/solictation/proposta?data=${data}`, '_blank'); //Mudar isso ai
           setProposta({url:data, user_id:props.user_id});
           setSendProp(false);
           // console.log(proposta);
