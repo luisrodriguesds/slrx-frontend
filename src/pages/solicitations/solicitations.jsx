@@ -57,7 +57,7 @@ export default class solicitations extends React.Component {
 		const filter = e.target.value;
 		const res = await searchSolicitation(filter);
 		let solicitations = res.data;
-		this.setState({solicitations});
+		this.setState({solicitations, selectSol:[]});
 
 		// console.log(res, filter);
 	}

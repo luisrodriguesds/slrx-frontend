@@ -26,7 +26,8 @@ export default class editAccount extends React.Component {
       states:[],
       cities:[],
       address:{},
-      company:{},
+	  company:{},
+	  id_state:null,
 	  loading:false,
 	  loadpage:true
     };
@@ -85,7 +86,7 @@ export default class editAccount extends React.Component {
 			}
 		}
 		this.setState({loadpage:false, data:{...this.state.data, status:this.state.user.status}});		
-		console.log(user);
+		// console.log(user);
 	}
 
 	handleCNPJ = async (e) => {
@@ -126,7 +127,9 @@ export default class editAccount extends React.Component {
       if (e.target.name == 'state') { 
         const states = this.state.states;
         const uf = states.filter(st => st.id == e.target.value); 
-              value = uf[0].sigla;
+			  value = uf[0].sigla;
+			  this.setState({id_state:uf[0].id});
+			  console.log(value);
       }
 
       const data = {...this.state.data};
@@ -269,7 +272,7 @@ export default class editAccount extends React.Component {
 			  </div>
 			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
 				  <label htmlFor="company_state">Estado <Red /> </label>
-				  <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="company_state" />
+				  <input id="company_state" type="text" value={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="company_state" />
 					<div className="invalid-feedback">
 						Como? Não entendi.
 					</div>

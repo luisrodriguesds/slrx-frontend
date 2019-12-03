@@ -127,7 +127,8 @@ export default class editAccount extends React.Component {
       if (e.target.name == 'state') { 
         const states = this.state.states;
         const uf = states.filter(st => st.id == e.target.value); 
-              value = uf[0].sigla;
+			  value = uf[0].sigla;
+			  this.setState({id_state:uf[0].id});
       }
 
       const data = {...this.state.data};
