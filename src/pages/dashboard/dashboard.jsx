@@ -6,6 +6,7 @@ import store from '../../store/store';
 
 import Main from '../../components/template/Main';
 import Button from '../../components/events/LoadingButtom';
+import ModalHead from '../../components/events/ModalHeaddash';
 
 import LoadingPage from '../../components/events/LoadingPage';
 
@@ -196,7 +197,7 @@ export default class dashboard extends React.Component {
 							<h4>Total de Amostras DRX</h4>
 							</div>
 							<div className="card-body">
-							{data.length == 0 ? '0' : data[2].count}
+							<ModalHead method="DRX" data={data[2]}>{data.length == 0 ? '0' : data[2].count}</ModalHead> 
 							</div>
 						</div>
 						</div>
@@ -211,7 +212,7 @@ export default class dashboard extends React.Component {
 							<h4>Total de Amostras FRX</h4>
 							</div>
 							<div className="card-body">
-							{data.length == 0 ? '0' : data[3].count}
+							<ModalHead method="FRX" data={data[3]}>{data.length == 0 ? '0' : data[3].count}</ModalHead> 
 							</div>
 						</div>
 						</div>
