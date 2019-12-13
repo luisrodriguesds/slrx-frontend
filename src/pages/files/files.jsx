@@ -1,11 +1,47 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
+import {getUsefulFiles} from '../../services/api';
+
+
 import Main from '../../components/template/Main';
 
+import store from '../../store/store';
+
 export default class equipment extends React.Component {
+	state = {
+		user:{},
+		files:{data:[], lastPage:'', page:1, total:'', perPage:''},
+		selectFiles:[],
+		loading:false,
+	  	loadpage:true
+	}
+
+	async componentDidMount(){
+		store.subscribe(() =>{
+			this.setState({
+				user:store.getState().user.user
+			})
+		});
+		store.dispatch({
+			type:'REQUEST_USER'
+		});
+		try {
+			const res = await getUsefulFiles();
+			if (res.data.error == true) {
+				alert(`${res.data.message}`);
+				return false;
+			}else{
+				this.setState({files:res.data})
+				console.log(this.state)
+			}
+		} catch (error) {
+			
+		}
+	}
 
 	render() {
+		const {files} = this.state;
 		return (
 			<Main title="Arquivos Úteis	">
 				 <div className="row">
@@ -43,8 +79,33 @@ export default class equipment extends React.Component {
 								  <th>Status</th>
 			                      <th>Ações</th>
 			                    </tr>
+								{files.data.length != 0 && files.data.map((file, i) => (
+									<tr>
+										<td className="p-0 text-center">
+											<div className="custom-checkbox custom-control">
+											<input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id={`checkbox-${i}`} />
+											<label htmlFor={`checkbox-${i}`} className="custom-control-label">&nbsp;</label>
+											</div>
+										</td>
+										<td>{file.name}</td>
+										<td>{file.description}</td>
+										<td>
+											{file.status == 1 && <div className="badge badge-success">Disponível</div>}
+											{file.status == 0 && <div className="badge badge-danger">Indisponível</div>}
+										</td>
+										<td>
+											<div className="btn-group" role="group" aria-label="Exemplo básico">
+												<a href={file.status == 1 && `${file.link}`} target="_blank" className="btn btn-warning" title="Donwload"> <i class="fas fa-arrow-alt-circle-down"></i> </a>
+												{this.state.user.permission == true && <Link to={`/arquivos-uteis/editar/${file.id}`} className="btn btn-info" title="Editar"><i className="fas fa-edit"></i> </Link>}
+												{this.state.user.permission == true && <button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>}
 
-			                    <tr>
+											</div>
+										</td>
+									</tr>
+
+								))}
+
+			                    {/* <tr>
 			                      <td className="p-0 text-center">
 			                        <div className="custom-checkbox custom-control">
 			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-00" />
@@ -167,7 +228,7 @@ export default class equipment extends React.Component {
 			                      		<a href="https://drive.google.com/open?id=1uWeLT-wdzB9LHpznOGNySfL6StZkJ5kE" target="_blank" className="btn btn-warning"> Download </a>
 									</div>
 			                      </td>
-			                    </tr>
+			                    </tr> */}
 
 			                  </tbody>
 			                </table>

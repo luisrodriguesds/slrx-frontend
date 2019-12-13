@@ -66,5 +66,10 @@ export const postEmail = (data) => api.post('/documents/email', data);
 //Professor Aluno
 export const storeProfessorStudant = (email) => api.post('/professor-studant/store', {email});
 
+//Useful files
+export const getUsefulFiles = () => api.get('/useful-files');
+export const postUsefulFiles = (form, config) => api.post('/useful-files', form, config);
+
+
 
 export default api;

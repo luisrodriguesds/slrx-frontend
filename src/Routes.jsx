@@ -22,6 +22,7 @@ import ChangePass from './pages/changePass/changePass';
 import editAccount from './pages/editAccount/editAccount';
 
 import Files  from './pages/files/files';
+import AddFiles  from './pages/files/addFiles';
 
 import NotFound from './pages/notFound';
 
@@ -82,7 +83,8 @@ function Routes(props){
       	<PrivateRoute exact path='/editar-conta' component={editAccount} />
 
       	<PrivateRoute exact path='/arquivos-uteis' component={Files} />
-      	<PrivateRoute exact path='/arquivos-uteis/enviar' component={Files} />
+      	<PrivateRoute exact path='/arquivos-uteis/enviar' component={AddFiles} />
+      	<PrivateRoute exact path='/arquivos-uteis/editar/:id' component={Files} />
 
       	<PrivateRoute exact path='/404' component={NotFound} />
       	<Redirect from="*" to='/' />
