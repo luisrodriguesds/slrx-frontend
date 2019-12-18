@@ -16,7 +16,7 @@ function ModalSolicitation(props) {
     });
 
     useEffect(() => {
-       
+        
     }, []);
   
     const handleClose = () => setShow(false);
@@ -30,26 +30,26 @@ function ModalSolicitation(props) {
   
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Histórico Anual de Medida - {props.method} </Modal.Title>
+            <Modal.Title>Contagem de {props.method} </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          <div class="table-responsive">
-            <table class="table">
-                <tr>
-                    <th>#</th>
-                    <th>Ano</th>
-                    <th>Contagem</th>
-                </tr>
-                
-                {props.data && props.data.years.map((v,i) => (
+            <div class="table-responsive">
+                <table class="table">
                     <tr>
-                        <td>{i+1} </td>
-                        <td>{v.year} </td>
-                        <td>{v.count} </td>
+                        <th>#</th>
+                        <th>Tipo de Usuário</th>
+                        <th>Contagem</th>
                     </tr>
-                ))}
-            </table>
-          </div>             
+                    {props.data && console.log(props.data)}
+                    {props.data && props.data.access_levels.map((v,i) => (
+                        <tr>
+                            <td>{i+1} </td>
+                            <td>{v.access_level} </td>
+                            <td>{v.count} </td>
+                        </tr>
+                    ))}
+                </table>
+            </div>             
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>

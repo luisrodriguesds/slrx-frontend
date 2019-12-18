@@ -5,12 +5,16 @@ import Button from '../../components/events/LoadingButtom';
 import {postUsefulFiles} from '../../services/api';
 
 const Red = () => (<span style={{color:'red'}}>*</span>);
-export default class addFiles extends React.Component {
+export default class editFiles extends React.Component {
     state = {
         data:{},
         file:null,
 		loading:false,
 	  	loadpage:true
+    }
+
+    async componentDidMount(){
+        
     }
     
     _onChange = (e) => {
