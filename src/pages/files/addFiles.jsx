@@ -19,7 +19,6 @@ export default class addFiles extends React.Component {
         const data = {...this.state.data};
         data[e.target.name] = value;
         this.setState({data});
-        console.log(this.state);
     }
 
     onChangeFile(e) {
@@ -60,7 +59,7 @@ export default class addFiles extends React.Component {
 	            'content-type': 'multipart/form-data'
 	        }
         }
-        console.log(formData);
+        // console.log(formData);
 	    return await postUsefulFiles(formData, config)
 	 }
 
@@ -71,7 +70,7 @@ export default class addFiles extends React.Component {
                     <div className="row justify-content-md-center">
                         <div className="col-12 col-sm-12 col-lg-7">
                             <div className="card">
-                                <form className="needs-validation" encType="multipart/form-data" onSubmit={(e) => this.handleSubmit(e)} id="" novalidate>
+                                <form className="needs-validation" encType="multipart/form-data" onSubmit={(e) => this.handleSubmit(e)} id="" noValidate>
                                     <div className="card-header">
                                         <h4>Cadastrar Arquivo</h4>
                                     </div>

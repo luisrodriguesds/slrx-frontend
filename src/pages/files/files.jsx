@@ -1,14 +1,14 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 
-import {getUsefulFiles} from '../../services/api';
+import {getUsefulFiles, deleteUsefulFiles} from '../../services/api';
 
 
 import Main from '../../components/template/Main';
 
 import store from '../../store/store';
 
-export default class equipment extends React.Component {
+export default class files extends React.Component {
 	state = {
 		user:{},
 		files:{data:[], lastPage:'', page:1, total:'', perPage:''},
@@ -40,6 +40,25 @@ export default class equipment extends React.Component {
 		}
 	}
 
+	handleDelete = async (id) => {
+		if (!window.confirm('Deseje realmente excluir este arquivo?')) {
+			return false;
+		}
+		try {
+			const res = await deleteUsefulFiles(id);
+			if (res.data.error == true) {
+				alert(`${res.data.message}`);
+			}else{
+				this.setState({data:[], lastPage:'', page:1, total:'', perPage:''});
+				alert(`${res.data.message}`);
+				const update = await getUsefulFiles();
+				this.setState({files:update.data})
+			}
+		} catch (error) {
+			
+		}
+	}
+
 	render() {
 		const {files} = this.state;
 		return (
@@ -48,20 +67,26 @@ export default class equipment extends React.Component {
 			        <div className="col-12">
 			          <div className="card">
 			            <div className="card-header">
-			              <h4>Arquivos Úteis	</h4>
-			              <div className="card-header-form">
-			                <div className="option-group">
-			                	<Link to="/arquivos-uteis/enviar" title="Cadastrar" className="btn btn-primary ml-1"><i className="fas fa-plus"></i></Link>
-				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger"><i className="fas fa-trash"></i></button>
-			                </div>
-			                <form>
-			                  <div className="input-group">
-			                    <input type="text" className="form-control" placeholder="Search" />
-			                    <div className="input-group-btn">
-			                      <button className="btn btn-primary"><i className="fas fa-search" /></button>
-			                    </div>
-			                  </div>
-			                </form>
+			              <h4>Arquivos</h4>
+			              <div className="card-header-form" style={{width:'100%'}}>
+							<div className="row" style={{width:'100%'}}>
+								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-left p-0">
+									<div className="option-group">
+										{ this.state.user.permission == true && <Link to="/arquivos-uteis/enviar" title="Cadastrar" className="btn btn-primary ml-1"><i className="fas fa-plus"></i></Link> }
+										{ this.state.user.permission == true && <button data-toggle="tooltip" title="Excluir" className="btn btn-danger"><i className="fas fa-trash"></i></button> }
+									</div>
+								</div>
+								<div className="col-lg-6 col-md-6 col-sm-6 col-12 text-right">
+									<form>
+										<div className="input-group">
+											<input type="text" className="form-control" placeholder="Search" />
+											<div className="input-group-btn">
+												<button className="btn btn-primary"><i className="fas fa-search" /></button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
 			              </div>
 			            </div>
 			            <div className="card-body p-0">
@@ -80,7 +105,7 @@ export default class equipment extends React.Component {
 			                      <th>Ações</th>
 			                    </tr>
 								{files.data.length != 0 && files.data.map((file, i) => (
-									<tr>
+									<tr key={i}>
 										<td className="p-0 text-center">
 											<div className="custom-checkbox custom-control">
 											<input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id={`checkbox-${i}`} />
@@ -95,9 +120,10 @@ export default class equipment extends React.Component {
 										</td>
 										<td>
 											<div className="btn-group" role="group" aria-label="Exemplo básico">
-												<a href={file.status == 1 && `${file.link}`} target="_blank" className="btn btn-warning" title="Donwload"> <i class="fas fa-arrow-alt-circle-down"></i> </a>
+												{this.state.user.permission == false && <a href={file.status == 1 && `${file.link}`} target="_blank" className="btn btn-warning" title="Donwload"> Download </a>}
+												{this.state.user.permission == true && <a href={file.status == 1 && `${file.link}`} target="_blank" className="btn btn-warning" title="Donwload"> <i className="fas fa-arrow-alt-circle-down"></i> </a>}
 												{this.state.user.permission == true && <Link to={`/arquivos-uteis/editar/${file.id}`} className="btn btn-info" title="Editar"><i className="fas fa-edit"></i> </Link>}
-												{this.state.user.permission == true && <button className="btn btn-danger" title="Excluir"> <i className="fas fa-trash"></i> </button>}
+												{this.state.user.permission == true && <button className="btn btn-danger" onClick={() => this.handleDelete(file.id)} title="Excluir"> <i className="fas fa-trash"></i> </button>}
 
 											</div>
 										</td>

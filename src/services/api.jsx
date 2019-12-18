@@ -69,6 +69,9 @@ export const storeProfessorStudant = (email) => api.post('/professor-studant/sto
 //Useful files
 export const getUsefulFiles = () => api.get('/useful-files');
 export const postUsefulFiles = (form, config) => api.post('/useful-files', form, config);
+export const putUsefulFiles = (form, config, id) => api.put('/useful-files/'+id, form, config);
+export const showUsefulFiles = (id) => api.get('/useful-files/show/'+id);
+export const deleteUsefulFiles = (id) => api.delete('/useful-files/destoy/'+id);
 
 
 

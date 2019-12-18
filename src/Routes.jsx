@@ -23,6 +23,7 @@ import editAccount from './pages/editAccount/editAccount';
 
 import Files  from './pages/files/files';
 import AddFiles  from './pages/files/addFiles';
+import EditFiles  from './pages/files/editFiles';
 
 import NotFound from './pages/notFound';
 
@@ -84,7 +85,7 @@ function Routes(props){
 
       	<PrivateRoute exact path='/arquivos-uteis' component={Files} />
       	<PrivateRoute exact path='/arquivos-uteis/enviar' component={AddFiles} />
-      	<PrivateRoute exact path='/arquivos-uteis/editar/:id' component={Files} />
+      	<PrivateRoute exact path='/arquivos-uteis/editar/:id' component={EditFiles} />
 
       	<PrivateRoute exact path='/404' component={NotFound} />
       	<Redirect from="*" to='/' />
