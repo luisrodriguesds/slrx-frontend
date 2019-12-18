@@ -42,7 +42,9 @@ export default class addFiles extends React.Component {
 				this.props.history.push("/arquivos-uteis");
 			}
 		}catch(e){
-			alert("Algo de errado aconteceu, por favor recarrege sua página");
+            alert("Algo de errado aconteceu, por favor recarrege sua página");
+			this.props.history.push("/arquivos-uteis");
+            
 			// console.log(e);
 		}
 
