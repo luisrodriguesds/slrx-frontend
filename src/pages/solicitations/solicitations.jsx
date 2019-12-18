@@ -343,7 +343,8 @@ export default class solicitations extends React.Component {
 			                      </td>
 			                      <td className="weight">
 			                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link> <br/>
-									{(this.state.user.permission == true && solicitation.method == 'DRX') && <small>{solicitation.settings.dois_theta_inicial} a {solicitation.settings.dois_theta_final}</small> }
+									  {(this.state.user.permission == true && solicitation.method == 'DRX') && <small>{solicitation.settings.dois_theta_inicial} a {solicitation.settings.dois_theta_final}</small> }
+									  {(this.state.user.permission == true && solicitation.method == 'FRX') && <small>{solicitation.settings.resultado}</small> }
 									{/* <ModalSolicitation solicitation={solicitation} user={this.state.user}>{solicitation.name}</ModalSolicitation> */}
 								  </td>
 			                      <td className="align-middle">{solicitation.equipment == null ? '' : solicitation.equipment.name}</td>
