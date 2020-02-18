@@ -251,10 +251,10 @@ export default class addSolicitation extends React.Component {
 										<label>Escolha o tipo da amostra <Red /></label>
 										<select name="shape"  className="form-control" onChange={(e) => this._onChange(e)} required>
 											<option value="">Selecione o tipo da amostra ...</option>
-											<option selected value="Pó">Pó</option>
-											<option value="Filme">Filme</option>
-											<option value="Pastilha">Pastilha</option>
-											<option value="Eletródo">Eletródo</option>
+											<option selected value="Pó">Pó {this.state.method == 'DRX' ? '- Mínimo de 1 grama, leve o pó peneirado e/ou macerado, preferência 230 mesh' : '- Leve o pó peneirado e/ou macerado'} </option>
+											<option value="Filme">Filme {this.state.method == 'DRX' ? '- Devem ter máx. 15x15mm2, espessura máx. de 3mm e devem ser planos' : '- Devem ter máx. de 2x2 cm2 e devem ser planos'}</option>
+											<option value="Pastilha">Pastilha {this.state.method == 'DRX' ? '- Disco devem ter máx. 15mm de diâmetro ou quadrado 15x15mm2, devem ter espessura máx. de 3mm e devem ser planos' : ' - Diâmetro menor: 17-19,5 mm, diâmetro máx. 30-44mm'}</option>
+											<option value="Eletródo">Eletródo {this.state.method == 'DRX' ? '- Disco devem ter máx. 15mm de diâmetro ou quadrado 15x15mm2, espessura máx. de 3mm e devem ser planos' : '- Devem ter máx. 2x2cm2 e devem ser planos'} </option>
 											<option value="Outro">Outro</option>
 										</select>
 										<div className="invalid-feedback">
