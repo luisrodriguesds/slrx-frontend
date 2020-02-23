@@ -386,7 +386,7 @@ export default class usersProfile extends React.Component {
 			            <div className="card-header">
 			              <h4>Amostras</h4>
 			              <div className="card-header-form">
-			                	{(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro' || userSingle.access_level_slug == 'empresa') && 
+			                	{
 			                		<div className="option-group">
 										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
 			                		</div>
