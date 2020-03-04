@@ -3,12 +3,15 @@ import React from 'react';
 import Main from './Main';
 import Login from './Login';
 import ModalHome from '../../components/events/ModalHome'
+
 // import { Container } from './styles';
 
 const home = () => {
     return (
         <Main>
-            <div className="row">
+           
+            
+            <div className="row home">
 		          <div className="col-lg-8 col-md-12 col-12 col-sm-12 order-2 order-sm-2 order-md-1 order-lg-1">
 		            <div className="card">
 		              <div className="card-header">
@@ -20,9 +23,9 @@ const home = () => {
 		              </div>
 		            </div>
                     <div className="card">
-                        {/* <div className="card-header">
-                            <h4>Recomendações na entrega das amostras e no preenchimento do formulário de solicitação</h4>
-                        </div> */}
+                        <div className="card-header">
+                            <h4>Observações importantes</h4>
+                        </div>
                         <div className="card-body">
                             {/* <p><strong>Rigaku (DMAXB) DRX-Difração de Raios-X</strong></p>
                             <ul>
@@ -49,7 +52,6 @@ const home = () => {
                                 <li>Eletrodo (devem ter máx. 2x2cm2 e devem ser planos)</li>
                             </ul> */}
                             
-                            <p><strong>Observações importantes</strong></p>
                             <ul>
                                 <li>Nos trabalhos de divulgação científica (congressos, teses, dissertações e artigos) coloque um agradecimento especial ao CNPq (Processo: 402561/2007-4) Edital MCT/CNPq nº 10/2007.</li>
                                 <li>Enviar as referências dos trabalhos para o endereço lrxufc@gmail.com.</li>

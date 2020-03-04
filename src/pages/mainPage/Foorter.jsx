@@ -19,9 +19,9 @@ const Foorter = () => {
                     Desde 1996 o coordenador do Laboratório de raios-X vem se dedicando na formação de pessoal qualificado no uso das técnicas de difração com o uso de fonte convencional de raios-X e de luz síncrotron.
                   </p>
                   <ol className="flat-list">
-                    <li><a href="#" target="_blank"><i className="fab fa-facebook-f" /></a></li>
-                    <li><a href="#" target="_blank"><i className="fab fa-instagram" /></a></li>
-                    <li><a href="#" target="_blank"><i className="fab fa-linkedin-in" /></a></li>
+                    <li><a href="https://www.facebook.com/labraiosx/" target="_blank"><i className="fab fa-facebook-f" /></a></li>
+                    <li><a href="https://www.instagram.com/lrxufc/" target="_blank"><i className="fab fa-instagram" /></a></li>
+                    <li><a href="https://www.linkedin.com/in/lrx-ufc-6a449a1a2/" target="_blank"><i className="fab fa-linkedin-in" /></a></li>
                     <li><a href="#" target="_blank"><i className="fab fa-whatsapp" /></a></li>
                   </ol>
                 </div>
@@ -54,7 +54,6 @@ const Foorter = () => {
                   <ul className="footer-widget-office-time">
                     <li>
                       <p>
-                          Atendemos: <br />
                           Segunda - Sexta: <br/>
                           8h às 12h <br />
                           14h às 18h
@@ -72,21 +71,27 @@ const Foorter = () => {
               <div className="col-12 col-sm-6 col-lg-3 mt-4 mt-lg-0">
                 <div className="footer-widget-item">
                   <h3>Apoio</h3>
+                  <div>
                     <a href="http://www.ufc.br/" target="_blank">
-                      <img src={UFC} alt="Universidade Federal do Ceará"/>
+                      <img src={UFC} alt="Universidade Federal do Ceará" style={{width:'170px'}}/>
                     </a>
-                    <a href="http://www.cnpq.br/" target="_blank">
-                      <img src={CNPq} alt=""/>
-                    </a>
-                    <a href="https://www.capes.gov.br/" target="_blank">
-                      <img src={Capes} style={{width:'150px'}} alt=""/>
-                    </a>
+                  </div>
+                    <div>
+                      <a href="http://www.cnpq.br/" target="_blank">
+                        <img src={CNPq} alt="" style={{width:'100px'}}/>
+                      </a>
+                    </div>
+                    <div>
+                      <a href="https://www.capes.gov.br/" target="_blank">
+                        <img src={Capes} style={{width:'70px'}} alt=""/>
+                      </a>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="footer-copyright p-3">
+        <div className="footer-copyright p-1">
           <div className="container">
             <div className="row">
               <div className="col-xl-12 text-center">

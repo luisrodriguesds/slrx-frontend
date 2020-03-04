@@ -52,7 +52,7 @@ class Login extends Component {
             <div className="card-body pb-0">
                 {/* <p className="text-muted">Click login to change the card to progress mode.</p> */}
                 {this.state.error && <div className="alert alert-danger" role="alert">{this.state.error}</div>}
-                <div className="form-group">
+                <div className="form-group" style={{marginBottom:'5px'}}>
                 <label>Email</label>
                 <div className="input-group">
                     <div className="input-group-prepend">
@@ -63,7 +63,7 @@ class Login extends Component {
                     <input type="text" className="form-control" onChange={(e) => this._onChange(e)} name="email" placeholder="Email" />
                 </div>
                 </div>
-                <div className="form-group">
+                <div className="form-group" style={{marginBottom:'5px'}}>
                 <label>Senha</label>
                 <div className="input-group">
                     <div className="input-group-prepend">
