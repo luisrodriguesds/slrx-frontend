@@ -60,12 +60,14 @@ export default class usersProfile extends React.Component {
 				case "aluno":
 					obs = (res.data.academic == null ? '' : `${res.data.academic.laboratory}`);
 					let professor = await getProfessorStudant(res.data.id);
-					this.setState({professor:professor.data});
+					propostas = await getProposta(res.data.id);
+					this.setState({professor:professor.data, propostas:propostas.data});
 				break;
 				case "professor":
 					obs = (res.data.academic == null ? '' : `${res.data.academic.laboratory}`);
 					studants = await getProfessorStudant(null,	res.data.id);
-					this.setState({studants:studants.data});
+					propostas = await getProposta(res.data.id);
+					this.setState({studants:studants.data, propostas:propostas.data});
 				break;
 				case "tecnico":
 				case "financeiro":
@@ -488,7 +490,7 @@ export default class usersProfile extends React.Component {
 					      {(userSingle.access_level_slug == 'professor' || userSingle.access_level_slug == 'administrador') && this.renderStudants() }
 					      {(userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderCompany() }
 					      {userSingle.access_level_slug == 'empresa' && this.renderEmployees() }
-					      {(userSingle.access_level_slug == 'empresa' || userSingle.access_level_slug == 'tecnico' || userSingle.access_level_slug == 'financeiro') && this.renderPropostas() }
+					      {this.renderPropostas() }
 
 					</div>
 				</div>

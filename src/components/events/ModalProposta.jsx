@@ -21,7 +21,8 @@ function ModalProposta(props) {
       drxCalculo:null,
       qtdDrxCalculo:null,
       dataPrazo:null,
-      observacoesProposta:null
+      observacoesProposta:null,
+      name:null
     });
 
     const handleClose = () => setShow(false);
@@ -109,7 +110,7 @@ function ModalProposta(props) {
                       <input type="text" name="frxSemiQuantitativa" onChange={(e) => onChange(e)} defaultValue={state.frxSemiQuantitativa} title="Caso vazio, será adotado o preço da tabela" placeholder="Preço por amostra" className="form-control" required />
                     </div>
                     <div className="col-3 pl-1">
-                      <input type="number" name="qtdFrxSemiQuantitativa" onChange={(e) => onChange(e)} defaultValue={state.frxSemiQuantitativa} title="Mínimo = 1" min={1} placeholder="Quantidade de amotras" className="form-control" required />
+                      <input type="number" name="qtdFrxSemiQuantitativa" onChange={(e) => onChange(e)} defaultValue={state.qtdFrxSemiQuantitativa} title="Mínimo = 1" min={1} placeholder="Quantidade de amotras" className="form-control" required />
                     </div>
                   </div>
                 </div>
@@ -171,6 +172,12 @@ function ModalProposta(props) {
                       <textarea name="observacoesProposta" className="form-control" defaultValue={state.observacoesProposta} onChange={(e) => onChange(e)}></textarea>
                     </div>
                   </div>
+                  <div className="control-label"><strong>Proposta de Outro Solicitante?</strong></div>
+                  <div className="row mb-3">
+                    <div className="col-12 pr-0">
+                      <input type="text" name="name" onChange={(e) => onChange(e)} defaultValue={state.name} title="Digite o nome do solicitante" placeholder="Proposta no nome de outro solicitante? Digite o nome completo!" className="form-control" required />
+                    </div>
+                  </div>  
                 </div>
             </form>
           </Modal.Body>
