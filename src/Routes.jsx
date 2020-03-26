@@ -66,6 +66,7 @@ function Routes(props){
 
       	<PrivateRoute exact path='/equipamentos' component={Equipment} />
       	<PrivateRoute exact path='/equipamentos/cadastro' component={addEquipment} />
+      	<PrivateRoute exact path='/equipamentos/editar/:id' component={addEquipment} />
 
       	<PrivateRoute exact path='/usuarios' component={Users} />
       	<PrivateRoute exact path='/usuarios/cadastro' component={addUser} />

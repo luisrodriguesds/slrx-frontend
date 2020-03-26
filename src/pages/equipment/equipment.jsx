@@ -1,17 +1,51 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import store from '../../store/store';
 
 import Main from '../../components/template/Main';
 
-// import {getMenu} from '../../services/api';
+import {getAllEquipment, deleteEquipment} from '../../services/api';
 
 export default class equipment extends React.Component {
-	
+	state = {
+		equipments:[],
+		user:{access_level_slug:''}
+	}
+
 	async componentDidMount(){
-		// const menu = await getMenu();
+		store.subscribe(() =>{
+			this.setState({
+				user:store.getState().user.user
+			})
+		});
+		store.dispatch({
+			type:'REQUEST_USER'
+		});
+
+		const equipment = await getAllEquipment()
+		this.setState({equipments:equipment.data})
+	}
+
+	excluir = async (id) => {
+		if (window.confirm("Deseja realmente exluir este equipamento?")) {
+			try {
+				const res = await deleteEquipment(id)
+				if (res.data.error == true) {
+					window.scroll(0,0);
+					alert(`${res.data.message}`);       			
+				}else{
+					alert(`${res.data.message}`);
+					const equipment = await getAllEquipment()
+					this.setState({equipments:equipment.data})
+				}
+			} catch (error) {
+				
+			}
+		}
 	}
 
 	render() {
+		const {equipments, user} = this.state
 		return (
 			<Main title="Equipamentos">
 				 <div className="row">
@@ -22,7 +56,6 @@ export default class equipment extends React.Component {
 			              <div className="card-header-form">
 			                <div className="option-group">
 			                	<Link to="/equipamentos/cadastro" title="Cadastrar" className="btn btn-primary ml-1"><i className="fas fa-plus"></i></Link>
-				            	<button data-toggle="tooltip" title="Excluir" className="btn btn-danger"><i className="fas fa-trash"></i></button>
 			                </div>
 			                <form>
 			                  <div className="input-group">
@@ -46,116 +79,40 @@ export default class equipment extends React.Component {
 			                      </th>
 			                      <th>Nome</th>
 			                      <th>Tipo</th>
-			                      <th>Cadastrado por</th>
 			                      <th>Data do Cadastro</th>
 			                      <th>Status</th>
-			                      <th>Ações</th>
+
+			                      {user.access_level_slug == 'administrador' && <th>Ações</th>}
 			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-1" />
-			                          <label htmlFor="checkbox-1" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>Rigaku DMAXB</td>
-			                      <td className="align-middle">DRX</td>
-			                      <td>
-			                        <img alt="image" src="assets/img/avatar/avatar-5.png" className="rounded-circle" width={35} data-toggle="tooltip" title="Wildan Ahdian" />
-			                      </td>
-			                      <td>2018-01-20</td>
-			                      <td><div className="badge badge-danger">Indisponível</div></td>
-			                      <td>
-								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
-			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
-									</div>
-			                      </td>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-2" />
-			                          <label htmlFor="checkbox-2" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>PANalytical X'Pert PRO</td>
-			                      <td className="align-middle">DRX</td>
-			                      <td>
-			                        <img alt="image" src="assets/img/avatar/avatar-4.png" className="rounded-circle" width={35} data-toggle="tooltip" title="Bagus Dwi Cahya" />
-			                      </td>
-			                      <td>2018-04-10</td>
-			                      <td><div className="badge badge-success">Disponível</div></td>
-			                      <td>
-								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
-			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
-									</div>
-			                      </td>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-3" />
-			                          <label htmlFor="checkbox-3" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>Rigaku ZSX mini II</td>
-			                      <td className="align-middle">FRX</td>
-			                      <td>
-			                        <img alt="image" src="assets/img/avatar/avatar-1.png" className="rounded-circle" width={35} data-toggle="tooltip" title="Rizal Fakhri" />
-			                      </td>
-			                      <td>2018-01-29</td>
-			                      <td><div className="badge badge-success">Disponível</div></td>
-			                      <td>
-								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
-			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
-									</div>
-			                      </td>
-			                    </tr>
-			                    <tr>
-			                      <td className="p-0 text-center">
-			                        <div className="custom-checkbox custom-control">
-			                          <input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id="checkbox-4" />
-			                          <label htmlFor="checkbox-4" className="custom-control-label">&nbsp;</label>
-			                        </div>
-			                      </td>
-			                      <td>PANalytical AxiosmAX - IPDI</td>
-			                      <td className="align-middle">FRX</td>
-			                      <td>
-			                        <img alt="image" src="assets/img/avatar/avatar-4.png" className="rounded-circle" width={35} data-toggle="tooltip" title="Yudi Nawawi" />
-			                      </td>
-			                      <td>2018-01-16</td>
-			                      <td><div className="badge badge-danger">Indisponível</div></td>
-			                      <td>
-								  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-			                      		<button className="btn btn-info"> <i className="fas fa-edit"></i> </button>
-			                      		<button className="btn btn-danger"> <i className="fas fa-trash"></i> </button>
-									</div>
-			                      </td>
-			                    </tr>
-			                  </tbody>
+								{equipments.map((v,i) => (
+
+									<tr key={i}>
+										<td className="p-0 text-center">
+											<div className="custom-checkbox custom-control">
+											<input type="checkbox" data-checkboxes="mygroup" className="custom-control-input" id={`checkbox-${i}`} />
+											<label htmlFor={`checkbox-${i}`} className="custom-control-label">&nbsp;</label>
+											</div>
+										</td>
+										<td> <Link to={`/equipamentos/editar/${v.id}`}>{v.name}</Link> </td>
+										<td className="align-middle">{v.type}</td>
+										<td>{new Date(v.created_at).toLocaleString('pt-BR')}</td>
+										<td>
+											{v.status == 0 ? <div className="badge badge-danger">Indisponível</div> : <div className="badge badge-success">Disponível</div>}
+										</td>
+
+										{user.access_level_slug == 'administrador' && <td>
+											<div className="btn-group" role="group" aria-label="Exemplo básico">
+												<Link to={`/equipamentos/editar/${v.id}`} className="btn btn-info" title="Editar"> <i className="fas fa-edit"></i> </Link>
+												<button className="btn btn-danger" onClick={() => this.excluir(v.id)}> <i className="fas fa-trash"></i> </button>
+											</div>
+										</td>}
+
+									</tr>
+								))}
+							  </tbody>
 			                </table>
 			              </div>
 			            </div>
-					      <div className="card-footer text-right">
-					        <nav className="d-inline-block">
-					          <ul className="pagination mb-0">
-					            <li className="page-item disabled">
-					              <a className="page-link" href="#" tabIndex={-1}><i className="fas fa-chevron-left" /></a>
-					            </li>
-					            <li className="page-item active"><a className="page-link" href="#">1 <span className="sr-only">(current)</span></a></li>
-					            <li className="page-item">
-					              <a className="page-link" href="#">2</a>
-					            </li>
-					            <li className="page-item"><a className="page-link" href="#">3</a></li>
-					            <li className="page-item">
-					              <a className="page-link" href="#"><i className="fas fa-chevron-right" /></a>
-					            </li>
-					          </ul>
-					        </nav>
-					      </div>
 			          </div>
 			        </div>
 			      </div>

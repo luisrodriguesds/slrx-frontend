@@ -39,6 +39,11 @@ export const getAccessLevel = () => api.get('/access-level/index');
 //Solicitations
 export const getGap = () => api.get('/gap');
 export const getEquipment = () => api.get('/equipment');
+export const getAllEquipment = () => api.get('/equipment/all');
+export const showEquipment = (id) => api.get('/equipment/'+id);
+export const putEquipment = (id, data) => api.put('/equipment/'+id, data);
+export const postEquipment = (data) => api.post('/equipment', data);
+export const deleteEquipment = (id) => api.delete('/equipment/'+id);
 export const postSolicitation = (data) => api.post('/solictation', data);
 export const getSolicitation = ({page}) => api.get('/solictation/all?page='+page);
 export const searchSolicitation = (filter) => api.get('/solictation/filter?filter='+filter);
