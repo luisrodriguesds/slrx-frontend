@@ -7,6 +7,7 @@ import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta,
 
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 import ModalProposta from '../../components/events/ModalProposta';
+import ModalAddSolicitation from '../../components/events/ModalAddSolicitation';
 import LoadingPage from '../../components/events/LoadingPage';
 import SendPicture from '../profile/sendPicture';
 
@@ -91,6 +92,8 @@ export default class usersProfile extends React.Component {
 						this.setState({employees:res.data.employees, propostas:propostas.data});
 					}
 				break;
+				default:
+				break;
 			}
 
 			this.setState({userSingle:{obs, ...res.data}, solicitations:res.data.solicitations, user_id:id, loadpage:false});
@@ -99,6 +102,12 @@ export default class usersProfile extends React.Component {
 			console.log(e);
 			alert("Error no servidor, por favor procurar o suporte técnico.");			
 		}
+	}
+
+	handleLoadSol = async (id) =>{
+		const res = await getUserById(id)
+		console.log(res.data.solicitations)
+		this.setState({...this.state, solicitations:res.data.solicitations})
 	}
 
 	handleCheckbox = (id) => {
@@ -336,7 +345,6 @@ export default class usersProfile extends React.Component {
 		const {userSingle} = this.state;
 		const {solicitations} = this.state;
 
-		console.log(solicitations);
 		return (
 			<Main title="Perfil do Usuário">
 				<LoadingPage loading={this.state.loadpage} />
@@ -391,11 +399,13 @@ export default class usersProfile extends React.Component {
 			                	{
 			                		<div className="option-group">
 										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
-			                		</div>
+										<ModalAddSolicitation title="Cadastrar Amostra" handleLoadSol={this.handleLoadSol.bind(this)} solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
+               	
+													</div>
 			                	}
 			                <form method="post" onSubmit={(e) => e.preventDefault()}>
 			                  <div className="input-group">
-			                    <input type="text" className="form-control" onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
+			                    <input type="text" className="form-control" style={{width:'100px'}} onChange={(e) => this.handleSearch(e)} placeholder="Pesquisar" />
 			                    <div className="input-group-btn">
 			                      <button className="btn btn-primary"><i className="fas fa-search" /></button>
 			                    </div>

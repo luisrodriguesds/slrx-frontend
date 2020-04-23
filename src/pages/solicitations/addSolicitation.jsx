@@ -1,7 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 
-import {getGap, getEquipment, postSolicitation, showSolicitation} from '../../services/api';
+import {getGap, getEquipment, postSolicitation} from '../../services/api';
 
 import Eppendorf from '../../assets/img/eppendorf_1.5ml.jpg';
 

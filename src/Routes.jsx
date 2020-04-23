@@ -1,6 +1,6 @@
 import React from 'react';
 import {Switch, Route, Redirect} from 'react-router';
-import ScrollToTop, { componentDidUpdate } from 'react-router-scroll-top';
+import ScrollToTop from 'react-router-scroll-top';
 
 import Dashboard from './pages/dashboard/dashboard';
 
