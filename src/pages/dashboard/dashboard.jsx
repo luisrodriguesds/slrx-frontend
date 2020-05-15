@@ -153,8 +153,6 @@ export default class dashboard extends React.Component {
 		const {data, users, user, access} = this.state;
 		return (
 			<Main title="Dashboard">
-				<LoadingPage loading={this.state.loadpage} />
-
 				<div className="wrap_dashboard" style={{display:(this.state.loadpage ? 'none': 'block')}}>
 					{/* Estatísticas */}
 					<div className="row">

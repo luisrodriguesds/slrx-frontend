@@ -16,16 +16,6 @@ function App() {
         <Routes />
       </AuthProvider>
     </HashRouter>
-    // <BrowserRouter>
-    //   <div className="app" id="app">
-    //     <div className="main-wrapper main-wrapper-1">
-    //       {/* Rota Publica */}
-    //       {!isAuthenticated() && <Public />}
-    //       {/* Rota Privada */}
-    //       {isAuthenticated() && <Private />}
-    //     </div>
-    //   </div>
-    // </BrowserRouter>
   );
 }
 

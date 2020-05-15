@@ -10,8 +10,6 @@ import store from './store/store';
 
 
 export default function Private() {
-  const [side, setSide] = useState(false)
-
   return (
       <React.Fragment>
         <Provider store={store}>
