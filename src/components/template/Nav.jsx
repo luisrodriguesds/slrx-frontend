@@ -1,39 +1,25 @@
-import React, {useState,useEffect} from 'react';
+import React from 'react';
 import {Link} from 'react-router-dom';
-import {useSelector, useDispatch} from 'react-redux';
 
-import store from '../../store/store';
-import {logout} from '../../services/auth';
-import {URL_BASE} from '../../services/routesBackend';
+import { useAuth } from '../../context/auth'
 
-import Avatar from '../../assets/img/avatar/avatar-1.png';
-
-function Nav(){
-
-  const [user, setUser] = useState({});
-  const [active, setActive] = useState({});
-  useEffect(()=> {
-    store.subscribe(() => {
-      const getUser = store.getState().user.user;
-      setUser({ ...getUser});
-    })
-    store.dispatch({
-      type:'REQUEST_USER'
-    })
-
-    // dispatch(requestUser())
-  }, []);
-
+function Nav(props){
+  const { user, signOut } = useAuth()
+  
   return (
     <React.Fragment>
         <div className="navbar-bg" />
         <nav className="navbar navbar-expand-lg main-navbar">
           <form className="form-inline mr-auto">
             <ul className="navbar-nav mr-3">
-              <li><a href="#" data-toggle="sidebar" className="nav-link nav-link-lg"><i className="fas fa-bars" /></a></li>
-              <li><a href="#" data-toggle="search" className="nav-link nav-link-lg d-sm-none"><i className="fas fa-search" /></a></li>
+              <li>
+                <Link to="#" data-toggle="sidebar" className="nav-link nav-link-lg"><i className="fas fa-bars" /></Link>
+              </li>
+              <li>
+                <Link to="#" data-toggle="search" className="nav-link nav-link-lg d-sm-none"><i className="fas fa-search" /></Link>
+              </li>
             </ul>
-            <div className="search-element">
+            {/* <div className="search-element">
               <input className="form-control" type="search" placeholder="Pesquisar" aria-label="Search" data-width={250} />
               <button className="btn" type="submit"><i className="fas fa-search" /></button>
               <div className="search-backdrop" />
@@ -94,11 +80,12 @@ function Nav(){
                   </a>
                 </div>
               </div>
-            </div>
+            </div> */}
           </form>
+          
           <ul className="navbar-nav navbar-right">
             {/* Mensagens */}
-            <li className="dropdown dropdown-list-toggle">
+            {/* <li className="dropdown dropdown-list-toggle">
               <a href="#" data-toggle="dropdown" className="nav-link nav-link-lg message-toggle beep">
                 <i className="far fa-envelope" />
               </a>
@@ -166,9 +153,10 @@ function Nav(){
                   <a href="#">View All <i className="fas fa-chevron-right" /></a>
                 </div>
               </div>
-            </li>
+            </li> */}
+
             {/* Notificações */}
-            <li className="dropdown dropdown-list-toggle">
+            {/* <li className="dropdown dropdown-list-toggle">
               <a href="#" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg beep"><i className="far fa-bell" /></a>
               <div className="dropdown-menu dropdown-list dropdown-menu-right">
                 <div className="dropdown-header">Notificações
@@ -227,13 +215,15 @@ function Nav(){
                   <a href="#">Ver todas <i className="fas fa-chevron-right" /></a>
                 </div>
               </div>
-            </li>
+            </li> */}
+
             {/* Avatar */}
             <li className="dropdown dropdown-list-toggle">
             {/* dropdown-toggle -> essa class está com problema, modificado arquivo script.js e ela parou de funcionar ???? */}
-              <a href="#" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg nav-link-user">
-                <img alt="carregando ..." src={user.photo} className="rounded-circle mr-1" />
-                <div className="d-sm-none d-lg-inline-block">Olá, {user.name}!</div></a>
+              <Link to="/" data-toggle="dropdown" className="nav-link notification-toggle nav-link-lg nav-link-user">
+                <img alt="..." src={user.photo} className="rounded-circle mr-1" />
+                <div className="d-sm-none d-lg-inline-block">Olá, {user.name}!</div>
+              </Link>
               {/* Menus */}
               <div className="dropdown-menu dropdown-menu-right">
                 <div className="dropdown-title">Logado há 10 min</div>
@@ -247,7 +237,7 @@ function Nav(){
                   <i className="fas fa-cog" /> Editar Conta
                 </Link>
                 <div className="dropdown-divider" />
-                <Link to="/logout" onClick={() => {logout(); window.location=process.env.REACT_APP_HOME_URL; } } className="dropdown-item has-icon text-danger">
+                <Link to="/" onClick={() => { signOut() } } className="dropdown-item has-icon text-danger">
                     <i className="fas fa-sign-out-alt" /> Sair
                 </Link>
               </div>

@@ -1,78 +1,98 @@
-import React, { Component } from 'react';
+import React, { useState, useRef } from 'react';
 import {Link, withRouter} from 'react-router-dom';
+
 import Button from '../../components/events/LoadingButtom';
-import api, {userLogin} from '../../services/api';
-import { login } from "../../services/auth";
-import { URL_BASE } from '../../services/routesBackend';
+import InputIcon from '../../components/form/InputIcon';
+import { Form } from '@unform/web'
+import * as Yup from 'yup'
+import { useAuth } from '../../context/auth'
 
-class Login extends Component {
-    state = {
-        data:{email:'', password:''},
-        loading:false,
-        error:''
-    };
+function Login(){
+    const { signIn } = useAuth()
 
-    _onChange = (e) => {
-        let value = e.target.value;
-        const data = {...this.state.data};
-        data[e.target.name] = value;
-        this.setState({data, error:''});
-        
-        // console.log(this.state);
-    }
+    const formRef = useRef(null)
 
-    onSubmit = async e => {
-        e.preventDefault();
-        //Set loading
-        this.setState({loading:true});
-        
-        const auth = this.state.data;
-        const res = await userLogin(auth);
-        if (res.data.error == true) {
-            this.setState({error:res.data.message});
-        }else{
-            this.setState({error:''});
-            login(res.data.token);
-            // this.props.history.push("/");
-			window.location=window.location.href;    
+    const [state, setState] = useState({
+        email:'', 
+        password:''
+    })
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+
+    const onSubmit = async (data) => {
+        setLoading(true)
+        try {
+            const schemaLogin = Yup.object().shape({
+                email: Yup.string()
+                    .email('Digite um válido')
+                    .required('Campo Obrigatório'),
+                password: Yup.string()
+                    .min(8, 'Número de caracteres menor que 8')
+                    .required('Campo Obrigatório')
+            })
+
+            await schemaLogin.validate(data, {
+                abortEarly:false
+            })
+
+            const response = await signIn(data)
+            if (response.error) {
+                setError(response.message)
+            }
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                const message = {}
+                //Transforma as mensagens e array para obj
+                err.inner.forEach(error => {
+                    message[error.path] = error.message
+                })
+                formRef.current.setErrors(message)
+            }
         }
 
-        setTimeout(() => {
-            this.setState({loading:false});
-        }, 1000);
+        //Set loading
+        
+        // const auth = state;
+        // const res = await userLogin(state);
+        // if (res.data.error == true) {
+        //     setState({error:res.data.message});
+        // }else{
+        //     setState({error:''});
+        //     login(res.data.token);
+        //     // props.history.push("/");
+		// 	window.location=window.location.href;    
+        // }
+
+       setLoading(false)
     }
 
-  render() {
+
     return (
         <div className="card" id="sample-login">
-            <form method="post" onSubmit={this.onSubmit}>
+            <Form ref={formRef} onSubmit={onSubmit}>
             <div className="card-header">
                 <h4>Sistema LRX - Login</h4>
             </div>
             <div className="card-body pb-0">
                 {/* <p className="text-muted">Click login to change the card to progress mode.</p> */}
-                {this.state.error && <div className="alert alert-danger" role="alert">{this.state.error}</div>}
+                {error && <div className="alert alert-danger" role="alert">{error}</div>}
                 <div className="form-group" style={{marginBottom:'5px'}}>
-                <label>Email</label>
-                <div className="input-group">
-                    <div className="input-group-prepend">
-                    <div className="input-group-text">
-                        <i className="fas fa-envelope" />
-                    </div>
-                    </div>
-                    <input type="text" className="form-control" onChange={(e) => this._onChange(e)} name="email" placeholder="Email" />
-                </div>
+                    <InputIcon 
+                        name="email"
+                        label="Email"
+                        icon="fas fa-envelope"
+                        placeholder="Digite seu email"
+                        type="text"
+                    />
                 </div>
                 <div className="form-group" style={{marginBottom:'5px'}}>
-                <label>Senha</label>
-                <div className="input-group">
-                    <div className="input-group-prepend">
-                    <div className="input-group-text">
-                        <i className="fas fa-lock" />
-                    </div>
-                    </div>
-                    <input type="password" className="form-control" onChange={(e) => this._onChange(e)} name="password" placeholder="Senha" />
-                </div>
+                    <InputIcon 
+                        name="password"
+                        label="Senha"
+                        icon="fas fa-lock"
+                        placeholder="Digite sua senha"
+                        type="password"
+                    />
                 </div>
                 <div className="form-group mb-0">
                 <div className="custom-control custom-checkbox">
@@ -84,17 +104,17 @@ class Login extends Component {
             <div className="card-footer">
             {/* onClick="$.cardProgress('#sample-login', {dismiss: true,onDismiss: function() {alert('Dismissed :)')}});return false;" */}
                 <div className="button-login-footer">
-                    <Button type="submit" className="btn btn-primary" loading={this.state.loading} name="Login" loadName="Carregando ..."></Button>
+                    <Button type="submit" className="btn btn-primary" loading={loading} name="Login" loadName="Carregando ..."></Button>
                     <Link to="/cadastro" className="ml-2" title="Alunos, Professores, Operadores, Empresa e Funcionários">Cadastre-se</Link>
                     <Link to="/recuperar-senha" className="ml-2">Esqueci Minha Senha</Link>
                 </div>
             </div>
-            </form>
+            </Form>
         </div>
 
     
         );
-  }
+
 }
 
 export default withRouter(Login)

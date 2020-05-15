@@ -1,4 +1,4 @@
-"use strict";
+
 
 // ChartJS
 if(window.Chart) {
@@ -84,10 +84,8 @@ $(function() {
     if($(".main-sidebar").length) {
       $(".main-sidebar").niceScroll(sidebar_nicescroll_opts);
       sidebar_nicescroll = $(".main-sidebar").getNiceScroll();
-      // console.log(sidebar_nicescroll);
       $(".main-sidebar .sidebar-menu li a.has-dropdown").off('click').on('click', function() {
         var me = $(this);
-        // console.log(me);
         me.parent().find('> .dropdown-menu').slideToggle(500, function() {
           update_sidebar_nicescroll();
           return false;
@@ -96,50 +94,33 @@ $(function() {
       });
 
       $('body').on('click', ".main-sidebar .sidebar-menu .nav-link", function() {
+        toggleLayout();
+      });
+    }
+  } 
+
+  var clickMenu = setInterval(function (){
+    var nav = $('.main-sidebar .sidebar-menu .nav-link')
+    if(nav.length > 0){
+
+      sidebar_dropdown();
+      update_sidebar_nicescroll();
+
+      $('body').on('click', ".main-sidebar .sidebar-menu .nav-link", function() {
         // console.log("Teste");
         // toggle_sidebar_mini(true);
         toggleLayout();
+        var section = $(this).parents()[2];
+        if($(section).hasClass('dropdown')){
+          $('.active').removeClass('active');
+          $(section).addClass('active');
+        }else{
+          $('.active').removeClass('active');
+          $('.dashboard').addClass('active');
+        }
       });
-
-      // $('body').off('click').on('click', ".main-sidebar .sidebar-menu li a.has-dropdown", function() {
-      //   var me = $(this);
-      //   console.log(me);
-      //   me.parent().find('> .dropdown-menu').slideToggle(500, function() {
-      //     update_sidebar_nicescroll();
-      //     return false;
-      //   });
-      //   return false;
-      // });
-
+      clearInterval(clickMenu)
     }
-  }
-
-  setTimeout(function (){
-    sidebar_dropdown();
-    update_sidebar_nicescroll();
-    
-  }, 1000);
-
-  setTimeout(function (){
-    sidebar_dropdown();
-    update_sidebar_nicescroll();
-    
-  }, 2000);
-
-  setInterval(function (){
-    $('body').on('click', ".main-sidebar .sidebar-menu .nav-link", function() {
-      // console.log("Teste");
-      // toggle_sidebar_mini(true);
-      toggleLayout();
-      var section = $(this).parents()[2];
-      if($(section).hasClass('dropdown')){
-        $('.active').removeClass('active');
-        $(section).addClass('active');
-      }else{
-        $('.active').removeClass('active');
-        $('.dashboard').addClass('active');
-      }
-    });
   }, 1000)
   // sidebar_dropdown();
 
@@ -204,32 +185,40 @@ $(function() {
     }
   }
 
-  $("[data-toggle='sidebar']").click(function() {
-    var body = $("body"),
-      w = $(window);
+  var findSidebarButton = setInterval(function(){
+    var sidebar = $("[data-toggle='sidebar']")
 
-    if(w.outerWidth() <= 1024) {
-      body.removeClass('search-show search-gone');
-      if(body.hasClass('sidebar-gone')) {
-        body.removeClass('sidebar-gone');
-        body.addClass('sidebar-show');
-      }else{
-        body.addClass('sidebar-gone');
-        body.removeClass('sidebar-show');
-      }
-
-      update_sidebar_nicescroll();
-    }else{
-      body.removeClass('search-show search-gone');
-      if(body.hasClass('sidebar-mini')) {
-        toggle_sidebar_mini(false);
-      }else{
-        toggle_sidebar_mini(true);
-      }
+    if(sidebar.length > 0){
+      $("[data-toggle='sidebar']").click(function() {
+        var body = $("body"),
+          w = $(window);
+    
+        if(w.outerWidth() <= 1024) {
+          body.removeClass('search-show search-gone');
+          if(body.hasClass('sidebar-gone')) {
+            body.removeClass('sidebar-gone');
+            body.addClass('sidebar-show');
+          }else{
+            body.addClass('sidebar-gone');
+            body.removeClass('sidebar-show');
+          }
+    
+          update_sidebar_nicescroll();
+        }else{
+          body.removeClass('search-show search-gone');
+          if(body.hasClass('sidebar-mini')) {
+            toggle_sidebar_mini(false);
+          }else{
+            toggle_sidebar_mini(true);
+          }
+        }
+    
+        return false;
+      });
+      clearInterval(findSidebarButton)
     }
+  }, 1000)
 
-    return false;
-  });
 
   var toggleLayout = function() {
     var w = $(window),

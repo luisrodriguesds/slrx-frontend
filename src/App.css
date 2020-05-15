@@ -260,3 +260,11 @@ p{
     	max-width: 1250px;
 	}
 }
+
+/* .sidebar-gone .main-sidebar {
+	left: -250px; 
+} */
+
+.show-sidebar {
+	left: -250px; 
+}

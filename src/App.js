@@ -1,23 +1,31 @@
 import React from 'react';
-import {HashRouter, BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { isAuthenticated, user } from "./services/auth";
-import Private from './Private';
-import Public from './Public';
+// , BrowserRouter, Route, Redirect
+import {HashRouter } from 'react-router-dom';
+// import { isAuthenticated, user } from "./services/auth";
+// import Private from './Private';
+// import Public from './Public';
+import Routes from './routes/routes'
+import AuthProvider from './context/auth'
 
 import './App.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="app" id="app">
-        <div className="main-wrapper main-wrapper-1">
-          {/* Rota Publica */}
-          {!isAuthenticated() && <Public />}
-          {/* Rota Privada */}
-          {isAuthenticated() && <Private />}
-        </div>
-      </div>
-    </BrowserRouter>
+    <HashRouter>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </HashRouter>
+    // <BrowserRouter>
+    //   <div className="app" id="app">
+    //     <div className="main-wrapper main-wrapper-1">
+    //       {/* Rota Publica */}
+    //       {!isAuthenticated() && <Public />}
+    //       {/* Rota Privada */}
+    //       {isAuthenticated() && <Private />}
+    //     </div>
+    //   </div>
+    // </BrowserRouter>
   );
 }
 

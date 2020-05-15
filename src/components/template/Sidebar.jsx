@@ -1,12 +1,9 @@
 import React,{useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {useSelector} from 'react-redux';
 import {getMenu} from '../../services/api';
 import store from '../../store/store';
 const Sidebar = (props) => {
   const [menu, setMenu] = useState([]);
-  const [active, setActive] = useState({});
-  const user = useSelector(state => state.user.user);
 
   useEffect(() => {
     async function callMenu() {
@@ -21,14 +18,9 @@ const Sidebar = (props) => {
     callMenu();  
   }, [])
 
-  // useEffect(() => {
-  //   console.log(store.getState().menu.url);
-  // }, [store.getState().menu.url]);
 
-  
-  
   return (
-      <div className="main-sidebar sidebar-style-2">
+      <div className={`main-sidebar sidebar-style-2`}>
         <aside id="sidebar-wrapper">
           <div className="sidebar-brand">
             <Link to="/dashboard">Sistema LRX</Link>

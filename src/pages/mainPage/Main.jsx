@@ -7,11 +7,9 @@ import Logo from '../../assets/img/logo_lrx@2x.png';
 const Main = (props) => (
     <>
     <nav className="navbar navbar-expand-lg main-navbar home-nav">
-        <a href="index.html" className="navbar-brand">
-            <Link to="/" >
-                <img src={Logo} alt="logo" className="" />
-            </Link>       
-        </a>
+        <Link to="/" >
+            <img src={Logo} alt="logo" className="navbar-brand" />
+        </Link>       
         {/* <a href="#" className="nav-link sidebar-gone-show" data-toggle="sidebar"><i className="fas fa-bars"></i></a>
         <div className="nav-collapse">
             <a className="sidebar-gone-show nav-collapse-toggle nav-link" href="#">

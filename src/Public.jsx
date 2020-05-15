@@ -1,17 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-import Routes from './pages/mainPage/Routes.jsx';
+
+import AppRoute from './routes/app.routes'
 import Footer from './pages/mainPage/Foorter';
 
-export default class Public extends Component {
-    
-
-  render() {
-    return (
-        <React.Fragment>
-            <Routes />
-            <Footer />
-        </React.Fragment>
-    );
-  }
+export default function Public(){
+  return (
+      <React.Fragment>
+          <AppRoute />
+          <Footer />
+      </React.Fragment>
+  );
 }
