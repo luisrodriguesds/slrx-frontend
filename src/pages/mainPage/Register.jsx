@@ -38,7 +38,8 @@ class Register extends Component {
     };
 
     async componentDidMount(){
-      let tipo = window.location.pathname.split('/')[2];
+      let tipo = window.location.hash.split('/')[2];
+      console.log(window.location)
       switch (tipo) {
         case 'aluno':
           init = { ...init,

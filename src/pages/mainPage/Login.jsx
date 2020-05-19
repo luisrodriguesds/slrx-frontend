@@ -12,10 +12,6 @@ function Login(){
 
     const formRef = useRef(null)
 
-    const [state, setState] = useState({
-        email:'', 
-        password:''
-    })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
 
@@ -49,20 +45,6 @@ function Login(){
                 formRef.current.setErrors(message)
             }
         }
-
-        //Set loading
-        
-        // const auth = state;
-        // const res = await userLogin(state);
-        // if (res.data.error == true) {
-        //     setState({error:res.data.message});
-        // }else{
-        //     setState({error:''});
-        //     login(res.data.token);
-        //     // props.history.push("/");
-		// 	window.location=window.location.href;    
-        // }
-
        setLoading(false)
     }
 

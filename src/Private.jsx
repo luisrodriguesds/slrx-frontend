@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {Provider} from 'react-redux';
 
 import Nav from './components/template/Nav';

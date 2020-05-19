@@ -5,6 +5,7 @@ import ScrollToTop from 'react-router-scroll-top';
 import Home from '../pages/mainPage/Home'
 import Choose from '../pages/mainPage/Choose';
 import Register from '../pages/mainPage/Register';
+import SignUp from '../pages/mainPage/SignUp'
 import ForgotPass from '../pages/mainPage/forgotPass';
 import NotFound from '../pages/notFound';
 import NewPass from '../pages/mainPage/NewPass';
@@ -24,11 +25,7 @@ function AppRoute() {
           <Route exact path='/inicio' component={()=><Home />} />
           <Route exact path='/cadastro' component={()=><Choose />} />
 
-          <Route exact path='/cadastro/aluno' component={()=><Register />} />
-          <Route exact path='/cadastro/professor' component={()=><Register />} />
-          <Route exact path='/cadastro/empresa' component={()=><Register />} />
-          <Route exact path='/cadastro/operador' component={()=><Register />} />
-          <Route exact path='/cadastro/autonomo' component={()=><Register />} />
+          <Route exact path='/cadastro/:level' component={()=><SignUp />} />
 
           <Route exact path='/recuperar-senha' component={()=><ForgotPass />} />
           <Route exact path='/nova-senha' component={()=> <NewPass />} />
