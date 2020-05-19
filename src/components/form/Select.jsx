@@ -21,15 +21,15 @@ function Input({ name, label, obs, required, children, ...rest }) {
     <select ref={selectRef} defaultValue={defaultValue} className={`form-control ${error && `is-invalid`}`} {...rest} >
       {children}
     </select>
-    {obs && (
-      <small className="form-text text-muted">
-        {obs}
-      </small>
-    )}
     {error && (
       <div className="invalid-feedback">
         {error}
       </div>
+    )}
+    {obs && (
+      <small className="form-text text-muted">
+        {obs}
+      </small>
     )}
    
     </>

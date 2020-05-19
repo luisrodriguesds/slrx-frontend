@@ -19,17 +19,16 @@ function Input({ name, label, obs, required, ...rest }) {
     <>
     <label htmlFor={name}>{label} {required && <Red />}</label>
     <textarea ref={inputRef} defaultValue={defaultValue} className={`form-control ${error && `is-invalid`}`} {...rest}></textarea>
-    {obs && (
-      <small className="form-text text-muted">
-        {obs}
-      </small>
-    )}
     {error && (
       <div className="invalid-feedback">
         {error}
       </div>
     )}
-   
+    {obs && (
+      <small className="form-text text-muted">
+        {obs}
+      </small>
+    )}
     </>
   )
 }

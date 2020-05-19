@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Main from './Main';
-import Login from './Login';
+import SignIn from './SignIn';
 import ModalHome from '../../components/events/ModalHome'
 
 // import { Container } from './styles';
@@ -19,7 +19,7 @@ const home = () => {
 		              </div>
 		              <div className="card-body">
 		                {/* <canvas id="myChart" height={382} /> */}
-		                <iframe src="http://csd.fisica.ufc.br:8080/iframe" height="452" frameBorder="0" style={{border:0, width:"100%"}} allowFullScreen=""></iframe>
+		                <iframe src="http://csd.fisica.ufc.br:8080/iframe" id="chart-drx" title="Gráfico DRX" height="452" frameBorder="0" style={{border:0, width:"100%"}} allowFullScreen=""></iframe>
 		              </div>
 		            </div>
                     <div className="card">
@@ -64,7 +64,7 @@ const home = () => {
                     </div>
 		          </div>
 		          <div className="col-lg-4 col-md-12 col-12 col-sm-12 order-1 order-sm-1 order-md-2 order-lg-2">
-                        <Login />
+                        <SignIn />
 
                         <div className="card">
                             <div className="card-header">

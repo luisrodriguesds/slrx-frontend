@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import api from '../../services/api'
 
@@ -12,18 +12,25 @@ import InputMask from '../../components/form/InputMask'
 import Button from '../../components/form/Button';
 import Select from '../../components/form/Select'
 import TextArea from '../../components/form/TextArea'
+import Choice from '../../components/form/Choice'
 
-// import { Container } from './styles';
+import * as Yup from 'yup'
+
+//urls
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados'
 const urlCity = (state) => `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state}/municipios`
+const urlCEP = (cep) => `https://viacep.com.br/ws/${cep}/json/`
 
 function SignUp(props) {
+  const formRef = useRef(null)
 
   const [states, setStates] = useState([])
   const [state, setState] = useState('')
   const [cities, setCities] = useState([])
   const [level, setLevel] = useState('')
-  
+  const [cep, setCep] = useState('')
+  const [cnpj, setCnpj] = useState({})
+
   const titles = [
     'Graduando',
     'Graduado',
@@ -35,14 +42,26 @@ function SignUp(props) {
     'Doutor',
   ]
 
+  const levels = {
+    aluno: 'Aluno(a)',
+    professor: 'Professor(a)',
+    empresa: 'Empresa',
+    autonomo: 'Autônomo(a)'
+  }
+
+  //Load main
   useEffect(() => {
     async function load(){
       const tipo = props.match.params.level
+      if (levels[tipo] === undefined) {
+        props.history.goBack()
+      }
       setLevel(tipo)
     }
     load()
-  },  [props.match.params])
+  },  [levels, props.history, props.match.params])
 
+  //Load state
   useEffect(() => {
     async function loadStates(){
       try {
@@ -55,6 +74,7 @@ function SignUp(props) {
     loadStates()
   }, [props.history])
 
+  //load city
   useEffect(() => {
     async function loadCity(){
       try {
@@ -67,8 +87,114 @@ function SignUp(props) {
     loadCity()
   }, [state])
 
-  function handleSubmit(data){
+  //LoadCEP
+  useEffect(()=> {
+    async function loadCep(){
+      if (cep.length < 9) {
+        return
+      }
+
+      try {
+        const newCep = cep.replace('-', '')
+        const res = await api.get(urlCEP(newCep))
+        if (level === 'empresa') {
+          formRef.current.setData({
+            company:{
+              company_city: res.data.localidade,
+              company_state: res.data.uf,
+              neighborhood: res.data.bairro,
+              street: res.data.logradouro
+            }
+          })
+          return
+        }
+
+        formRef.current.setData({
+          address:{
+            city_address: res.data.localidade,
+            state_address: res.data.uf,
+            neighborhood_address: res.data.bairro,
+            street_address: res.data.logradouro
+          }
+        })
+
+      } catch (error) {
+        
+      }
+    }
+    loadCep()
+  }, [cep, level])
+
+  //Load CNPJ
+  useEffect(() => {
+    async function loadCNPJ(){
+      if (cnpj.length < 18) {
+        return
+      }
+      try {
+        const res = await api.get(`/company/cnpj?cnpj=${cnpj}`);
+        formRef.current.setFieldValue('company.cep', res.data.cep)
+      } catch (error) {
+        
+      }
+    }
+    loadCNPJ()
+  }, [cnpj])
+
+  async function handleSubmit(data){
     console.log(data)
+    try {
+      const shema = Yup.object().shape({
+        name: Yup.string().min(3, 'Campo deve ter no mínimo 3 caracteres').required('Campo Obrigatório'),
+        cpf: Yup.string().min(9, 'Campo deve ter no mínimo 9 caracteres').required('Campo Obrigatório'),
+        birthday: Yup.date().typeError('Data Inválida').required("Campo Obrigatório"),
+        sex: Yup.string().required('Campo Obrigatório').oneOf(['1', '2', null], 'Campo Obrigatório'),
+        email: Yup.string().required('Campo Obrigatório').email('Email inválido'),
+        state: Yup.string().min(2, 'Campo Obrigatório').required('Campo Obrigatório'),
+        city: Yup.string().required('Campo Obrigatório'),
+        phone1: Yup.string().required('Campo Obrigatório'),
+        password: Yup.string().min(8, 'Campo deve ter no mínimo 8 caracteres').required('Campo Obrigatório'),
+        confim_password: Yup.string().oneOf([Yup.ref('password'), null], 'As senhas não correspondem').required('Campo Obrigatório'),
+        address: level === 'empresa' ? null : Yup.object().shape({
+          cep: Yup.string().required('Campo Obrigatório').min(9, 'Campo deve ter no mínimo 9 caracteres'),
+          street_address: Yup.string().required('Campo Obrigatório'),
+          neighborhood_address: Yup.string().required('Campo Obrigatório'),
+          number_address: Yup.string().required('Campo Obrigatório'),
+          state_address: Yup.string().required('Campo Obrigatório').min(2, 'Campo deve ter no mínimo 2 caracteres'),
+          city_address: Yup.string().required('Campo Obrigatório'),
+        }),
+        academic: (level !== 'aluno' && level !== 'professor') ? null : Yup.object().shape({
+          email_leader: level !== 'aluno' ? null : Yup.string().required('Campo obrigatório').email('Email inválido'),
+          ies: Yup.string().required('Campo Obrigatório'),
+          department: Yup.string().required('Campo Obrigatório'),
+          title: Yup.string().required('Campo Obrigatório').oneOf(titles, 'Título Inválido'),
+          laboratory: Yup.string().required('Campo Obrigatório'),
+          research: Yup.string().required('Campo Obrigatório'),
+          description: Yup.string().required('Campo Obrigatório'),
+
+        })
+      })
+      
+      await shema.validate(data, {
+        abortEarly: false
+      })
+
+      //Enviar para o backend
+      //Enviar
+      //Verifica resposta
+      //Caso erro ->  Alert
+      //Caso Sucesso -> Alert e Direciona para a página principal
+
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const validationErrors = {};
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+        window.scroll(0,0)
+      }
+    }
   }
 
   function renderAcademy(){
@@ -82,7 +208,7 @@ function SignUp(props) {
           <div className="form-group col-12">
             <Input 
               label="Email do seu Orientador"
-              name="email_leader"
+              name="academic.email_leader"
               required="true"
               obs="Seu Orientador precisa estar cadastrado na plataforma para que você possa ser vinculado a ele."
               type="text"
@@ -183,6 +309,7 @@ function SignUp(props) {
               placeholder="Digite o CNPJ da empresa"
               mask="99.999.999/9999-99" 
               maskChar={null}
+              onChange={(e) => setCnpj(e.target.value)}
             />
           </div>
           <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
@@ -249,9 +376,10 @@ function SignUp(props) {
               required="true"
               obs="Digite o CEP da sede da empresa. Ex: 99999-999."
               type="text"
-              placeholder="Digite o fone (wpp) da empresa"
+              placeholder="Digite o CEP da empresa"
               mask="99999-999" 
               maskChar={null}
+              onChange={(e) => setCep(e.target.value)}
             />
           </div>
         </div>
@@ -311,6 +439,96 @@ function SignUp(props) {
             />
           </div>
         </div>
+        <div className="form-group">
+          <Choice 
+            name="company.type_company"
+            label="Cargo"
+            required="true"
+            options={[
+              { id: "Técnico", label: "Técnico" },
+              { id: "Financeiro", label: "Financeiro" },
+            ]}
+          />
+        </div>
+      </>
+    )
+  }
+
+  function renderAddress(){
+    return (
+      <>
+        <div className="form-divider">
+            Endereço
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <InputMask 
+              label="CEP"
+              name="address.cep"
+              required="true"
+              obs="Ex: 99999-999"
+              type="text"
+              placeholder="Digite seu CEP"
+              mask="99999-999" 
+              maskChar={null}
+              onChange={(e) => setCep(e.target.value)}
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Logradouro"
+              name="address.street_address"
+              obs="Ex: Av Humberto Monte"
+              required="true"
+              type="text"
+              placeholder="Digite o logradouro da empresa"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Bairro"
+              name="address.neighborhood_address"
+              obs="Ex: Pici"
+              required="true"
+              type="text"
+              placeholder="Digite seu Bairro"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Número"
+              name="address.number_address"
+              obs="Ex: 134, Ap 201"
+              required="true"
+              type="text"
+              placeholder="Digite o número da sua residência"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Estado"
+              name="address.state_address"
+              obs="Ex: Ce"
+              required="true"
+              type="text"
+              placeholder="Digite o estado da empresa"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Cidade"
+              name="address.city_address"
+              obs="Ex: Fortaleza"
+              required="true"
+              type="text"
+              placeholder="Digite a cidade da empresa"
+            />
+          </div>
+        </div>
       </>
     )
   }
@@ -322,10 +540,10 @@ function SignUp(props) {
               <div className="col-12 col-sm-12 col-lg-8">
                   <div className="card card-primary">
                       <div className="card-header">
-                          <h4>Cadastro de </h4>
+                          <h4>Cadastro de {levels[level]}</h4>
                       </div>
                       <div className="card-body">
-                        <Form onSubmit={handleSubmit}>
+                        <Form ref={formRef} onSubmit={handleSubmit}>
                         <span style={{color:'red'}}>* Campo Obrigatório</span>
                             <div className="form-divider">
                                 Dados Pessoas
@@ -392,7 +610,6 @@ function SignUp(props) {
                               <Input 
                                 label="Email Alternativo"
                                 name="other_email"
-                                required="true"
                                 obs="Ex: exemplo2@exemplo.com"
                                 type="email"
                                 placeholder="Digite seu email alternativo"
@@ -444,7 +661,6 @@ function SignUp(props) {
                                   <InputMask 
                                     label="Fone Alternativo"
                                     name="phone2"
-                                    required="true"
                                     obs="Ex: (99)99999-9999"
                                     type="text"
                                     placeholder="Digite seu número principal"
@@ -456,6 +672,8 @@ function SignUp(props) {
                             {/* Render da entidade de cada usuário */}
                             {(level === 'aluno' || level === 'professor') && renderAcademy()}
                             
+                            {level !== 'empresa' && renderAddress()}
+
                             {level === 'empresa' && renderCompany()}
 
                             <div className="form-divider">

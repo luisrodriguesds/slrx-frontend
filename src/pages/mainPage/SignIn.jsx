@@ -7,7 +7,7 @@ import { Form } from '@unform/web'
 import * as Yup from 'yup'
 import { useAuth } from '../../context/auth'
 
-function Login(){
+function SingUp(){
     const { signIn } = useAuth()
 
     const formRef = useRef(null)
@@ -99,4 +99,4 @@ function Login(){
 
 }
 
-export default withRouter(Login)
+export default withRouter(SingUp)

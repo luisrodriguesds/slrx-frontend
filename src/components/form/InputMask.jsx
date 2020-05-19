@@ -21,15 +21,15 @@ function InputMask({ name, label, obs, required, ...rest }) {
     <>
     <label htmlFor={name}>{label} {required && <Red />}</label>
     <InputMaske ref={inputRef} defaultValue={defaultValue} className={`form-control ${error && `is-invalid`}`} {...rest} />
-    {obs && (
-      <small className="form-text text-muted">
-        {obs}
-      </small>
-    )}
     {error && (
       <div className="invalid-feedback">
         {error}
       </div>
+    )}
+    {obs && (
+      <small className="form-text text-muted">
+        {obs}
+      </small>
     )}
    
     </>
