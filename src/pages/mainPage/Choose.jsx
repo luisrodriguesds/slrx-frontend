@@ -19,6 +19,7 @@ const Choose = () => {
                                 <br />
                                 <h3>Alunos</h3>
                                 <p className="text-danger">*Alunos deverão passar pela aprovação do seu professor/orientador</p>
+                                <p className="text-danger">*Tenha o email do seu professor/orientador que foi cadastrado no sistema em mãos</p>
                                 <p className="text-danger">*Só poderá se cadastrar como aluno se estiver cursando <strong>graduação, mestrado, doutorado ou pós-doutorado</strong></p>
                                 <Link to="/cadastro/aluno" className="btn btn-primary btn-block">Aluno</Link>
                                <hr/>

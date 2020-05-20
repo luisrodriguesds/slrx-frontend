@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-import api from '../../services/api'
+import api, { userRegister } from '../../services/api'
 
 import { withRouter } from "react-router-dom";
 import { Form } from '@unform/web'
@@ -16,6 +16,9 @@ import Choice from '../../components/form/Choice'
 
 import * as Yup from 'yup'
 
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
 //urls
 const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados'
 const urlCity = (state) => `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${state}/municipios`
@@ -30,7 +33,7 @@ function SignUp(props) {
   const [level, setLevel] = useState('')
   const [cep, setCep] = useState('')
   const [cnpj, setCnpj] = useState({})
-
+  const [loading, setLoading] = useState(false)
   const titles = [
     'Graduando',
     'Graduado',
@@ -142,7 +145,8 @@ function SignUp(props) {
   }, [cnpj])
 
   async function handleSubmit(data){
-    console.log(data)
+    
+    setLoading(true)
     try {
       const shema = Yup.object().shape({
         name: Yup.string().min(3, 'Campo deve ter no mínimo 3 caracteres').required('Campo Obrigatório'),
@@ -154,9 +158,9 @@ function SignUp(props) {
         city: Yup.string().required('Campo Obrigatório'),
         phone1: Yup.string().required('Campo Obrigatório'),
         password: Yup.string().min(8, 'Campo deve ter no mínimo 8 caracteres').required('Campo Obrigatório'),
-        confim_password: Yup.string().oneOf([Yup.ref('password'), null], 'As senhas não correspondem').required('Campo Obrigatório'),
+        password_confirmation: Yup.string().oneOf([Yup.ref('password'), null], 'As senhas não correspondem').required('Campo Obrigatório'),
         address: level === 'empresa' ? null : Yup.object().shape({
-          cep: Yup.string().required('Campo Obrigatório').min(9, 'Campo deve ter no mínimo 9 caracteres'),
+          cep_address: Yup.string().required('Campo Obrigatório').min(9, 'Campo deve ter no mínimo 9 caracteres'),
           street_address: Yup.string().required('Campo Obrigatório'),
           neighborhood_address: Yup.string().required('Campo Obrigatório'),
           number_address: Yup.string().required('Campo Obrigatório'),
@@ -171,20 +175,31 @@ function SignUp(props) {
           laboratory: Yup.string().required('Campo Obrigatório'),
           research: Yup.string().required('Campo Obrigatório'),
           description: Yup.string().required('Campo Obrigatório'),
-
         })
       })
       
       await shema.validate(data, {
         abortEarly: false
       })
-
-      //Enviar para o backend
-      //Enviar
-      //Verifica resposta
-      //Caso erro ->  Alert
-      //Caso Sucesso -> Alert e Direciona para a página principal
-
+      const MySwal = withReactContent(Swal)
+      try {
+        const res = await userRegister({...data, level})
+        if (res.data) {
+          MySwal.fire({
+            title: <p>Parabéns!</p>,
+            icon: 'success',
+            text: res.data.message 
+          }).then(() => {
+            props.history.push('/')
+          })
+        }
+      } catch (error) {
+        MySwal.fire({
+          title: <p>Ops ...</p>,
+          icon: 'error',
+          text: 'Aconteceu um erro em nossos servidores, por favor tente novamente mais tarde ou entre em contato com o suporte.' 
+        })
+      }
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const validationErrors = {};
@@ -195,6 +210,7 @@ function SignUp(props) {
         window.scroll(0,0)
       }
     }
+    setLoading(false)
   }
 
   function renderAcademy(){
@@ -464,7 +480,7 @@ function SignUp(props) {
           <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
             <InputMask 
               label="CEP"
-              name="address.cep"
+              name="address.cep_address"
               required="true"
               obs="Ex: 99999-999"
               type="text"
@@ -653,7 +669,7 @@ function SignUp(props) {
                                     obs="Ex: (99)99999-9999"
                                     type="text"
                                     placeholder="Digite seu número principal"
-                                    mask="(99)9999-9999"
+                                    mask="(99)99999-9999"
                                     maskChar={null}
                                   />
                               </div>
@@ -693,7 +709,7 @@ function SignUp(props) {
                                 <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
                                   <Input 
                                     label="Confirmar Senha"
-                                    name="confim_password"
+                                    name="password_confirmation"
                                     required="true"
                                     obs="As senhas devem corresponder"
                                     type="password"
@@ -702,7 +718,7 @@ function SignUp(props) {
                                 </div>
                             </div>
                             <div className="form-group">
-                              <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={false} name="Cadastrar" loadName="Cadastrando..."></Button>
+                              <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={loading} name="Cadastrar" loadName="Cadastrando..."></Button>
                             </div>
                         </Form>
                       </div>
