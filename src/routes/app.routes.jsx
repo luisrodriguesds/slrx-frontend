@@ -4,7 +4,6 @@ import ScrollToTop from 'react-router-scroll-top';
 
 import Home from '../pages/mainPage/Home'
 import Choose from '../pages/mainPage/Choose';
-import Register from '../pages/mainPage/Register';
 import SignUp from '../pages/mainPage/SignUp'
 import ForgotPass from '../pages/mainPage/forgotPass';
 import NotFound from '../pages/notFound';

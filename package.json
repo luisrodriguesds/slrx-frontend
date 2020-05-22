@@ -29,6 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "http://localhost/slrx-frontend/build",
   "eslintConfig": {
     "extends": "react-app"
   },

@@ -1,77 +1,109 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { withRouter } from "react-router-dom";
 
-import Logo from '../../assets/img/logo_lrx@2x.png';
 import Main from './Main';
 import api from "../../services/api";
-import { URL_BASE } from '../../services/routesBackend';
-import Button from '../../components/events/LoadingButtom';
 
-export default class forgotPass extends React.Component {
-	state = {
-		error:'',
-		data:{email:''},
-		loading:false
-	};
+import { Form } from '@unform/web'
+import Input from '../../components/form/Input'
+import Button from '../../components/form/Button';
+import * as Yup from 'yup'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
-	_onChange = (e) => {
-        let value = e.target.value;
-        const data = {...this.state.data};
-        data[e.target.name] = value;
-        this.setState({data, error:''});
-        
-    }
+function ForgotPass(props){
+	const formRef = useRef(null)
+	const [error, setError] = useState(null)
+	const [loading, setLoading] = useState(false)
+	// state = {
+	// 	error:'',
+	// 	data:{email:''},
+	// 	loading:false
+	// };
 
-    onSubmit = async e => {
-        e.preventDefault();
-        //Set loading
-		this.setState({loading:true});
-		
-        const email = this.state.data.email;
-		const res = await api.get(`/user/request-newpass/${email}`);
-        if (res.data.error == true) {
-            this.setState({error:res.data.message});
-        }else{
-			this.setState({error:''});
-			alert(res.data.message);
-            window.location=process.env.REACT_APP_HOME_URL;
+
+
+	async function handleSubmit(data) {
+		setLoading(true)
+
+		try {
+			const schema = Yup.object().shape({
+				email: Yup.string().email('Email inválido').required('Campo Obrigatório')
+			})
+
+			await schema.validate(data, {abortEarly: false })
+      const MySwal = withReactContent(Swal)
+			try {
+				const res = await api.post(`/user/request-newpass`, { email: data.email })
+				if (res.data) {
+          MySwal.fire({
+            title: <p>Sucesso!</p>,
+            icon: 'success',
+            text: res.data.message 
+          }).then(() => {
+            props.history.push('/')
+          })
         }
-        setTimeout(() => {
-            this.setState({loading:false});
-        }, 2000);
-    }
+			} catch (err) {
+				if (err.response.status === 403) {
+					setError(err.response.data.message)	
+				}else{
+					MySwal.fire({
+						title: <p>Ops ...</p>,
+						icon: 'error',
+						text: 'Aconteceu um erro em nossos servidores, por favor tente novamente mais tarde ou entre em contato com o suporte.' 
+					})
+				}				
+			}
+		} catch (err) {
+			if (err instanceof Yup.ValidationError) {
+				const validationErrors = {};
+				err.inner.forEach(error => {
+					validationErrors[error.path] = error.message;
+				});
+				formRef.current.setErrors(validationErrors);
+			}
+			
+		}
 
-	render() {
+		setLoading(false)
+  }
+
 		return (
 			<Main>
-	            <div className="container">
-	                <div className="row justify-content-md-center mb-5">
-	                    <div className="col-12 col-sm-12 col-lg-6">
-		                    <div className="login-brand">
-				              <img src={Logo} alt="logo" width="300" className="" />
-				            </div>
-	                        <div className="card card-primary">
-	                            <div className="card-header">
-	                                <h4>Esqueci Minha Senha</h4>
-	                            </div>
-	                            <div className="card-body">
-				                <p className="text-muted">Será enviado um email de recuperação de senha para o email informado</p>
-				                {this.state.error && <div className="alert alert-danger" role="alert">{this.state.error}</div>}                
-								<form method="POST" onSubmit={this.onSubmit}>
-				                  <div className="form-group">
-				                    <label htmlFor="email">Email</label>
-				                    <input id="email" type="email" className="form-control" onChange={(e) => this._onChange(e)} name="email" tabIndex={1} required autoFocus />
-				                  </div>
-
-				                  <div className="form-group">
-								  <Button type="submit" className="btn btn-primary btn-block" loading={this.state.loading} name="Enviar" loadName="Enviando ..."></Button>
-				                  </div>
-				                </form>
-				              </div>
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </Main>
+			<div className="container">
+				<div className="row justify-content-md-center mb-5">
+					<div className="col-12 col-sm-12 col-lg-6">
+						<div className="card card-primary">
+							<div className="card-header">
+								<h4>Esqueci Minha Senha</h4>
+							</div>
+							<div className="card-body">
+								<p className="text-muted">Será enviado um email de recuperação de senha para o email informado</p>
+									{error && <div className="alert alert-danger" role="alert">{error}</div>}                
+									<Form ref={formRef} onSubmit={handleSubmit}>
+										<div className="form-group">
+											<Input 
+												label="Email"
+												type="text"
+												name="email"
+												placeholder="Digite seu email"
+												obs="Ex: exemplo@ememplo.com"
+												required="true"
+												autoFocus
+											/>
+										</div>
+										<div className="form-group">
+											<Button type="submit" className="btn btn-primary btn-block" loading={loading} name="Enviar" loadName="Enviando ..."></Button>
+										</div>
+								</Form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</Main>
 		);
-	}
 }
+
+export default withRouter(ForgotPass)

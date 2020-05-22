@@ -497,7 +497,7 @@ function SignUp(props) {
               obs="Ex: Av Humberto Monte"
               required="true"
               type="text"
-              placeholder="Digite o logradouro da empresa"
+              placeholder="Digite o logradouro"
             />
           </div>
         </div>
