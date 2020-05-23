@@ -38,7 +38,7 @@ const Sidebar = () => {
           </div>
           <ul className="sidebar-menu">
             <li className="menu-header">Dashboard</li>
-            <li className={`dropdown dashboard ${url === 'dashboard' ? `active` : ``}`} onClick={() => handleCurrentMenu('dashboard')}>
+            <li className={`dropdown dashboard ${url === 'dashboard' ? `active` : ``}`} onClick={() => handleCurrentMenu('/dashboard')}>
               <Link to="/dashboard" className="nav-link"><i className="fas fa-fire" /><span>Dashboard</span></Link>
             </li>
             <li className="menu-header">Menus</li>
