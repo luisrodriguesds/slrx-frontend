@@ -1,22 +1,30 @@
 import React,{useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {getMenu} from '../../services/api';
-import store from '../../store/store';
-const Sidebar = (props) => {
+const Sidebar = () => {
   const [menu, setMenu] = useState([]);
-
+  const [url, setUrl] = useState('')
   useEffect(() => {
     async function callMenu() {
       try {
         const res = await getMenu();
         setMenu(res.data);
-        // console.log(menu);
       } catch (error) {
         console.log(error);
       }
     }
     callMenu();  
   }, [])
+
+  useEffect(() => {
+    const current = window.location.hash.slice(1).split('/')
+    setUrl(current[1])
+  }, [])
+
+
+  function handleCurrentMenu(urlCurrent){
+    setUrl(urlCurrent.slice(1))
+  }
 
 
   return (
@@ -30,23 +38,14 @@ const Sidebar = (props) => {
           </div>
           <ul className="sidebar-menu">
             <li className="menu-header">Dashboard</li>
-            <li className={(store.getState().menu.url == '/dashboard') ? 'dropdown active dashboard' : 'dropdown dashboard'}>
+            <li className={`dropdown dashboard ${url === 'dashboard' ? `active` : ``}`} onClick={() => handleCurrentMenu('dashboard')}>
               <Link to="/dashboard" className="nav-link"><i className="fas fa-fire" /><span>Dashboard</span></Link>
             </li>
             <li className="menu-header">Menus</li>
             {menu && menu.map(section => {
-              let act = "dropdown";
-              const t = section.itens.filter((v,i) => v.url == store.getState().menu.url);
               
-              // console.log(t)
-              // console.log(store.getState().menu)
-              if (t.length > 0) {
-                act = "dropdown active";
-              }else{
-                act = "dropdown";
-              }
               return (
-              <li className={act} key={section.id}>
+              <li className={`dropdown ${url === section.url.slice(1) ? `active` : ``}`} key={section.id}>
                 <Link to="#" className="nav-link has-dropdown" data-toggle="dropdown"><i className={section.icon} /> 
                   <span>{section.section}</span>
                 </Link>
@@ -54,7 +53,9 @@ const Sidebar = (props) => {
                   
                   {section.itens.map((item, i) => {
                     return (
-                        <li key={`sub-${i}`}><Link className="nav-link" to={item.url}>{item.name}</Link></li>                      
+                        <li key={`sub-${i}`} onClick={() => handleCurrentMenu(section.url)}>
+                          <Link className="nav-link" to={item.url}>{item.name}</Link>
+                        </li>                      
                     )
                   })}
                 </ul>
