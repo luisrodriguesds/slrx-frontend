@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import { GridLoader } from 'react-spinners';
 
 import Main from '../../components/template/Main';
 import store from '../../store/store';
@@ -38,10 +39,21 @@ export default class usersProfile extends React.Component {
 		propostas:[],
 		user_id:'',
 		loading:false,
-	  	loadpage:true
+	  loadpage:true
 	}
 
 	async componentDidMount(){
+		await this.loadAAll(this.props.match.params.id)
+	}
+
+	async componentDidUpdate (prevProps) {
+		if (prevProps.match.params.id !== this.props.match.params.id) {
+			this.setState({loadpage:true})
+			await this.loadAAll(this.props.match.params.id)
+    }
+	}
+	
+	async loadAAll(id){
 		store.subscribe(() =>{
 			this.setState({
 				user:store.getState().user.user
@@ -52,50 +64,46 @@ export default class usersProfile extends React.Component {
 			type:'REQUEST_USER'
 		});
 
-		
-			const {id} = this.props.match.params;
-			const res = await getUserById(id);
-			console.log(res.data.user, 'User');
-			let obs = ``, studants, propostas;
-			switch(res.data.user.access_level_slug){
-				case "aluno":
-					obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
-					let professor = await getProfessorStudant(res.data.user.id);
-					console.log(professor.data, 'prof');
-					propostas = await getProposta(res.data.user.id);
-					this.setState({professor:professor.data, propostas:propostas.data});
-				break;
-				case "professor":
-					obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
-					studants = await getProfessorStudant(null,	res.data.user.id);
-					propostas = await getProposta(res.data.user.id);
-					this.setState({studants:studants.data, propostas:propostas.data});
-				break;
-				case "tecnico":
-				case "financeiro":
-					obs = `${res.data.user.company.fantasy_name}`;
-					propostas = await getProposta(res.data.user.id);
-					this.setState({company:res.data.user.company, propostas:propostas.data});
-				break;
-				case "autonomo":
-				case "operador":
+		const res = await getUserById(id);
+		let obs = ``, studants, propostas;
+		switch(res.data.user.access_level_slug){
+			case "aluno":
+				obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
+				let professor = await getProfessorStudant(res.data.user.id);
+				propostas = await getProposta(res.data.user.id);
+				this.setState({professor:professor.data, propostas:propostas.data});
+			break;
+			case "professor":
+				obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
+				studants = await getProfessorStudant(null,	res.data.user.id);
+				propostas = await getProposta(res.data.user.id);
+				this.setState({studants:studants.data, propostas:propostas.data});
+			break;
+			case "tecnico":
+			case "financeiro":
+				obs = `${res.data.user.company.fantasy_name}`;
+				propostas = await getProposta(res.data.user.id);
+				this.setState({company:res.data.user.company, propostas:propostas.data});
+			break;
+			case "autonomo":
+			case "operador":
 
-				break;
-				case "administrador":
-					// obs = `${res.data.academic.laboratory}`;
-					studants = await getProfessorStudant(null,	res.data.user.id);
-					this.setState({studants:studants.data});
-				break;
-				case "empresa":
-					obs = `${res.data.user.cnpj}`;
-					if (res.data.user.employees.length > 0) {
-						propostas = await getProposta(res.data.user.employees[0].id);
-						this.setState({employees:res.data.user.employees, propostas:propostas.data});
-					}
-				break;
-				default:
-				break;
-			}
+			break;
+			case "administrador":
+				// obs = `${res.data.academic.laboratory}`;
+				studants = await getProfessorStudant(null,	res.data.user.id);
+				this.setState({studants:studants.data});
+			break;
+			case "empresa":
+				obs = `${res.data.user.cnpj}`;
+				if (res.data.user.employees.length > 0) {
+					propostas = await getProposta(res.data.user.employees[0].id);
+					this.setState({employees:res.data.user.employees, propostas:propostas.data});
+				}
+			break;
+			default:
+			break;
+		}
 
 			this.setState({userSingle:{obs, ...res.data.user}, solicitations:res.data.user.solicitations, user_id:id, loadpage:false});
 
@@ -177,7 +185,7 @@ export default class usersProfile extends React.Component {
                     <img className="mr-3 rounded-circle" width={50} src={professor.photo} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${badge} mb-1 float-right`}>{professor.status == 1 ? "Ativo" : "Inativo"}</div>
-                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${professor.id}`}>{professor.name}</a></h6>
+                      <h6 className="media-title"><Link to={`/usuarios/ver-perfil/${professor.id}`}>{professor.name}</Link></h6>
                       <div className="text-small text-muted">{professor.phone1} <div className="bullet" /> {professor.email} </div>
                     </div>
                   </li>
@@ -212,7 +220,7 @@ export default class usersProfile extends React.Component {
                     <img className="mr-3 rounded-circle" width={50} src={studant.photo} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${studant.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{studant.status == 1 ? 'Ativo' : 'Inativo'}</div>
-                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${studant.id}`}>{studant.name}</a></h6>
+                      <h6 className="media-title"><Link to={`/usuarios/ver-perfil/${studant.id}`}>{studant.name}</Link></h6>
                       <div className="text-small text-muted">{studant.phone1} <div className="bullet" /> {studant.email}</div>
                     </div>
                   </li>
@@ -248,7 +256,7 @@ export default class usersProfile extends React.Component {
                     <img className="mr-3 rounded-circle" width={50} src={Avatar} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${badge} mb-1 float-right`}>{company.status == 1 ? "Ativo" : "Inativo"}</div>
-                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/company-${company.id}`}>{company.fantasy_name}</a></h6>
+                      <h6 className="media-title"><Link to={`/usuarios/ver-perfil/company-${company.id}`}>{company.fantasy_name}</Link></h6>
                       <div className="text-small text-muted">{company.company_phone} <div className="bullet" /> {company.company_email} </div>
                     </div>
                   </li>
@@ -283,7 +291,7 @@ export default class usersProfile extends React.Component {
                     <img className="mr-3 rounded-circle" width={50} src={employee.photo} alt="avatar" />
                     <div className="media-body">
                       <div className={`badge badge-pill badge-${employee.status == 1 ? 'primary' : 'danger'} mb-1 float-right`}>{employee.status == 1 ? 'Ativo' : 'Inativo'}</div>
-                      <h6 className="media-title"><a href={`/usuarios/ver-perfil/${employee.id}`}>{employee.name}</a></h6>
+                      <h6 className="media-title"><Link to={`/usuarios/ver-perfil/${employee.id}`}>{employee.name}</Link></h6>
                       <div className="text-small text-muted">{employee.phone1} <div className="bullet" /> {employee.email}</div>
                     </div>
                   </li>
@@ -345,7 +353,14 @@ export default class usersProfile extends React.Component {
 
 		return (
 			<Main title="Perfil do Usuário">
-				<LoadingPage loading={this.state.loadpage} />
+				<center>
+					<GridLoader
+						sizeUnit={"px"}
+						size={30}
+						color={'#41b6ad'}
+						loading={this.state.loadpage}
+						/>
+				</center>
 				<div className="row" style={{display:(this.state.loadpage ? 'none': 'flex')}}>
 					<div className="col-12 col-sm-12 col-lg-7">
 
@@ -396,9 +411,8 @@ export default class usersProfile extends React.Component {
 			              <div className="card-header-form">
 			                	{
 			                		<div className="option-group">
-										<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
-										<ModalAddSolicitation title="Cadastrar Amostra" handleLoadSol={this.handleLoadSol.bind(this)} solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
-               	
+														<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
+														<ModalAddSolicitation title="Cadastrar Amostra" handleLoadSol={this.handleLoadSol.bind(this)} solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
 													</div>
 			                	}
 			                <form method="post" onSubmit={(e) => e.preventDefault()}>

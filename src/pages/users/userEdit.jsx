@@ -131,6 +131,7 @@ function Account(props) {
   async function handleSubmit(data){
     
     setLoading(true)
+    const MySwal = withReactContent(Swal)
     try {
       const shema = Yup.object().shape({
         name: Yup.string().min(3, 'Campo deve ter no mínimo 3 caracteres').required('Campo Obrigatório'),
@@ -163,7 +164,6 @@ function Account(props) {
       await shema.validate(data, {
         abortEarly: false
       })
-      const MySwal = withReactContent(Swal)
       try {
         const res = await userUpdate({...data, level, id: user.id})
         if (res.data) {
@@ -173,6 +173,7 @@ function Account(props) {
             text: res.data.message 
           }).then(() => {
             window.scroll(0,0)
+            formRef.current.setErrors({})
           })
         }
       } catch (error) {
@@ -195,8 +196,13 @@ function Account(props) {
         const validationErrors = {};
         err.inner.forEach(error => {
           validationErrors[error.path] = error.message;
-        });
-        formRef.current.setErrors(validationErrors);
+        })
+        formRef.current.setErrors(validationErrors)
+        MySwal.fire({
+          title: <p>Ops ...</p>,
+          icon: 'error',
+          text: 'Verifique se todos os campos obrigatórios foram preenchidos' 
+        })
         window.scroll(0,0)
       }
     }
