@@ -37,7 +37,7 @@ export default class profile extends React.Component {
 					  <div className="card profile-widget">
 				        <div className="profile-widget-header">
 
-				          <img alt="image" src={user ? user.photo : `assets/img/avatar/avatar-1.png`} className="rounded-circle profile-widget-picture" />
+				          <img alt="" src={user ? user.photo : `assets/img/avatar/avatar-1.png`} className="rounded-circle profile-widget-picture" />
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>
@@ -45,7 +45,7 @@ export default class profile extends React.Component {
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Analisadas</div>
-				              <div className="profile-widget-item-value">{solicitations && solicitations.filter((v,i) => v.status == 7).length}</div>
+				              <div className="profile-widget-item-value">{solicitations && solicitations.filter((v,i) => v.status === 7).length}</div>
 				            </div>
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Amostras Pendentes</div>

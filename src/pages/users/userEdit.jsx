@@ -1,622 +1,795 @@
-import React from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useRef } from 'react';
+
+import api, { getUserById, userUpdate } from '../../services/api'
+import aixos from 'axios'
 import { GridLoader } from 'react-spinners';
-//https://www.react-spinners.com/
 
-import Main from '../../components/template/Main';
-import InputMask from 'react-input-mask';
-import Button from '../../components/events/LoadingButtom';
+import { withRouter } from "react-router-dom";
+import { Form } from '@unform/web'
 
-// import {user} from '../../services/auth';
-// import {useSelector} from 'react-redux';
-// import {URL_BASE} from '../../services/routesBackend';
-import api, {userUpdate, getUserById} from '../../services/api';
-import store from '../../store/store';
+import Main from '../../components/template/Main'
 
-const urlStates = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
-const Red = () => (<span style={{color:'red'}}>*</span>);
+import Input from '../../components/form/Input'
+import InputMask from '../../components/form/InputMask'
+import Button from '../../components/form/Button';
+import Select from '../../components/form/Select'
+import TextArea from '../../components/form/TextArea'
+import Choice from '../../components/form/Choice'
 
-export default class editAccount extends React.Component {
+import * as Yup from 'yup'
 
-	state = {
-      tipo:"",
-	  user:{},
-      tipoSlug:"",
-      data:{state:""},
-      states:[],
-      cities:[],
-      address:{},
-	  company:{},
-	  id_state:null,
-	  loading:false,
-	  loadpage:true
-    };
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
+//urls
+const urlCEP = (cep) => `https://viacep.com.br/ws/${cep}/json/`
 
-	// static getDerivedStateFromProps(props, state) {
-	// 	if (Object.keys(props.user).length) {
-	// 		return {
-	// 	    	user: props.user
-	// 	    };
-	// 	}
-	// 	return null;
-	// }
+function Account(props) {
+  const formRef = useRef(null)
 
+  const [level, setLevel] = useState('')
+  const [user, setUser] = useState({})
+  const [cep, setCep] = useState('')
+  const [cnpj, setCnpj] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [loadpage, setLoadpage] = useState(true)
+  const [cpf, setCpf] = useState('999.999.999-99')
+  const titles = [
+    'Graduando',
+    'Graduado',
+    'Especializando',
+    'Especialista',
+    'Mestrando',
+    'Mestre',
+    'Doutorando',
+    'Doutor',
+  ]
 
-	async componentDidMount(){
-		const {id} = this.props.match.params;
-		const res = await getUserById(id);
-		await this.loadDataForm(res.data);
-		console.log(this.state);
-		
-	}
+  const levels = {
+    aluno: 'Aluno(a)',
+    professor: 'Professor(a)',
+    empresa: 'Empresa',
+    autonomo: 'Autônomo(a)'
+  }
 
-	loadDataForm = async (user) =>{
-		this.setState({user});
-		const states = await axios.get(urlStates);
-		this.setState({states:states.data});
-	
-		let st = this.state.states.filter((st) => st.sigla == this.state.user.state && st.sigla);
-		st = (st.length == 0) ? '' : st[0].id;
-		this.setState({id_state:st});
-		
-		const cities = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${st}/municipios`);
-		this.setState({cities:cities.data});
-		
-		this.setState({data:{user_id:this.state.user.id, ...this.state.user, ...this.state.user.academic, ...this.state.user.company[0], ...this.state.user.address, type_company:this.state.user.access_level_slug}});
-	
-		
-		//if estudante - get no email do professor
-		if (this.state.user.access_level_slug == 'aluno') {			
-			const professor = await api.get(`/professor-studant/show?studant_id=${this.state.user.id}`);
-			this.setState({professor:`${professor.data.name}`, professor_email:`${professor.data.email}`, data:{email_leader:professor.data.email, ...this.state.data}});
-		}else if (this.state.user.access_level_slug == 'professor') {
-			
-		}else if (this.state.user.access_level_slug == 'financeiro' || this.state.user.access_level_slug == 'tecnico') {
-			let e = {target:{value:''}};
-			e.target.value = this.state.data.cnpj;
-			await this.handleCNPJ(e);
-			this.setState({data:{company_id:this.state.user.company[0].id, ...this.state.data}})
-		}else{
-			if (this.state.data.cep_address) {
-				let e = {target:{value:''}};
-				e.target.value = this.state.data.cep_address;
-				await this.handleCEP(e);
-				this.setState({data:{address_id:this.state.user.address.id, ...this.state.data}});
-			}
-		}
-		this.setState({loadpage:false, data:{...this.state.data, status:this.state.user.status}});		
-		// console.log(user);
-	}
+  //Load main
+  useEffect(() => {
 
-	handleCNPJ = async (e) => {
-		let cnpj = e.target.value;
-		const res = await api.get(`/company/cnpj?cnpj=${cnpj}`);
-		if (res.data != '') {
-		  const req = res.data;
-		  const data = {...this.state.data, ...req};
-		  this.setState({company:res.data, data, address:{localidade:req.company_city, uf:req.company_state, bairro:req.neighborhood, logradouro:req.street}});
-		  console.log(this.state);     
-		}
-	}
+    async function load(){
+			const {id} = props.match.params;
+			const res = await getUserById(id);
+			const access = res.data.user.access_level_slug === 'tecnico' || res.data.user.access_level_slug === 'financeiro' ? 'empresa' : res.data.user.access_level_slug
+      setLevel(access)
 
-	handleCEP = async (e) => {
-		let cep = e.target.value.replace('-', '');
-			cep = parseInt(cep);
-		if (cep.toString().length == 8) {
-			const address = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-			let data = {...this.state.data};
-			if (this.state.data.access_level_slug == 'tecnico' ||this.state.data.access_level_slug == 'financeiro') {
-				data.company_city 	= address.data.localidade;
-				data.company_state 	= address.data.uf;
-				data.neighborhood 	= address.data.bairro;
-				data.street 		= address.data.logradouro;
-			}else{
-				data.city_address 	= address.data.localidade;
-				data.state_address 	= address.data.uf;
-				data.neighborhood_address = address.data.bairro;
-				data.street_address = address.data.logradouro;
-			}
-			this.setState({address:address.data, data});
-		}
-	}
+      formRef.current.setData({
+        ...res.data.user,
+        password:'',
+        phone2: res.data.user.phone2 ? res.data.user.phone2 : ''
+      })
+      console.log(cpf);
+      setCpf(res.data.user.cpf)
+      setUser({...res.data.user})
+      setLoadpage(false)
+    }
+    load()
+  },  [cpf, level, props.history, props.match.params])
 
-	_onChange = (e) => {
-      let value = e.target.value;
-      if (e.target.name =='ies') { e.target.value=e.target.value.toUpperCase(); value.toUpperCase(); }
-      if (e.target.name == 'state') { 
-        const states = this.state.states;
-        const uf = states.filter(st => st.id == e.target.value); 
-			  value = uf[0].sigla;
-			  this.setState({id_state:uf[0].id});
-			  console.log(value);
+  //LoadCEP
+  useEffect(()=> {
+    async function loadCep(){
+      if (cep.length < 9) {
+        return
       }
 
-      const data = {...this.state.data};
-      data[e.target.name] = value;
-	  this.setState({data});
-	  console.log(this.state);
-    }
-
-    handleStates = async (e) => {
-      const cities = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${e.target.value}/municipios`);
-      this.setState({cities:cities.data});
-    }
-
-	onSubmit = async e => {
-      e.preventDefault();
-      //Set loading
-      this.setState({loading:true});
-      
-      //Layer of Validation
-
-      //send register to backend
       try {
-		const update = this.state.data;
-		const res = await userUpdate(update);
-		if (res.data.error == true) {
-		  alert(`${res.data.message}`);       
-		}else{
-		  alert(`${res.data.message}`);
-		  window.scrollTo(0,0);
-		//   this.props.history.push("/");
-		//   window.location=URL_BASE+'editar-conta';
-		}
-	  } catch (error) {
-		alert(`Algo de errado aconteceu, procure o suporte técnico.`);
-	  }
+        const newCep = cep.replace('-', '')
+        const res = await aixos.get(urlCEP(newCep))
+        if (level === 'empresa') {
+          formRef.current.setData({
+            company:{
+              company_city: res.data.localidade,
+              company_state: res.data.uf,
+              neighborhood: res.data.bairro,
+              street: res.data.logradouro
+            }
+          })
+          return
+        }
 
-      setTimeout(() => {
-        this.setState({loading:false});
-      }, 1000);
+        formRef.current.setData({
+          address:{
+            city_address: res.data.localidade,
+            state_address: res.data.uf,
+            neighborhood_address: res.data.bairro,
+            street_address: res.data.logradouro
+          }
+        })
 
-      console.log(this.state);
-	}
-	
+      } catch (error) {
+        
+      }
+    }
+    loadCep()
+  }, [cep, level])
 
-	renderCompany(){
-		return (
-		<div className="infos-company">
-		  <div className="form-divider">
-			  Informações da Empresa
-		  </div>
-		  <div className="row">
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="cnpj">CNPJ <Red /> </label>
-				  <InputMask id="cnpj" type="text" className="form-control" value={this.state.data.cnpj} mask="99.999.999/9999-99" name="cnpj" onChange={(e) => {this._onChange(e); this.handleCNPJ(e); } } />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="fantasy_name">Nome Fantasia <Red /> </label>
-				  <input id="fantasy_name" type="text" className="form-control" defaultValue={this.state.data.fantasy_name} name="fantasy_name" defaultValue={this.state.company.fantasy_name} onChange={(e) => this._onChange(e) } />
-					<div className="invalid-feedback">
-						Como? Não entendi.
-					</div>
-			  </div>
-		  </div>
-		  <div className="row">
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="company_name">Razão Social <Red /> </label>
-				  <input id="company_name" type="text" className="form-control" defaultValue={this.state.data.company_name} name="company_name" defaultValue={this.state.company.company_name} onChange={(e) => this._onChange(e) } />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="state_registration">Inscrição Estadual </label>
-				  <input id="state_registration" type="text" className="form-control" defaultValue={this.state.data.state_registration} name="state_registration" defaultValue={this.state.company.state_registration} onChange={(e) => this._onChange(e) } />
-					<div className="invalid-feedback">
-						Como? Não entendi.
-					</div>
-			  </div>
-		  </div>
-		  <div className="row">
-			  <div className="form-group col-12">
-				  <label htmlFor="company_email">Email da Empresa <Red /> </label>
-				  <InputMask id="company_email" type="email" className="form-control" defaultValue={this.state.data.company_email} name="company_email" defaultValue={this.state.company.company_email} onChange={(e) => this._onChange(e) } />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-		  </div>
-		  <div className="row">
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="company_phone">Fone <Red /> <i className="fab fa-whatsapp"></i>  </label>
-				  <InputMask id="company_phone" type="text" mask="(99)99999-9999" className="form-control" defaultValue={this.state.data.company_phone} name="company_phone"  onChange={(e) => this._onChange(e) } />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="cep">CEP <Red /> </label>
-				  <InputMask id="cep" type="text" mask="99999-999" autoComplete="false" defaultValue={this.state.data.cep} onChange={(e) => { this.handleCEP(e); this._onChange(e); }} className="form-control" name="cep" />
-					<div className="invalid-feedback">
-						Como? Não entendi.
-					</div>
-			  </div>
-		  </div>
-		  <div className="row">
-			<div className="form-group col-12">
-				  <label htmlFor="street">Logradouro <Red /> </label>
-				  <input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street" />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-		  </div>
-		  <div className="row">
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="neighborhood">Bairro <Red /> </label>
-				  <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood" />
-					<div className="invalid-feedback">
-						Como? Não entendi.
-					</div>
-			  </div>
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="number">Número <Red /> </label>
-				  <input id="number" type="text" className="form-control" name="number" defaultValue={this.state.company.number} onChange={(e) => this._onChange(e) } />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-		  </div>
-		  <div className="row">
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="company_city">Localidade <Red /> </label>
-				  <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="company_city" />
-				  <div className="invalid-feedback">
-					  Como? Não entendi.
-				  </div>
-			  </div>
-			  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-				  <label htmlFor="company_state">Estado <Red /> </label>
-				  <input id="company_state" type="text" value={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="company_state" />
-					<div className="invalid-feedback">
-						Como? Não entendi.
-					</div>
-			  </div>
-		  </div>
-		  <div className="form-group">
-			  <label htmlFor="company_state">Cargo <Red /> </label>
-			  <div className="custom-control custom-radio">
-				  <input type="radio" name="type_company" defaultValue="tecnico" defaultChecked={(this.state.data.access_level_slug == 'tecnico') ? this.state.data.access_level_slug : ''} onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_1" />
-				  <label className="custom-control-label" htmlFor="type_company_1">Técnico</label>
-			  </div>
-			  <div className="custom-control custom-radio">
-				  <input type="radio" name="type_company" defaultValue="financeiro" defaultChecked={(this.state.data.access_level_slug == 'financeiro') ? this.state.data.access_level_slug : ''}  onChange={(e) => this._onChange(e) } className="custom-control-input" id="type_company_2" />
-				  <label className="custom-control-label" htmlFor="type_company_2">Financeiro</label>
-			  </div>
-		  </div>
-		</div>
-		);
-	}
+  //Load CNPJ
+  useEffect(() => {
+    async function loadCNPJ(){
+      if (cnpj.length < 18) {
+        return
+      }
+      try {
+        const res = await api.get(`/company/cnpj?cnpj=${cnpj}`);
+        formRef.current.setFieldValue('company.cep', res.data.cep)
+      } catch (error) {
+        
+      }
+    }
+    loadCNPJ()
+  }, [cnpj])
 
-	renderAcademy(){
-		return (
-			<div className="infos-acad">
-			  <div className="form-divider">
-				  Informações Acadêmicas
-			  </div>
-			  <div className="row">
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="ies">Instituição de Ensino Superior <Red /> </label>
-					  <input id="ies" type="text" className="form-control" defaultValue={this.state.data.ies} name="ies" onChange={(e) => this._onChange(e) } required />
-					   <div className="invalid-feedback">
-						</div>
-				  </div>
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="department">Departamento <Red /></label>
-					  <input id="department" type="text" className="form-control" defaultValue={this.state.data.department} name="department" onChange={(e) => this._onChange(e)} required />
-					   <div className="invalid-feedback">
-						</div>
-				  </div>
-			  </div>
-			  <div className="row">
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="title">Título <Red /></label>
-					  <select className="form-control" name="title" value={this.state.data.title} required onChange={(e) => this._onChange(e)}>
-						<option value="">Selecione sua Título ...</option>
-						<option value="Graduando">Graduando</option>
-						<option value="Graduado">Graduado</option>
-						<option value="Especializando">Especializando</option>
-						<option value="Especialista">Especialista</option>
-						<option value="Mestrando">Mestrando</option>
-						<option value="Mestre">Mestre</option>
-						<option value="Doutorando">Doutorando</option>
-						<option value="Doutor">Doutor</option>
-					  </select>
-					  <div className="invalid-feedback">
-					  </div>
-				  </div>
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="laboratory">Laboratório <Red /></label>
-					  <input id="laboratory" type="text" defaultValue={this.state.data.laboratory} className="form-control" name="laboratory" onChange={(e) => this._onChange(e)} />
-					   <div className="invalid-feedback">
-						</div>
-				  </div>
-			  </div>
-			  <div className="row">
-				<div className="form-group col-12">
-					  <label htmlFor="research">Área de Pesquisa <Red /></label>
-					  <input id="research" type="text" className="form-control" defaultValue={this.state.data.research} name="research" onChange={(e) => this._onChange(e)} />
-					   <div className="invalid-feedback">
-						</div>
-				  </div>
-			  </div>
-			  <div className="row">
-				<div className="form-group col-12">
-				  <label htmlFor="description">Descrição da Pesquisa</label>
-				  <textarea className="form-control" name="description" defaultValue={this.state.data.description} onChange={(e) => this._onChange(e)} />
-				</div>
-			  </div>
-			</div>
-		);
-	}  
-	
-	renderStudent(){
-		return (
-		  <div className="row">
-			  <div className="form-group col-6">
-				  <label htmlFor="email_leader" className="d-block">Email Orientador</label>
-				  <input id="email_leader" type="email" defaultValue={this.state.professor_email} className="form-control" name="email_leader" onChange={(e) => this._onChange(e) } />
-				  <div className="invalid-feedback">
-				  </div>
-			  </div>
-			  <div className="form-group col-6">
-				  <label htmlFor="name_leader" className="d-block">Orientador</label>
-				  <input id="name_leader" type="text" disabled defaultValue={this.state.professor} className="form-control" name="name_leader" />
-				  <div className="invalid-feedback">
-				  </div>
-			  </div>
-		  </div>
-		);
-	}
+  async function handleSubmit(data){
+    
+    setLoading(true)
+    try {
+      const shema = Yup.object().shape({
+        name: Yup.string().min(3, 'Campo deve ter no mínimo 3 caracteres').required('Campo Obrigatório'),
+        cpf: Yup.string().min(9, 'Campo deve ter no mínimo 9 caracteres').required('Campo Obrigatório'),
+        birthday: Yup.date().typeError('Data Inválida').required("Campo Obrigatório"),
+        sex: Yup.string().required('Campo Obrigatório').oneOf(['1', '2', null], 'Campo Obrigatório'),
+        email: Yup.string().required('Campo Obrigatório').email('Email inválido'),
+        state: Yup.string().min(2, 'Campo Obrigatório').required('Campo Obrigatório'),
+        city: Yup.string().required('Campo Obrigatório'),
+        phone1: Yup.string().required('Campo Obrigatório'),
+        address: level === 'empresa' ? null : Yup.object().shape({
+          cep_address: Yup.string().required('Campo Obrigatório').min(9, 'Campo deve ter no mínimo 9 caracteres'),
+          street_address: Yup.string().required('Campo Obrigatório'),
+          neighborhood_address: Yup.string().required('Campo Obrigatório'),
+          number_address: Yup.string().required('Campo Obrigatório'),
+          state_address: Yup.string().required('Campo Obrigatório').min(2, 'Campo deve ter no mínimo 2 caracteres'),
+          city_address: Yup.string().required('Campo Obrigatório'),
+        }),
+        academic: (level !== 'aluno' && level !== 'professor') ? null : Yup.object().shape({
+          email_leader: level !== 'aluno' ? null : Yup.string().required('Campo obrigatório').email('Email inválido'),
+          ies: Yup.string().required('Campo Obrigatório'),
+          department: Yup.string().required('Campo Obrigatório'),
+          title: Yup.string().required('Campo Obrigatório').oneOf(titles, 'Título Inválido'),
+          laboratory: Yup.string().required('Campo Obrigatório'),
+          research: Yup.string().required('Campo Obrigatório'),
+          description: Yup.string().required('Campo Obrigatório'),
+        })
+      })
+      
+      await shema.validate(data, {
+        abortEarly: false
+      })
+      const MySwal = withReactContent(Swal)
+      try {
+        const res = await userUpdate({...data, level, id: user.id})
+        if (res.data) {
+          MySwal.fire({
+            title: <p>Parabéns!</p>,
+            icon: 'success',
+            text: res.data.message 
+          }).then(() => {
+            window.scroll(0,0)
+          })
+        }
+      } catch (error) {
+				if (error.response.status === 400) {
+					MySwal.fire({
+						title: <p>Ops ...</p>,
+						icon: 'error',
+						text: 'Verifique se todos os campos estão preenchidos' 
+					})	
+					return				
+				}
+        MySwal.fire({
+          title: <p>Ops ...</p>,
+          icon: 'error',
+          text: 'Aconteceu um erro em nossos servidores, por favor tente novamente mais tarde ou entre em contato com o suporte.' 
+        })
+      }
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const validationErrors = {};
+        err.inner.forEach(error => {
+          validationErrors[error.path] = error.message;
+        });
+        formRef.current.setErrors(validationErrors);
+        window.scroll(0,0)
+      }
+    }
+    setLoading(false)
+  }
 
-	renderOther(){
-		return (
-		  <div className="infos-acad">
-			  <div className="form-divider">
-				  Endereço
-			  </div>
-			  <div className="row">
-				<div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					<label htmlFor="cep">CEP <Red /> </label>
-					<InputMask id="cep" type="text" mask="99999-999" autoComplete="false" onChange={(e) => { this.handleCEP(e); this._onChange(e); }} value={this.state.data.cep_address} className="form-control" name="cep_address" />
-					  <div className="invalid-feedback">
-					  </div>
-				</div>
-				<div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					<label htmlFor="street">Logradouro <Red /> </label>
-					<input id="street" type="text" defaultValue={this.state.address.logradouro} onChange={(e) => this._onChange(e) }  className="form-control" name="street_address" />
-					<div className="invalid-feedback">
-					</div>
-				</div>
-			  </div>
-			  <div className="row">
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="neighborhood">Bairro <Red /> </label>
-					  <input id="neighborhood" type="text" defaultValue={this.state.address.bairro} onChange={(e) => this._onChange(e) } className="form-control" name="neighborhood_address" />
-						<div className="invalid-feedback">
-						</div>
-				  </div>
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="number">Número <Red /> </label>
-					  <input id="number" type="text" className="form-control" name="number_address" defaultValue={this.state.data.number_address} onChange={(e) => this._onChange(e) } />
-					  <div className="invalid-feedback">
-					  </div>
-				  </div>
-			  </div>
-			  <div className="row">
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="company_city">Localidade <Red /> </label>
-					  <input id="company_city" type="text" defaultValue={this.state.address.localidade} onChange={(e) => this._onChange(e) } className="form-control" name="city_address" />
-					  <div className="invalid-feedback">
-					  </div>
-				  </div>
-				  <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-					  <label htmlFor="company_state">Estado <Red /> </label>
-					  <input id="company_state" type="text" defaultValue={this.state.address.uf}  onChange={(e) => this._onChange(e) } className="form-control" name="state_address" />
-						<div className="invalid-feedback">
-						</div>
-				  </div>
-			  </div>
-		  </div>
-  
-		);
-	}
+  function renderAcademy(){
+    return (
+      <>
+        <div className="form-divider">
+            Informações Acadêmicas
+        </div>
+        {level === 'aluno' && (
+        <div className="row">
+          <div className="form-group col-12">
+            <Input 
+              label="Email do seu Orientador"
+              name="academic.email_leader"
+              required="true"
+              obs="Seu Orientador precisa estar cadastrado na plataforma para que você possa ser vinculado a ele."
+              type="text"
+              placeholder="Digite o email do seu orientador"
+            />
+          </div>
+        </div>
+        )}
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Instituição de Ensino Superior"
+              name="academic.ies"
+              required="true"
+              obs="Ex: UFC"
+              type="text"
+              placeholder="Digite o nome ou a Sigla da sua IES"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Departamento"
+              name="academic.department"
+              required="true"
+              obs="Ex: Departamento de Fisica"
+              type="text"
+              placeholder="Digite seu departamento"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Select 
+              label="Título"
+              name="academic.title"
+              required="true"
+              obs="Ex: Feminino"
+            >
+              <option value="">Selecione sua Título ...</option>
+              {titles.map((title, i) => (
+                <option key={`titles-${i}`} value={title}>{title}</option>
+              ))}
+            </Select>
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Laboratório"
+              name="academic.laboratory"
+              required="true"
+              obs="Ex: LABOSAM"
+              type="text"
+              placeholder="Digite seu laboratório"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12">
+            <Input 
+              label="Área de Pesquisa"
+              name="academic.research"
+              required="true"
+              obs="Apenas um o título da pesquisa"
+              type="text"
+              placeholder="Digite sua Área de Pesquisa"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12">
+            <TextArea 
+              label="Descrição da Pesquisa"
+              name="academic.description"
+              required="true"
+              obs="Informe com detalhes sua área de pesquisa e se possível informar links sobre."
+              placeholder="Digite sua descrição da pesquisa"
+              style={{height:'80px'}}
+            />
+          </div>
+        </div>
+      </>
+    )
+  }
 
-	render() {
-		
-		return (
-			<Main title="Editar Conta">
-				
-	            <div className="container">
-	                <div className="row justify-content-md-center">
-	                    <div className="col-12 col-sm-12 col-lg-8">
-							<center>
-								<GridLoader
-									sizeUnit={"px"}
-									size={30}
-									color={'#41b6ad'}
-									loading={this.state.loadpage}
-									/>
-							</center>
-	                        <div className="card card-primary" style={{display:((this.state.loadpage) ? 'none' : 'block')}}>
-	                           
-	                            <div className="card-body"> 
-	                              <form method="post" className="needs-validation" noValidate onSubmit={this.onSubmit} autoComplete="off">
-	                                  <span style={{color:'red'}}>* Campo Obrigatório</span>
-	                                  <div className="form-divider">
-	                                      Dados Pessoas
-	                                  </div>
-	                                  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="name">Nome Completo <Red /></label>
-	                                          <input id="name" type="text" className="form-control" name="name" defaultValue={this.state.data.name} onChange={(e) => this._onChange(e)} autoFocus required />
-	                                          <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="cpf">CPF <Red /></label>
-	                                          <InputMask id="cpf" type="text" className="form-control" value={this.state.data.cpf} onChange={(e) => this._onChange(e)} name="cpf" mask="999.999.999-99" required />
-	                                          <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                  </div>
-	                                  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="birthday">Data de Nascimento <Red /></label>
-	                                          <input id="birthday" type="date" className="form-control" defaultValue={this.state.data.birthday} onChange={(e) => this._onChange(e) } name="birthday" required />
-	                                          <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="sexo">Sexo <Red /></label>
-	                                          <select className="form-control" name="sex" value={this.state.data.sex} required onChange={(e) => this._onChange(e) }>
-	                                            <option value="">Selecione seu sexo ...</option>
-	                                            <option value={1}>Masculino</option>
-	                                            <option value={2}>Feminino</option>
-	                                          </select>
-	                                           <div className="invalid-feedback">
-	                                            </div>
-	                                      </div>
-	                                  </div>
-	                                  <div className="form-group">
-	                                      <label htmlFor="email">Email <Red /></label>
-	                                      <input id="email" type="email" className="form-control" defaultValue={this.state.data.email} name="email" required onChange={(e) => this._onChange(e) } />
-	                                      <div className="invalid-feedback">
-	                                      </div>
-	                                  </div>
-	                                  <div className="form-group">
-	                                      <label htmlFor="other_email">Email Alternativo</label>
-	                                      <input id="other_email" type="other_email" defaultValue={this.state.data.other_email} className="form-control" name="other_email" onChange={(e) => this._onChange(e) } />
-	                                      <div className="invalid-feedback">
-	                                      </div>
-	                                  </div>
-	                                  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="state">Estado <Red /></label>
-	                                          <select className="form-control" name="state" value={this.state.id_state} onChange={(e) => {this.handleStates(e); this._onChange(e);} } required>
-	                                            <option value="">Selecione seu estado ...</option>
-	                                            {this.state.states.map(sts => (
-	                                              <option key={sts.id} value={sts.id} rel={sts.nome}>{sts.nome}</option>
-	                                            ))}
-	                                          </select>
-	                                          <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="city">Cidade <Red /></label>
-	                                          <select className="form-control" value={this.state.data.city} name="city" required onChange={(e) => this._onChange(e) }>
-	                                            <option value="">Selecione seu cidade ...</option>
-	                                            {this.state.cities.map(city => (
-	                                              <option key={city.id} value={city.nome}>{city.nome}</option>
-	                                            ))}
-	                                          </select>
-	                                          <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                  </div>
-	                                  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="phone1" className="d-block">Fone <Red /> <i className="fab fa-whatsapp"></i></label>  
-	                                          <InputMask id="phone1" type="text" className="form-control" value={this.state.data.phone1} name="phone1" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
-	                                          <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="phone2" className="d-block">Fone Alternativo</label>
-	                                          <InputMask id="phone2" type="text" className="form-control" value={this.state.data.phone2} name="phone2" mask="(99)99999-9999" onChange={(e) => this._onChange(e) } />
-	                                      </div>
-	                                  </div>
-	                                  {(this.state.data.access_level_slug == 'aluno' || this.state.data.access_level_slug == 'professor') ? this.renderAcademy() : ""}
-	                                  {(this.state.data.access_level_slug == 'tecnico' || this.state.data.access_level_slug == 'financeiro') ? this.renderCompany() : ""}
-	                                  {(this.state.data.access_level_slug == 'operador' || this.state.data.access_level_slug == 'autonomo' || this.state.data.access_level_slug == 'administrador') ? this.renderOther() : ""}
-	                                  
-	                                  <div className="form-divider">
-	                                        Sistema
-	                                    </div>
-	                                   {(this.state.data.access_level_slug == 'aluno') ? this.renderStudent() : ""} 
-									   <div className="row">
-										<div className="form-group col-12">
-											<label htmlFor="password" className="d-block">Tipo de Usuário <Red /></label>
-											<input id="access_level" type="text" className="form-control" name="access_level" defaultValue={(this.state.user.access_level_slug == 'tecnico' || this.state.user.access_level_slug == 'financeiro') ? 'Empresa' : this.state.user.access_level} disabled />
-	                                    </div>
-	                                  </div>
-									  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="confirm" className="d-block">Confirmação <Red /></label>
-	                                          <select className="form-control" name="confirm" value={this.state.data.confirm} required onChange={(e) => this._onChange(e) }>
-	                                            <option value="">Selecione a confirmação ...</option>
-	                                            <option value={1}>Confirmado</option>
-	                                            <option value={0}>Não Confirmado</option>
-	                                          </select>
-											  <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="confirm_email" className="d-block">Confirmação do Email <Red /></label>
-											  <select className="form-control" name="confirm_email" value={this.state.data.confirm_email} required onChange={(e) => this._onChange(e) }>
-	                                            <option value="">Selecione a confirmação ...</option>
-	                                            <option value={1}>Confirmado</option>
-	                                            <option value={0}>Não Confirmado</option>
-	                                          </select>
-	                                      </div>
-	                                  </div>
-									  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="drx_permission" className="d-block">Permissão DRX <Red /></label>
-	                                          <select className="form-control" name="drx_permission" value={this.state.data.drx_permission} required onChange={(e) => this._onChange(e) }>
-	                                            <option value="">Selecione a Permissão ...</option>
-	                                            <option value={1}>Permitido</option>
-	                                            <option value={0}>Não Permitido</option>
-	                                          </select>
-											  <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="frx_permission" className="d-block">Permissão FRX <Red /></label>
-											  <select className="form-control" name="frx_permission" value={this.state.data.frx_permission} required onChange={(e) => this._onChange(e) }>
-											  	<option value="">Selecione a Permissão ...</option>
-	                                            <option value={1}>Permitido</option>
-	                                            <option value={0}>Não Permitido</option>
-	                                          </select>
-	                                      </div>
-	                                  </div>
-									  <div className="row">
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="status" className="d-block">Status do Usuário <Red /></label>
-	                                          <select className="form-control" name="status" value={this.state.data.status} required onChange={(e) => this._onChange(e) }>
-	                                            <option value="">Selecione o status ...</option>
-	                                            <option value={1}>Ativo</option>
-	                                            <option value={0}>Inativo</option>
-	                                          </select>
-											  <div className="invalid-feedback">
-	                                          </div>
-	                                      </div>
-	                                      <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
-	                                          <label htmlFor="limit" className="d-block">Limite de Amostras <Red /></label>
-											  <input id="limit" type="text" className="form-control" value={this.state.data.limit} name="limit" onChange={(e) => this._onChange(e) } />
-	                                      </div>
-	                                  </div>
-									  <div className="form-group">
-	                                      <div className="custom-control custom-checkbox">
-	                                          <input type="checkbox" defaultChecked name="agree" disabled className="custom-control-input" id="agree" />
-	                                          <label className="custom-control-label" htmlFor="agree">Eu aceito os termos e as condições</label>
-	                                      </div>
-	                                  </div>
-	                                  <div className="form-group">
-	                                      <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Editar" loadName="Enviando..."></Button>
-	                                  </div>
-	                              </form>
-	                            </div>
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
-	        </Main>
-		);
-	}
+  function renderCompany(){
+    return (
+      <>
+        <div className="form-divider">
+            Informações da Empresa
+        </div>
+        <Input
+          name="company.id"
+          hidden
+        />
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <InputMask 
+              label="CNPJ"
+              name="company.cnpj"
+              required="true"
+              obs="Ex: 99.999.999/9999-99"
+              type="text"
+              placeholder="Digite o CNPJ da empresa"
+              mask="99.999.999/9999-99" 
+              maskChar={null}
+              onChange={(e) => setCnpj(e.target.value)}
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Nome Fantasia"
+              name="company.fantasy_name"
+              required="true"
+              obs="Nome usado em logo e peças de arte."
+              type="text"
+              placeholder="Digite o nome fantasia da empresa"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Razão Social"
+              name="company.company_name"
+              required="true"
+              obs="Nome da empresa usado cartório"
+              type="text"
+              placeholder="Digite a razão social da empresa"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Inscrição Estadual"
+              name="company.state_registration"
+              obs="Digite somente se caso houver"
+              type="text"
+              placeholder="Digite a inscrição estadual da empresa"
+            />
+          </div>
+        </div>
+        <div className="row">
+            <div className="form-group col-12">
+              <Input 
+                label="Email da Empresa"
+                name="company.company_email"
+                obs="Ex: empresa@empresa.com.br"
+                required="true"
+                type="email"
+                placeholder="Digite o email da empresa"
+              />
+            </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <InputMask 
+              label="Fone"
+              name="company.company_phone"
+              required="true"
+              obs="Ex: (85)99999-9999"
+              type="text"
+              placeholder="Digite o fone (wpp) da empresa"
+              mask="(85)99999-9999" 
+              maskChar={null}
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <InputMask 
+              label="CEP"
+              name="company.cep"
+              required="true"
+              obs="Digite o CEP da sede da empresa. Ex: 99999-999."
+              type="text"
+              placeholder="Digite o CEP da empresa"
+              mask="99999-999" 
+              maskChar={null}
+              onChange={(e) => setCep(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12">
+            <Input 
+              label="Logradouro"
+              name="company.street"
+              obs="Ex: Av Humberto Monte"
+              required="true"
+              type="text"
+              placeholder="Digite o logradouro da empresa"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Bairro"
+              name="company.neighborhood"
+              obs="Ex: Pici"
+              required="true"
+              type="text"
+              placeholder="Digite o bairro da empresa"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Número"
+              name="company.number"
+              obs="Ex: 134"
+              required="true"
+              type="text"
+              placeholder="Digite o número do local da empresa"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Estado"
+              name="company.company_state"
+              obs="Ex: Ce"
+              required="true"
+              type="text"
+              placeholder="Digite o estado da empresa"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Cidade"
+              name="company.company_city"
+              obs="Ex: Fortaleza"
+              required="true"
+              type="text"
+              placeholder="Digite a cidade da empresa"
+            />
+          </div>
+        </div>
+        <div className="form-group">
+          <Choice 
+            name="company.type_company"
+            label="Cargo"
+						required="true"
+						defaultValue="tecnico"
+            options={[
+              { id: "tecnico", label: "Técnico" },
+              { id: "financeiro", label: "Financeiro" },
+            ]}
+          />
+        </div>
+      </>
+    )
+  }
+
+  function renderAddress(){
+    return (
+      <>
+        <div className="form-divider">
+            Endereço
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <InputMask 
+              label="CEP"
+              name="address.cep_address"
+              required="true"
+              obs="Ex: 99999-999"
+              type="text"
+              placeholder="Digite seu CEP"
+              mask="99999-999" 
+              maskChar={null}
+              onChange={(e) => setCep(e.target.value)}
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Logradouro"
+              name="address.street_address"
+              obs="Ex: Av Humberto Monte"
+              required="true"
+              type="text"
+              placeholder="Digite o logradouro"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Bairro"
+              name="address.neighborhood_address"
+              obs="Ex: Pici"
+              required="true"
+              type="text"
+              placeholder="Digite seu Bairro"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Número"
+              name="address.number_address"
+              obs="Ex: 134, Ap 201"
+              required="true"
+              type="text"
+              placeholder="Digite o número da sua residência"
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Estado"
+              name="address.state_address"
+              obs="Ex: Ce"
+              required="true"
+              type="text"
+              placeholder="Digite o estado da sua residência"
+            />
+          </div>
+          <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+            <Input 
+              label="Cidade"
+              name="address.city_address"
+              obs="Ex: Fortaleza"
+              required="true"
+              type="text"
+              placeholder="Digite a cidade da sua residência"
+            />
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <Main title="Editar Conta">
+        <div className="container">
+          <div className="row justify-content-md-center">
+              <div className="col-12 col-sm-12 col-lg-8">
+                <center>
+                  <GridLoader
+                    sizeUnit={"px"}
+                    size={30}
+                    color={'#41b6ad'}
+                    loading={loadpage}
+                    />
+                </center>
+                  <div className="card card-primary" style={{display:((loadpage) ? 'none' : 'block')}}>
+                      <div className="card-header">
+                          <h4>Editar dados de {levels[level]}</h4>
+                      </div>
+                      <div className="card-body">
+                        <Form ref={formRef} onSubmit={handleSubmit}>
+                        <span style={{color:'red'}}>* Campo Obrigatório</span>
+                            <div className="form-divider">
+                                Dados Pessoas
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                <Input 
+                                  label="Nome Completo"
+                                  name="name"
+                                  autoFocus
+                                  required="true"
+                                  obs="Ex: Francisco da Silva Nunes"
+                                  type="text"
+                                  placeholder="Digite seu nome completo"
+                                />
+                              </div>
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                  <InputMask 
+                                    label="CPF"
+                                    name="cpf"
+                                    required="true"
+                                    obs="Ex: 999.999.999-99"
+                                    type="text"
+                                    placeholder="Digite seu CPF"
+                                    mask="999.999.999-99"
+                                    maskChar={null}
+                                  />
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                <Input 
+                                  label="Data de Nascimento"
+                                  name="birthday"
+                                  required="true"
+                                  obs="Ex: 12/01/1996"
+                                  type="date"
+                                />
+                              </div>
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                <Select 
+                                  label="Sexo"
+                                  name="sex"
+                                  required="true"
+                                  obs="Ex: Feminino"
+                                >
+                                  <option value="">Selecione seu sexo ...</option>
+                                  <option value="1">Masculino</option>
+                                  <option value="2">Feminino</option>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="form-group">
+                              <Input 
+                                label="Email"
+                                name="email"
+                                required="true"
+                                obs="Ex: exemplo@exemplo.com"
+                                type="email"
+                                placeholder="Digite seu email princial"
+                              />
+                            </div>
+                            <div className="form-group">
+                              <Input 
+                                label="Email Alternativo"
+                                name="other_email"
+                                obs="Ex: exemplo2@exemplo.com"
+                                type="email"
+                                placeholder="Digite seu email alternativo"
+                              />
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                <Input 
+                                  label="Estado"
+                                  name="state"
+                                  required="true"
+                                  obs="Estado de origem"
+                                  type="text"
+                                  placeholder="Digite seu Estado"
+                                />
+                              </div>
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                <Input 
+                                  label="Cidade"
+                                  name="city"
+                                  required="true"
+                                  obs="Cidade de origem"
+                                  type="text"
+                                  placeholder="Digite sua Cidade"
+                                />
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                  <InputMask 
+                                    label="Fone Wpp"
+                                    name="phone1"
+                                    required="true"
+                                    obs="Ex: (99)99999-9999"
+                                    type="text"
+                                    placeholder="Digite seu número principal"
+                                    mask="(99)99999-9999"
+                                    maskChar={null}
+                                  />
+                              </div>
+                              <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
+                                  <InputMask 
+                                    label="Fone Alternativo"
+                                    name="phone2"
+                                    obs="Ex: (99)99999-9999"
+                                    type="text"
+                                    placeholder="Digite seu número principal"
+                                    mask="(99)99999-9999"
+                                    maskChar={null}
+                                  />
+                              </div>
+                            </div>
+                            {/* Render da entidade de cada usuário */}
+                            {(level === 'aluno' || level === 'professor') && renderAcademy()}
+                            
+                            {level !== 'empresa' && renderAddress()}
+
+                            {level === 'empresa' && renderCompany()}
+
+                            <div className="form-divider">
+                              Sistema
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12">
+                                <Select 
+                                  label="Tipo de Usuário"
+                                  name="access_level_slug"
+                                  disabled
+                                  required="true"
+                                >
+                                  <option value="">Selecione seu tipo ...</option>
+                                  <option value="aluno">Aluno</option>
+                                  <option value="professor">Professor</option>
+                                  <option value="financeiro">Financeiro</option>
+                                  <option value="tecnico">Técnico</option>
+                                  <option value="autonomo">Autônomo</option>
+                                  <option value="operador">Operador</option>
+                                  <option value="administrador">Administrador</option>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12  col-md-6 col-lg-6">
+                                <Select 
+                                  label="Confirmação"
+                                  name="confirm"
+                                  required="true"
+                                >
+                                  <option value="">Selecione a Confirmação ...</option>
+                                  <option value="0">Não confirmado</option>
+                                  <option value="1">Confirmado</option>
+                                </Select>
+                              </div>
+                              <div className="form-group col-12 col-sm-12  col-md-6 col-lg-6">
+                                <Select 
+                                  label="Confirmação de email"
+                                  name="confirm_email"
+                                  required="true"
+                                >
+                                  <option value="">Selecione a Confirmação ...</option>
+                                  <option value="0">Não confirmado</option>
+                                  <option value="1">Confirmado</option>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12  col-md-6 col-lg-6">
+                                <Select 
+                                  label="Permissão DRX"
+                                  name="drx_permission"
+                                  required="true"
+                                >
+                                  <option value="">Selecione a permissão ...</option>
+                                  <option value="0">Não Permitido</option>
+                                  <option value="1">Permitido</option>
+                                </Select>
+                              </div>
+                              <div className="form-group col-12 col-sm-12  col-md-6 col-lg-6">
+                                <Select 
+                                  label="Permissão FRX"
+                                  name="frx_permission"
+                                  required="true"
+                                >
+                                  <option value="">Selecione a permissão ...</option>
+                                  <option value="0">Não Permitido</option>
+                                  <option value="1">Permitido</option>
+                                </Select>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="form-group col-12 col-sm-12  col-md-6 col-lg-6">
+                                <Select 
+                                  label="Status do usuário"
+                                  name="status"
+                                  required="true"
+                                >
+                                  <option value="">Selecione o status ...</option>
+                                  <option value="0">Inativo</option>
+                                  <option value="1">Ativo</option>
+                                </Select>
+                              </div>
+                              <div className="form-group col-12 col-sm-12  col-md-6 col-lg-6">
+                                <Input 
+                                  label="Limite de amostras"
+                                  name="limit"
+                                  required="true"
+                                  type="text"
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group">
+                              <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={loading} name="Editar" loadName="Editando..."></Button>
+                            </div>
+                        </Form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+    </Main>
+    );
 }
+
+export default withRouter(Account);

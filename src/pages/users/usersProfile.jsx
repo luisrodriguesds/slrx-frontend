@@ -52,29 +52,30 @@ export default class usersProfile extends React.Component {
 			type:'REQUEST_USER'
 		});
 
-		try{
+		
 			const {id} = this.props.match.params;
 			const res = await getUserById(id);
-
+			console.log(res.data.user, 'User');
 			let obs = ``, studants, propostas;
-			switch(res.data.access_level_slug){
+			switch(res.data.user.access_level_slug){
 				case "aluno":
-					obs = (res.data.academic == null ? '' : `${res.data.academic.laboratory}`);
-					let professor = await getProfessorStudant(res.data.id);
-					propostas = await getProposta(res.data.id);
+					obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
+					let professor = await getProfessorStudant(res.data.user.id);
+					console.log(professor.data, 'prof');
+					propostas = await getProposta(res.data.user.id);
 					this.setState({professor:professor.data, propostas:propostas.data});
 				break;
 				case "professor":
-					obs = (res.data.academic == null ? '' : `${res.data.academic.laboratory}`);
-					studants = await getProfessorStudant(null,	res.data.id);
-					propostas = await getProposta(res.data.id);
+					obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
+					studants = await getProfessorStudant(null,	res.data.user.id);
+					propostas = await getProposta(res.data.user.id);
 					this.setState({studants:studants.data, propostas:propostas.data});
 				break;
 				case "tecnico":
 				case "financeiro":
-					obs = `${res.data.company[0].fantasy_name}`;
-					propostas = await getProposta(res.data.id);
-					this.setState({company:res.data.company[0], propostas:propostas.data});
+					obs = `${res.data.user.company.fantasy_name}`;
+					propostas = await getProposta(res.data.user.id);
+					this.setState({company:res.data.user.company, propostas:propostas.data});
 				break;
 				case "autonomo":
 				case "operador":
@@ -82,26 +83,23 @@ export default class usersProfile extends React.Component {
 				break;
 				case "administrador":
 					// obs = `${res.data.academic.laboratory}`;
-					studants = await getProfessorStudant(null,	res.data.id);
+					studants = await getProfessorStudant(null,	res.data.user.id);
 					this.setState({studants:studants.data});
 				break;
 				case "empresa":
-					obs = `${res.data.cnpj}`;
-					if (res.data.employees.length > 0) {
-						propostas = await getProposta(res.data.employees[0].id);
-						this.setState({employees:res.data.employees, propostas:propostas.data});
+					obs = `${res.data.user.cnpj}`;
+					if (res.data.user.employees.length > 0) {
+						propostas = await getProposta(res.data.user.employees[0].id);
+						this.setState({employees:res.data.user.employees, propostas:propostas.data});
 					}
 				break;
 				default:
 				break;
 			}
 
-			this.setState({userSingle:{obs, ...res.data}, solicitations:res.data.solicitations, user_id:id, loadpage:false});
+			this.setState({userSingle:{obs, ...res.data.user}, solicitations:res.data.user.solicitations, user_id:id, loadpage:false});
 
-		}catch(e){
-			console.log(e);
-			alert("Error no servidor, por favor procurar o suporte técnico.");			
-		}
+		
 	}
 
 	handleLoadSol = async (id) =>{
@@ -265,7 +263,7 @@ export default class usersProfile extends React.Component {
 
 	renderEmployees(){
 		const {employees} = this.state;
-
+		
 		return (
 			<div className="card">
               <div className="card-header">
@@ -353,7 +351,7 @@ export default class usersProfile extends React.Component {
 
 					  <div className="card profile-widget">
 				        <div className="profile-widget-header">                     
-				          <img alt="image" src={userSingle.photo} className="rounded-circle profile-widget-picture" />
+				          <img alt="imge" src={userSingle.photo} className="rounded-circle profile-widget-picture" />
 				          <div className="profile-widget-items">
 				            <div className="profile-widget-item">
 				              <div className="profile-widget-item-label">Total de Amostras</div>

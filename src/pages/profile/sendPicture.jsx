@@ -1,9 +1,5 @@
 import React from 'react';
 
-// import {getUserById} from '../../services/api';
-
-// import Main from '../../components/template/Main';
-import store from '../../store/store';
 import {sendPicture} from '../../services/api';
 
 export default class profile extends React.Component {
@@ -11,10 +7,6 @@ export default class profile extends React.Component {
 	state = {
 		user:{},
 		file:null
-	}
-
-	async componentDidMount(){
-		
 	}
 
 	handleSubmit = async (e) => {
@@ -27,7 +19,7 @@ export default class profile extends React.Component {
 		
 		try{
 			let res = await this.fileUpload(this.state.file);
-			if (res.data.error == true) {
+			if (res.data.error === true) {
 				alert(res.data.message);
 			}else{
 				alert(res.data.message);
@@ -43,8 +35,7 @@ export default class profile extends React.Component {
 
 
 	onChange(e) {
-		console.log(this.props);
-	    this.setState({file:e.target.files[0]})
+	  this.setState({file:e.target.files[0]})
 	}
 
 	fileUpload = async (file) => {
@@ -61,7 +52,6 @@ export default class profile extends React.Component {
 	 }
 
 	render() {
-		const {user} = this.props;
 
 		return (
 			<div className="card">

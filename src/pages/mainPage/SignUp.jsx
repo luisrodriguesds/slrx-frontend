@@ -531,7 +531,7 @@ function SignUp(props) {
               obs="Ex: Ce"
               required="true"
               type="text"
-              placeholder="Digite o estado da empresa"
+              placeholder="Digite o estado da sua residência"
             />
           </div>
           <div className="form-group col-12 col-sm-12 col-md-6 col-lg-6">
@@ -541,7 +541,7 @@ function SignUp(props) {
               obs="Ex: Fortaleza"
               required="true"
               type="text"
-              placeholder="Digite a cidade da empresa"
+              placeholder="Digite a cidade da sua residência"
             />
           </div>
         </div>

@@ -4,8 +4,8 @@ import { useField } from '@unform/core'
 const Red = () => (<span style={{color:'red'}}>*</span>);
 
 export default function Choice(props) {
-  const { name, options, label, required, multiple, ...rest } = props;
-  const { fieldName, registerField, defaultValue, error } = useField(name);
+  const { name, options, label, required, multiple, defaultValue, defaultChecked, ...rest } = props;
+  const { fieldName, registerField, error } = useField(name);
   const [value, setValue] = useState(defaultValue);
 
   const threatAsCheckbox = !!(multiple || options.length === 1);
@@ -28,15 +28,16 @@ export default function Choice(props) {
         : Array.from(value).filter(v => v !== e.target.value);
       setValue(newVal);
     } else {
-      console.log(toAdd ? fieldVal : "");
       setValue(toAdd ? fieldVal : "");
     }
   }
 
   function checked(val) {
+    console.log(defaultValue, value);
     if (multiple) {
       return Array.from(value || []).includes(val);
     }
+    
     return value === val;
   }
 
