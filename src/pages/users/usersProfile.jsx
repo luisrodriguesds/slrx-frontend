@@ -112,8 +112,12 @@ export default class usersProfile extends React.Component {
 
 	handleLoadSol = async (id) =>{
 		const res = await getUserById(id)
-		console.log(res.data.solicitations)
-		this.setState({...this.state, solicitations:res.data.solicitations})
+		this.setState({...this.state, solicitations:res.data.user.solicitations})
+	}
+
+	handleLoadProposta = async (id) =>{
+		const res = await getProposta(id)
+		this.setState({...this.state, propostas:res.data})
 	}
 
 	handleCheckbox = (id) => {
@@ -411,8 +415,8 @@ export default class usersProfile extends React.Component {
 			              <div className="card-header-form">
 			                	{
 			                		<div className="option-group">
-														<ModalProposta title="Gerar Proposta pelo LRX" solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
-														<ModalAddSolicitation title="Cadastrar Amostra" handleLoadSol={this.handleLoadSol.bind(this)} solicitations={this.state.selectSol} user_id={(this.state.solicitations.length > 0) ? this.state.solicitations[0].user_id : 0} />
+														<ModalProposta title="Gerar Proposta pelo LRX" handleLoadProposta={this.handleLoadProposta.bind(this)} solicitations={this.state.selectSol} user_id={this.props.match.params.id} />
+														<ModalAddSolicitation title="Cadastrar Amostra" handleLoadSol={this.handleLoadSol.bind(this)} solicitations={this.state.selectSol} user_id={this.props.match.params.id} />
 													</div>
 			                	}
 			                <form method="post" onSubmit={(e) => e.preventDefault()}>

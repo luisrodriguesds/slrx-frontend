@@ -49,11 +49,10 @@ function ModalProposta(props) {
         for (let i = 4; i <= 120; i++) {
           dois_theta_inicial.push(i);
         }
-		    setState({...state, dois_theta_inicial, dois_theta_final, gaps:gaps.data, equipments:equipments.data});	
-        console.log(state)
+		    setState({...inital, dois_theta_inicial, dois_theta_final, gaps:gaps.data, equipments:equipments.data });	
       }
       init()
-    },[])
+    }, [])
 
     function _onChange(e) {
       let value = e.target.value;
@@ -327,20 +326,11 @@ function ModalProposta(props) {
 								</div>
 					          </div>
 					          <div className="card-footer text-right">
-	                             <ButtonLoad type="submit" className="btn btn-primary btn-lg btn-block" loading={state.loading} name="Solicitar" loadName="Solicitando..."></ButtonLoad>
+	                    <ButtonLoad type="submit" className="btn btn-primary btn-lg btn-block" loading={state.loading} name="Solicitar" loadName="Solicitando..."></ButtonLoad>
 					          </div>
-					        </form>
+					      </form>
           
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Fechar
-            </Button>
-            <Button variant="primary" onClick="">
-              Cadastrar
-            </Button>
-
-          </Modal.Footer>
         </Modal>
       </React.Fragment>
     );
