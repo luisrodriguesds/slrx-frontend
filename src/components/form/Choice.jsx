@@ -33,7 +33,6 @@ export default function Choice(props) {
   }
 
   function checked(val) {
-    console.log(defaultValue, value);
     if (multiple) {
       return Array.from(value || []).includes(val);
     }
@@ -66,7 +65,11 @@ export default function Choice(props) {
         );
       })}
 
-      {error && <span>{error}</span>}
+    {error && (
+      <div className="invalid-feedback" style={{display:'block'}}>
+        {error}
+      </div>
+    )}
     </>
   );
 }

@@ -147,6 +147,8 @@ function SignUp(props) {
   async function handleSubmit(data){
     
     setLoading(true)
+    const MySwal = withReactContent(Swal)
+
     try {
       const shema = Yup.object().shape({
         name: Yup.string().min(3, 'Campo deve ter no mínimo 3 caracteres').required('Campo Obrigatório'),
@@ -175,13 +177,26 @@ function SignUp(props) {
           laboratory: Yup.string().required('Campo Obrigatório'),
           research: Yup.string().required('Campo Obrigatório'),
           description: Yup.string().required('Campo Obrigatório'),
+        }),
+        company: level !== 'empresa' ? null : Yup.object().shape({
+          cnpj: Yup.string().required('Campo Obrigatório'),
+          fantasy_name: Yup.string().required('Campo Obrigatório'),
+          company_name: Yup.string().required('Campo Obrigatório'),
+          company_email: Yup.string().required('Campo Obrigatório'),
+          company_phone: Yup.string().required('Campo Obrigatório'),
+          cep: Yup.string().required('Campo Obrigatório'),
+          street: Yup.string().required('Campo Obrigatório'),
+          neighborhood: Yup.string().required('Campo Obrigatório'),
+          number: Yup.string().required('Campo Obrigatório'),
+          company_state: Yup.string().required('Campo Obrigatório'),
+          company_city: Yup.string().required('Campo Obrigatório'),
+          type_company: Yup.string().required('Campo Obrigatório').oneOf(['tecnico', 'financeiro'], 'Escolha entre técnico ou financeiro'),
         })
       })
       
       await shema.validate(data, {
         abortEarly: false
       })
-      const MySwal = withReactContent(Swal)
       try {
         const res = await userRegister({...data, level})
         if (res.data) {
@@ -206,7 +221,12 @@ function SignUp(props) {
         err.inner.forEach(error => {
           validationErrors[error.path] = error.message;
         });
-        formRef.current.setErrors(validationErrors);
+        formRef.current.setErrors(validationErrors)
+        MySwal.fire({
+          title: <p>Ops ...</p>,
+          icon: 'error',
+          text: 'Um ou mais campos obrigatórios foram deixados em branco, por favor verificar.' 
+        })
         window.scroll(0,0)
       }
     }
@@ -461,8 +481,8 @@ function SignUp(props) {
             label="Cargo"
             required="true"
             options={[
-              { id: "Técnico", label: "Técnico" },
-              { id: "Financeiro", label: "Financeiro" },
+              { id: "tecnico", label: "Técnico" },
+              { id: "financeiro", label: "Financeiro" },
             ]}
           />
         </div>
