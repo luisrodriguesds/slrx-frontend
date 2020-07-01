@@ -136,6 +136,15 @@ export default class usersProfile extends React.Component {
     	}
 	}
 
+	handleCheckboxAll = (e) => {
+		const {solicitations}= this.state
+		if (e.target.checked) {
+			this.setState({selectSol: solicitations.map(s => s.id)})
+		}else{
+			this.setState({ selectSol:[]})
+		}
+	}
+
 	handleSearch = async (e) => {
 		const filter = e.target.value;
 		const res = await searchSolicitationByUser(filter, this.state.user_id);
@@ -436,7 +445,7 @@ export default class usersProfile extends React.Component {
 			                		<tr>
 										<th>
 											<div className="custom-checkbox custom-control">
-												<input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
+												<input type="checkbox" data-checkboxes="mygroup" onClick={this.handleCheckboxAll} data-checkbox-role="dad" className="custom-control-input" id="checkbox-all" />
 												<label htmlFor="checkbox-all" className="custom-control-label">&nbsp;</label>
 											</div>
 										</th>
@@ -448,12 +457,12 @@ export default class usersProfile extends React.Component {
 				                  <tbody>
 									
 									{solicitations.map((solicitation, i) => (
-									<tr key={i}>
+														<tr key={i}>
 				                      <td className="p-0 text-center">
 				                      	<div className="custom-control custom-checkbox">
-	                                          <input type="checkbox" data-checkboxes="mygroup" onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
-	                                          <label className="custom-control-label" htmlFor={`checkbox-${i}`}>&nbsp;</label>
-	                                     </div>
+																	<input type="checkbox" data-checkboxes="mygroup" checked={this.state.selectSol.includes(solicitation.id)} onClick={() => this.handleCheckbox(solicitation.id)} className="custom-control-input" value={solicitation.id} name={`check-${i}`} id={`checkbox-${i}`} />
+																	<label className="custom-control-label" htmlFor={`checkbox-${i}`}>&nbsp;</label>
+															</div>
 				                      </td>
 				                      <td className="weight">
 				                      	<Link to={`/solicitacoes/ver-amostra/${solicitation.name}`}>{solicitation.name}</Link>
@@ -470,16 +479,15 @@ export default class usersProfile extends React.Component {
 				                      <td>{new Date(solicitation.created_at).toLocaleString('pt-BR')}</td>
 				                      {/*
 				                      	<td>
-									  	<div className="btn-group" role="group" aria-label="Exemplo básico">
-											{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" title="Passar para a próxima fase" onClick={() => this.handleNextStep(solicitation.id)} className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}
-				                      		<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-warning" title="Editar"> <i className="fas fa-edit"></i> </Link>
-				                      		<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(solicitation.name)}> <i className="fas fa-trash"></i> </button>
-										</div>
+																	<div className="btn-group" role="group" aria-label="Exemplo básico">
+																	{(this.state.user.permission || this.state.user.access_level_slug == 'professor') && <button data-toggle="tooltip" title="Passar para a próxima fase" onClick={() => this.handleNextStep(solicitation.id)} className="btn btn-info"><i className="fas fa-arrow-alt-circle-right"></i></button>}
+																							<Link to={`/solicitacoes/editar/${solicitation.name}`} className="btn btn-warning" title="Editar"> <i className="fas fa-edit"></i> </Link>
+																							<button className="btn btn-danger" title="Excluir" onClick={() => this.handleDelete(solicitation.name)}> <i className="fas fa-trash"></i> </button>
+																</div>
 				                      </td>
 				                      */}
 				                    </tr>
-
-									))}
+													))}
 				                  </tbody>
 			                </table>
 			              </div>
