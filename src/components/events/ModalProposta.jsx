@@ -1,7 +1,7 @@
 import {Modal, Button} from 'react-bootstrap';
 import React, { useState}  from 'react';
 
-import {propostaSolicitation, postProposta} from '../../services/api';
+import {postProposta} from '../../services/api';
 
 function ModalProposta(props) {
     const [show, setShow] = useState(false);
@@ -48,7 +48,6 @@ function ModalProposta(props) {
       console.log(data)
        try {
           data = encodeURIComponent(JSON.stringify(data)); 
-          // const res = await propostaSolicitation(data);
           window.open(`${process.env.REACT_APP_API_URL}/solictation/proposta?data=${data}`, '_blank'); //Mudar isso ai
           setProposta({url:data, user_id:props.user_id});
           setSendProp(false);
