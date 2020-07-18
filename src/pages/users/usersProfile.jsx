@@ -9,7 +9,6 @@ import {getUserById, getProfessorStudant, searchSolicitationByUser, getProposta,
 import Avatar from '../../assets/img/avatar/avatar-1.png';
 import ModalProposta from '../../components/events/ModalProposta';
 import ModalAddSolicitation from '../../components/events/ModalAddSolicitation';
-import LoadingPage from '../../components/events/LoadingPage';
 import SendPicture from '../profile/sendPicture';
 
 export default class usersProfile extends React.Component {
@@ -455,7 +454,7 @@ export default class usersProfile extends React.Component {
 									</tr>
 			                	</thead>
 				                  <tbody>
-									
+											{console.log(this.state.selectSol)}
 									{solicitations.map((solicitation, i) => (
 														<tr key={i}>
 				                      <td className="p-0 text-center">

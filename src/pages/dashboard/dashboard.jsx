@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import { Editor } from '@tinymce/tinymce-react';
 
 import {getHead, filterUsers, postPedding, getAccessLevel, postEmail, storeProfessorStudant} from '../../services/api';
 import store from '../../store/store';
@@ -8,8 +9,6 @@ import Main from '../../components/template/Main';
 import Button from '../../components/events/LoadingButtom';
 import ModalHead from '../../components/events/ModalHeaddash';
 import ModalHeadUser from '../../components/events/ModalHeaddashUser';
-
-import LoadingPage from '../../components/events/LoadingPage';
 
 
 export default class dashboard extends React.Component {
@@ -99,6 +98,8 @@ export default class dashboard extends React.Component {
 			return false;
 		}
 
+		console.log(this.state.email);
+
 		//Send
 		const res = await storeProfessorStudant(email);
 		// console.log(res);
@@ -112,7 +113,6 @@ export default class dashboard extends React.Component {
 			const pedding = await filterUsers('pendentes', 1, 8);
 			this.setState({users:pedding.data});
 		}
-		// console.log(res);
 	}
 
 	_onChange = (e) => {
@@ -121,6 +121,16 @@ export default class dashboard extends React.Component {
 		email[e.target.name] = value;
 		this.setState({email});
 		// console.log(this.state);
+	}
+
+	handleEditorChange = (e) => {
+		this.setState({
+			email:{
+				...this.state.email,
+				message: e
+			}
+		})
+		console.log(this.state);
 	}
 
 	handleCheckbox = (id) => {
@@ -196,7 +206,7 @@ export default class dashboard extends React.Component {
 							<h4>Total de Medidas DRX</h4>
 							</div>
 							<div className="card-body">
-							<ModalHead method="DRX" data={data[2]}>{data.length == 0 ? '0' : data[2].count}</ModalHead> 
+							<ModalHead key="drx" method="DRX" data={data[2]}>{data.length == 0 ? '0' : data[2].count}</ModalHead> 
 							</div>
 						</div>
 						</div>
@@ -211,7 +221,7 @@ export default class dashboard extends React.Component {
 							<h4>Total de Medidas FRX</h4>
 							</div>
 							<div className="card-body">
-							<ModalHead method="FRX" data={data[3]}>{data.length == 0 ? '0' : data[3].count}</ModalHead> 
+							<ModalHead key="frx" method="FRX" data={data[3]}>{data.length == 0 ? '0' : data[3].count}</ModalHead> 
 							</div>
 						</div>
 						</div>
@@ -229,7 +239,7 @@ export default class dashboard extends React.Component {
 						</div>
 						<div className="card-body">
 							{/*<canvas id="myChart" height={382} />*/}
-							<iframe src="http://csd.fisica.ufc.br:8080/iframe" height="452" frameBorder="0" style={{border:0, width:"100%"}} allowFullScreen=""></iframe>
+							<iframe title="Gráfico" src="http://csd.fisica.ufc.br:8080/iframe" height="452" frameBorder="0" style={{border:0, width:"100%"}} allowFullScreen=""></iframe>
 						</div>
 						</div>
 					</div>
@@ -314,7 +324,23 @@ export default class dashboard extends React.Component {
 							<div className="form-group">
 								<label>Conteúdo</label>
 								{/* className="summernote-simple" */}
-								<textarea className="form-control" style={{height:'300px'}} name="message" onChange={(e) => this._onChange(e)} placeholder="Conteúdo do Email" defaultValue={""} />
+								<Editor
+									initialValue=""
+									name="message" 
+									apiKey={process.env.REACT_APP_APIKEY_TINYMCE}
+									init={{
+										height: 500,
+										menubar: false,
+										plugins: [
+											" advlist anchor autolink codesample fullscreen help image imagetools",
+											" lists link media noneditable preview",
+											" searchreplace table template visualblocks wordcount"
+										],
+										toolbar: 'insertfile a11ycheck undo redo | bold italic | forecolor backcolor | template codesample | alignleft aligncenter alignright alignjustify | bullist numlist | link image tinydrive'
+									}}
+									
+									onEditorChange={this.handleEditorChange}
+								/>
 							</div>
 							</div>
 							<div className="card-footer pt-0">
