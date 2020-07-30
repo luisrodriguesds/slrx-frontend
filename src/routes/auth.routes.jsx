@@ -25,6 +25,8 @@ import Files  from '../pages/files/files';
 import AddFiles  from '../pages/files/addFiles';
 import EditFiles  from '../pages/files/editFiles';
 
+import Statistics from '../pages/mainPage/Statistics';
+
 import NotFound from '../pages/notFound';
 
 
@@ -61,6 +63,8 @@ function AuthRoute() {
       	<Route exact path='/arquivos-uteis' component={Files} />
       	<Route exact path='/arquivos-uteis/enviar' component={AddFiles} />
       	<Route exact path='/arquivos-uteis/editar/:id' component={EditFiles} />
+
+				<Route exact path='/estatisticas' component={()=><Statistics />} />
 
       	<Route exact path='/404' component={NotFound} />
       	<Redirect from="*" to='/' />
