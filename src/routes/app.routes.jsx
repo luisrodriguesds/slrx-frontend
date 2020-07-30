@@ -8,6 +8,7 @@ import SignUp from '../pages/mainPage/SignUp'
 import ForgotPass from '../pages/mainPage/forgotPass';
 import NotFound from '../pages/notFound';
 import NewPass from '../pages/mainPage/NewPass';
+import Statistics from '../pages/mainPage/Statistics';
 
 // import { Container } from './styles';
 
@@ -30,6 +31,9 @@ function AppRoute() {
           <Route exact path='/nova-senha' component={()=> <NewPass />} />
 
           <Route exact path='/404' component={() => <NotFound />} />
+
+          <Route exact path='/estatisticas' component={()=><Statistics />} />
+
           <Redirect from="*" to='/' />
         </Switch>
     </React.Fragment>

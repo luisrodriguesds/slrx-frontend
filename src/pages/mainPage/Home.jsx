@@ -3,6 +3,7 @@ import React from 'react';
 import Main from './Main';
 import SignIn from './SignIn';
 import ModalHome from '../../components/events/ModalHome'
+import { Link } from 'react-router-dom';
 
 // import { Container } from './styles';
 
@@ -77,10 +78,13 @@ const home = () => {
                                         <ModalHome>Potenialidades das técnicas de DRX e FRX</ModalHome>
                                     </li>
                                     <li>
-                                        <a href="http://csd.fisica.ufc.br/documentos/tutorial_slrx.pdf" target="_blank">Tutorial de uso do sistema</a>
+                                        <a href="http://csd.fisica.ufc.br/documentos/tutorial_slrx.pdf" rel="noopener noreferrer" target="_blank">Tutorial de uso do sistema</a>
                                     </li>
                                     <li>
-                                        <a href="http://www.raiosx.ufc.br/site/" target="_blank">Site do Laboratório de Raio x</a>
+                                        <a href="http://www.raiosx.ufc.br/site/" rel="noopener noreferrer" target="_blank">Site do Laboratório de Raio x</a>
+                                    </li>
+                                    <li>
+                                        <Link to="/estatisticas">Estatísticas do Laboratório</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -92,7 +96,7 @@ const home = () => {
                             </div>
                             <div className="card-body">
                                 <div id="maps">
-                                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3981.2912231146315!2d-38.57732538005999!3d-3.7466149033128886!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x6c102749273a7709!2sLRX+-+Laborat%C3%B3rio+de+Raios-X!5e0!3m2!1spt-BR!2sbr!4v1560357188323!5m2!1spt-BR!2sbr" height={350} frameBorder={0} style={{border: 0, width: '100%'}} allowFullScreen />
+                                    <iframe title="gráfico-drx" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3981.2912231146315!2d-38.57732538005999!3d-3.7466149033128886!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x6c102749273a7709!2sLRX+-+Laborat%C3%B3rio+de+Raios-X!5e0!3m2!1spt-BR!2sbr!4v1560357188323!5m2!1spt-BR!2sbr" height={350} frameBorder={0} style={{border: 0, width: '100%'}} allowFullScreen />
                                 </div>
                             </div>
                         </div>

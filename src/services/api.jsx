@@ -78,6 +78,11 @@ export const putUsefulFiles = (form, config, id) => api.put('/useful-files/'+id,
 export const showUsefulFiles = (id) => api.get('/useful-files/show/'+id);
 export const deleteUsefulFiles = (id) => api.delete('/useful-files/destoy/'+id);
 
+//Statistics
+// period: day, month, year
+export const getStatisticsSamples = ({period, value}) => api.get('/statistics/samples?period='+period+'&value='+value)
+export const getStatisticsSamplesAllYears = () => api.get('/statistics/samples-year')
+export const getStatisticsSamplesByGroup = (year) => api.get('/statistics/samples-group?year='+year)
 
 
 export default api;

@@ -1,23 +1,9 @@
 import {Modal, Button} from 'react-bootstrap';
-import React, { useState, useEffect}  from 'react';
+import React, { useState }  from 'react';
 
-
-import {showSolicitation} from '../../services/api';
 
 function ModalSolicitation(props) {
     const [show, setShow] = useState(false);
-
-    const [state, setState] = useState({
-		user:{},
-		phase:'',
-		file:null,
-		loading:false,
-	  	loadpage:true
-    });
-
-    useEffect(() => {
-       
-    }, []);
   
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
