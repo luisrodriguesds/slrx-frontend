@@ -39,7 +39,7 @@ function ModalProposta(props) {
       if (state.dataPrazo == null) {
         alert(`Campo data está vazio`);
         return false;
-      }else if (props.solicitations.length == 0) {
+      }else if (props.solicitations.length === 0) {
         alert(`Selecione pelo menos uma amostra para realizar a proposta`);
         return false;
       }
@@ -61,11 +61,10 @@ function ModalProposta(props) {
     const handleSendProposta = async () => {
       try{
         const res = await postProposta(proposta);
-        if (res.data.error ==true) {
+        if (res.data.error === true) {
           alert(`${res.data.message}`);
         }else{
           alert(`${res.data.message}`);
-          // window.location=window.location.href; //Usar Redux depois para informar que a proposta deve aparecer em tela
           await props.handleLoadProposta(props.user_id)
           setSendProp(true);
           setShow(false);

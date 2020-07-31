@@ -63,6 +63,7 @@ export const getHead = () => api.get('/solictation/head-dash');
 //Documents
 export const postProposta = (data) => api.post('/documents/proposta', data);
 export const getProposta = (user_id) => api.get('/documents/proposta?user_id='+user_id);
+export const getAllProposta = () => api.get('/documents');
 export const deleteProposta = (id) => api.delete('/documents/proposta?id='+id);
 
 //Envio de email

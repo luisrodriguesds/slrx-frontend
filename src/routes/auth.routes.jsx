@@ -27,6 +27,9 @@ import EditFiles  from '../pages/files/editFiles';
 
 import Statistics from '../pages/mainPage/Statistics';
 
+import Proposals from '../pages/Proposals/proposals';
+import AddProposals from '../pages/Proposals/addProposals';
+
 import NotFound from '../pages/notFound';
 
 
@@ -46,6 +49,8 @@ function AuthRoute() {
 
       	<Route exact path='/usuarios' component={Users} />
       	<Route exact path='/usuarios/cadastro' component={addUser} />
+      	<Route exact path='/usuarios/propostas' component={Proposals} />
+      	<Route exact path='/usuarios/propostas/cadastrar' component={AddProposals} />
       	<Route path='/usuarios/editar/:id' component={UserEdit} />
         <Route path='/usuarios/ver-perfil/:id' component={UsersProfile} />
 
