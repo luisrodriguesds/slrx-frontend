@@ -7,7 +7,6 @@ export default function Choice(props) {
   const { name, options, label, required, multiple, defaultValue, defaultChecked, ...rest } = props;
   const { fieldName, registerField, error } = useField(name);
   const [value, setValue] = useState(defaultValue);
-
   const threatAsCheckbox = !!(multiple || options.length === 1);
   const nativeField = threatAsCheckbox ? "checkbox" : "radio";
 
@@ -47,7 +46,7 @@ export default function Choice(props) {
         const checkboxId = `${fieldName}-${option.id}`;
         return (
           <Fragment key={checkboxId}>
-            <div className="custom-control custom-radio">
+            <div className={`custom-control custom-${nativeField}`}>
               <input 
                 {...rest}
                 type={nativeField}
