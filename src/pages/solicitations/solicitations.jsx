@@ -2,11 +2,9 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 import store from '../../store/store';
-import {filterhSolicitation, getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation, nextStepSolicitation, nextStepAllSolicitation} from '../../services/api';
+import {filterhSolicitation, getSolicitation, searchSolicitation, destroySolicitation, destroyAllSolicitation, nextStepSolicitation} from '../../services/api';
 
 import Main from '../../components/template/Main';
-import LoadingPage from '../../components/events/LoadingPage';
-import ModalSolicitation from '../../components/events/ModalSolicitationClass';
 
 export default class solicitations extends React.Component {
 	//SALVAR AS MARCAÇÕES 
@@ -30,7 +28,7 @@ export default class solicitations extends React.Component {
 		checkboxAll:false,
 		filter:'Filtro',
 		loading:false,
-	  	loadpage:true
+	  loadpage:true
 	}
 
 	async componentDidMount(){
@@ -312,7 +310,6 @@ export default class solicitations extends React.Component {
 			              </div>
 			            </div>
 			            <div className="card-body p-0">
-						  <LoadingPage loading={this.state.loadpage} />
 
 			              <div className="table-responsive">
 			                <table className="table table-striped">
