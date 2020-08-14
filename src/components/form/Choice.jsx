@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useField } from '@unform/core'
 
 const Red = () => (<span style={{color:'red'}}>*</span>);
@@ -18,6 +18,9 @@ export default function Choice(props) {
 
   registerField({ name: fieldName, ref: getValue, getValue });
 
+  useEffect(() => {
+    setValue(defaultValue)
+  }, [defaultValue])
 
   function handleChange(e) {
     const { checked: toAdd, value: fieldVal } = e.target;

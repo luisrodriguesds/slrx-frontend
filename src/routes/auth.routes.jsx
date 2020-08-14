@@ -59,7 +59,7 @@ function AuthRoute() {
         <Route exact path='/solicitacoes' component={Solicitations} />
         <Route exact path='/solicitacoes/cadastro' component={addSolicitation} />
       	<Route path='/solicitacoes/ver-amostra/:id' component={SampleSingle} />
-      	<Route path='/solicitacoes/editar/:name' component={editSolicitation} />
+      	<Route path='/solicitacoes/editar/:sample' component={editSolicitation} />
 
       	<Route exact path='/perfil' component={Profile} />
       	<Route exact path='/alterar-senha' component={ChangePass} />

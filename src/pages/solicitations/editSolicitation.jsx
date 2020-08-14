@@ -1,361 +1,355 @@
-import React from 'react';
-
-import {getGap, getEquipment, showSolicitation, editSolicitation} from '../../services/api';
-
-import Eppendorf from '../../assets/img/eppendorf_1.5ml.jpg';
+import React, { useRef, useState, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+import Switch from 'react-switch';
+import { Form } from '@unform/web';
+import { GridLoader } from 'react-spinners';
 
 import Main from '../../components/template/Main';
-import Button from '../../components/events/LoadingButtom';
+import Eppendorf from '../../assets/img/eppendorf_1.5ml.jpg';
 
-export default class addSolicitation extends React.Component {
-	// "settings":{"tecnica":"DRX", "dois_theta_inicial":10, "dois_theta_final":100, "delta_dois_theta":0.013},
-	// "settings":{"tecnica":"FRX", "resultado":"oxidos", "medida":"semi-quantitativa"},
-	state = {
-		data:{
-			"equipment_id":3,
-			"gap_id":2,
-			"method":"",
-			"settings":{},
-			"composition":"",
-			"shape":"Pó",
-			"flammable":"Não",
-			"radioactive":"Não",
-			"toxic":"Não",
-			"corrosive":"Não",
-			"hygroscopic":"Não",
-			"note":"",
-			"quantity":1
-		},
-		equipments:[],
-		equiSelect:2,
-		method:'',
-		gaps:[],
-		setting_drx:{tecnica:"DRX", dois_theta_inicial:"10°", dois_theta_final:"100°", delta_dois_theta:0.013},
-		dois_theta_inicial:[],
-		dois_theta_final:[],
-		setting_frx:{tecnica:"FRX", resultado:"elementos", medida:"semi-quantitativa"},
-		loading:false,
-	  	loadpage:true
-	}
+import Select from '../../components/form/Select';
+import Input from '../../components/form/Input';
+import Choice from '../../components/form/Choice';
+import TextArea from '../../components/form/TextArea';
+import Button from '../../components/form/Button';
 
-	async componentDidMount(){
-		//load equipments
-		const equipments= await getEquipment();
-		const gaps 		= await getGap();
-		const dois_theta_inicial = [];
-		const dois_theta_final = [];
-		for (let i = 3; i <= 119; i++) {
-			dois_theta_final.push(i);
-		}
-		for (let i = 4; i <= 120; i++) {
-			dois_theta_inicial.push(i);
-		}
-		this.setState({...this.state, gaps:gaps.data, equipments:equipments.data, dois_theta_inicial, dois_theta_final});
-		if (this.props.computedMatch.params.name) {
-			const name = this.props.computedMatch.params.name;
-			await this.handleEdit(name);
-		}
-	}
+import { getEquipment, editSolicitation, showSolicitation } from '../../services/api';
+import { menuOfShape } from '../../datas/menuOfShape';
+import { securyData } from '../../datas/securySamples';
+import globalErros from '../../components/errors/globalErros';
+import Alert from '../../components/events/Alert';
 
-	handleEdit = async (name) => {
-        //Pegar a solicitação
-        try {
-            const res = await showSolicitation(name);
-            if (res.data[0].method == 'DRX') {
-                this.setState({
-                    data:res.data[0], 
-                    equiSelect:res.data[0].equipment_id,
-                    setting_drx:res.data[0].settings,
-                });
-            }else{
-                this.setState({
-                    data:res.data[0], 
-                    equiSelect:res.data[0].equipment_id,
-                    setting_frx:res.data[0].settings,
-                });
-            }
-        } catch (error) {
-            alert(`Amostra não encontrada.`);
-        }
-	} 
+import * as Yup from 'yup';
 
-	_onChange = (e) => {
-      let value = e.target.value;
-      if (e.target.name === 'method') {
-      	if (value === 'DRX') {
-    		this.setState({data:{method:'DRX', equipment_id:2, ...this.state.data}, equiSelect:2});
-    	}else if(value === 'FRX'){
-    		this.setState({data:{method:'FRX', equipment_id:3, ...this.state.data}, equiSelect:3});
-    	}
-      }
+const twoInitalTheta = new Array(119-3).fill(null).map((_,i) => i+3)
+const twoFinalTheta = new Array(120-4).fill(null).map((_,i) => i+4)
 
-      const data = {...this.state.data};
-      data[e.target.name] = value;
-	  this.setState({data});
-	  console.log(this.state);
-	}
-	
-	handleCheckbox = (e) => {
-	  	let value = e.target.value;
-	  		value = (this.state.data[e.target.name] === 'Sim') ? 'Não' : 'Sim';
-	  
-		const data = {...this.state.data};
-		data[e.target.name] = value;
-		this.setState({data});
-	}
 
-	handleDRX = (e) => {
-		let value = e.target.value;
-		const setting_drx = {...this.state.setting_drx};
-		setting_drx[e.target.name] = value;
-		this.setState({setting_drx});
-		console.log(this.state);
-	}
+function EditSolicitation() {
 
-	handleFRX = (e) => {
-		let value = e.target.value;
-		const setting_frx = {...this.state.setting_frx};
-		setting_frx[e.target.name] = value;
-		console.log(setting_frx);
-		this.setState({setting_frx});
-		console.log(this.state);
-	}
-
-	onSubmit = async e => {
-		e.preventDefault();
-		//Set loading
-		this.setState({loading:true});
-		setTimeout(() => {
-			this.setState({loading:false});
-		  }, 2000);
-		  
-		//Layer of Validation
+  const formRef = useRef(null)
   
-		//send register to backend
-		//Check em outros erros
-		try {
-			let data = {...this.state.data}
-				data.settings = (data.method == 'DRX') ? this.state.setting_drx : this.state.setting_frx;
-				data.equipment_id = this.state.equiSelect;
-			
-			const res = await editSolicitation(data);
-			if (res.data.error == true) {
-				window.scroll(0,0);
-				alert(`${res.data.message}`);       			
-			}else{
-				alert(`${res.data.message}`);
-				this.props.history.push("/solicitacoes");
+  const history = useHistory()
+	const { sample } = useParams()
+  const [selectedMethod, setSelectedMethod] = useState('')
+	const [selectedSecury, setSelectedSecury] = useState([])
+	const [selectedShapeOfResult, setSelectedShapeOfResult] = useState('')
+	const [buttonLoading, setButtonLoading] = useState(false)
+	const [loadPage, setLoadPage] = useState(true)
+	const [solicitationRes, setSolicitationRes] = useState({})
+  const [equipments, setEquipments] = useState({
+    DRX: [],
+    FRX: []
+  })
+
+  const [selectedShape, setSelectedShape] = useState("Pó")
+
+  useEffect(() => {
+    async function load (){
+      try {
+        const res = await getEquipment()
+    
+        setEquipments({
+          DRX: res.data.filter(equipment => equipment.type === 'DRX').sort((a,b) => b.id - a.id),
+          FRX: res.data.filter(equipment => equipment.type === 'FRX'),
+				})
+				
+				const resSolicitation = await showSolicitation(sample)
+				const [solicitation] = resSolicitation.data
+				setSolicitationRes(solicitation)
+				setSelectedMethod(solicitation.method)
+				setSelectedShape(solicitation.shape)
+
+				const filterSecury = securyData.filter(item => solicitation[item.id] === "Sim").map(item => item.id)
+				setSelectedSecury(filterSecury)
+
+				//No json existem thetas com o caracter °, então precisa retirar
+				const dois_theta_final = solicitation.settings.tecnica === 'DRX' && solicitation.settings.dois_theta_final.replace('°', '')
+				const dois_theta_inicial = solicitation.settings.tecnica === 'DRX' && solicitation.settings.dois_theta_inicial.replace('°', '')
+				setSelectedShapeOfResult(solicitation.settings.tecnica === 'FRX' ? solicitation.settings.resultado : '')
+				
+				const fillSolicitation = {
+					composition: solicitation.composition,
+					equipment_id: solicitation.equipment_id,
+					secury: filterSecury,
+					settings: {
+						...solicitation.settings,
+						dois_theta_final,
+						dois_theta_inicial
+					},
+					note: solicitation.note
+				}
+				
+				formRef.current.setData(fillSolicitation)
+				
+      } catch (error) {
+        Alert({
+          title: 'Ops ...',
+          type: 'error',
+          text: 'Não foi possível carregar os dados para a edição desta amostra.'
+				})
+				history.push('/solicitacoes')
+      } finally {
+				setLoadPage(false)
 			}
-		} catch (error) {
-		  alert(`Algo inesperado aconteceu, informe ao suporte técnico e atualize sua página.`);        
-		  // this.props.history.push("/");    
-		}		
-	  }
+    }
+    load()
+  }, [history, sample])
 
-	DRXrender(){
-		return (
-			<React.Fragment>
-			<div className="form-group">
-				<label>2θ inicial</label>
-				<select name="dois_theta_inicial" onChange={(e) => this.handleDRX(e)} className="form-control" required>									
-				{this.state.dois_theta_inicial.map((value, i) => (
-						<option key={i} value={value} selected={(value == '10') ? true : false}>{value}°</option>
-					))}
-				</select>
-				<div className="invalid-feedback">
-				Como? Não entendi.
-				</div>
-			</div>
-			<div className="form-group">
-				<label>2θ final</label>
-				<select name="dois_theta_final" onChange={(e) => this.handleDRX(e)} className="form-control" required>								
-					{this.state.dois_theta_final.map((value, i) => (
-						<option key={i} value={value} selected={(value == '100') ? true : false}>{value}°</option>
-					))}
-				</select>
-				<div className="invalid-feedback">
-				Como? Não entendi.
-				</div>
-			</div>
-			<div className="form-group">
-				<label>Δθ</label>
-				<input type="text" name="delta_dois_theta" className="form-control" defaultValue="0,013" disabled placeholder="Digite os elementos" required />
-				<div className="invalid-feedback">
-					Como? Não entendi.
-				</div>
-			</div>
-			</React.Fragment>
-		)
-	}
+  const handleSubmit = async (data) => {
+    try {
+      setButtonLoading(true)
+      const schema = Yup.object().shape({
+        equipment_id: Yup.string().required('Campo obrigatório'),
+        shape: Yup.string().oneOf(['Pó', 'Filme', 'Pastilha', 'Eletródo', 'Outro'], 'Escolha uma das forma da amostras'),
+        composition: Yup.string().required('Campo obrigatório'),
+      })
 
-	FRXrender(){
-		return (
-			<React.Fragment>
-				<div className="form-group">
-					<label htmlFor="">Selecione o tipo de medida</label>
-					<div className="custom-control custom-radio">
-						<input type="radio" name="medida" defaultValue="semi-quantitativa" defaultChecked  onChange={(e) => this.handleFRX(e) } className="custom-control-input" id="medida" />
-						<label className="custom-control-label" htmlFor="medida">Semi-Quantitativa</label>
-					</div>
-				</div>
-				<div className="form-group">
-					<label htmlFor="">Selecione a forma dos resultados</label>
-					<div className="custom-control custom-radio">
-						<input type="radio" name="resultado" defaultValue="oxidos" defaultChecked  onChange={(e) => this.handleFRX(e) } className="custom-control-input" id="resultado_1" />
-						<label className="custom-control-label" htmlFor="resultado_1">Óxidos</label>
-					</div>
-					<div className="custom-control custom-radio">
-						<input type="radio" name="resultado" defaultValue="elementos"  onChange={(e) => this.handleFRX(e) } className="custom-control-input" id="resultado_2" />
-						<label className="custom-control-label" htmlFor="resultado_2">Elementos</label>
-					</div>
-				</div>
-			</React.Fragment>
-		)
-	}
+      await schema.validate(data, {
+        abortEarly: false
+			})
+			
+			console.log(data);
+      const { secury = [] } = data
+      const postData = {
+        ...data,
+        settings: {
+          ...data.settings,
+          tecnica: selectedMethod
+        },
+        method: selectedMethod,
+        gap_id: 2,
+        flammable: secury.find(item => item === 'flammable') ? 'Sim' : 'Não',
+        radioactive: secury.find(item => item === 'radioactive') ? 'Sim' : 'Não',
+        toxic: secury.find(item => item === 'toxic') ? 'Sim' : 'Não',
+        corrosive: secury.find(item => item === 'corrosive') ? 'Sim' : 'Não',
+        hygroscopic: secury.find(item => item === 'hygroscopic') ? 'Sim' : 'Não',
+				quantity: data.quantity === '' ? 1 : data.quantity,
+				id: solicitationRes.id,
+				user_id: solicitationRes.user.id
+			}
+			console.log(postData);
 
-	render() {
-		return (
-			<Main title="Cadastrar Solicitações">
+      const res = await editSolicitation(postData)
+      Alert({
+        title: 'Edição realizada com sucesso!',
+        text: res.data.message
+      })
+			window.scrollTo(0,0)
+			// history.push('/solicitacoes')
+    } catch (error) {
+      globalErros({
+        error,
+        formRef
+      })
+    } finally{
+      setButtonLoading(false)
+    }
+  }
+
+  const renderDRX = () => (
+    <>
+      <div className="form-group">
+        <Select
+          label="2θ inicial"
+          name="settings.dois_theta_inicial"
+          required="true"
+          defaultValue="10"
+        >
+          <option value="">Selecione um valor ...</option>
+          {twoInitalTheta.map((item, i) => (
+            <option key={`two-inital-theta-${i}`} value={`${item}`}>{item}°</option>
+          ))}
+        </Select>
+      </div>
+      <div className="form-group">
+        <Select
+          label="2θ final"
+          name="settings.dois_theta_final"
+          required="true"
+          defaultValue="100"
+        >
+          <option value="">Selecione um valor ...</option>
+          {twoFinalTheta.map((item, i) => (
+            <option key={`two-final-theta-${i}`} value={`${item}`}>{item}°</option>
+          ))}
+        </Select>
+      </div>
+      <div className="form-group">
+        <Input 
+          label="Δθ"
+          name="settings.delta_dois_theta"
+          required="true"
+          defaultValue="0,013"
+          disabled
+          type="text"
+        />
+      </div>
+    </>
+  )
+
+  const renderFRX = () => (
+    <>
+      <div className="form-group">
+        <Select
+          label="Selecione o tipo de medida "
+          name="settings.medida"
+          required="true"
+          defaultValue="semi-quantitativa"
+        >
+          <option value="semi-quantitativa">Semi-quantitativa</option>
+        </Select>
+      </div>
+      <div className="form-group">
+        <Choice 
+          name="settings.resultado"
+					label="Selecione a forma dos resultados"
+					defaultValue={selectedShapeOfResult}
+          options={[
+            { id: "oxidos", label: "Óxidos" },
+            { id: "elementos", label: "Elementos" },
+          ]}
+        />
+      </div>
+    </>
+  )
+
+  return (
+		<Main title="Cadastrar Solicitações">
 				<div className="container">
 					<div className="row justify-content-md-center">
 						<div className="col-12 col-sm-12 col-lg-7">
-						<div className="card">
-					        <form className="needs-validation" onSubmit={this.onSubmit} method="post" id="" noValidate>
-					          <div className="card-header">
-								<h4>Cadastrar Solicitação</h4>
-					          </div>
-					          <div className="card-body">
-					          <div className="form-divider">Tipo de Análise e Equipamento</div>
-					            <div className="form-group">
-			                      <div className="control-label">Selecione o tipo de análise</div>
-			                      <div className="custom-switches-stacked mt-2">
-			                        <label className="custom-switch">
-			                          <input type="radio" name="method" value="DRX" disabled checked={(this.state.data.method === 'DRX') ? true : false} onChange={(e) => (this._onChange(e) )} className="custom-switch-input" />
-			                          <span className="custom-switch-indicator"></span>
-			                          <span className="custom-switch-description">DRX</span>
-			                        </label>
-			                        <label className="custom-switch">
-			                          <input type="radio" name="method" value="FRX" disabled checked={(this.state.data.method === 'FRX') ? true : false} onChange={(e) => (this._onChange(e))} className="custom-switch-input" />
-			                          <span className="custom-switch-indicator"></span>
-			                          <span className="custom-switch-description">FRX</span>
-			                        </label>
-			                      </div>
-			                    </div>
-								<div className="full-form" style={{display:(this.state.data.method !== '') ? 'block': 'none'}}>
-
-								
-									<div className="form-group">
-										<label>Equipamento</label>
-										<select className="form-control" value={this.state.equiSelect} onChange={(e) => this._onChange(e)} name="equipment_id" required>
-											<option value=""> Selecione o Equipamento ...</option>
-											{this.state.equipments.map(equipment => {
-												if (this.state.data.method === 'FRX') {
-													if (equipment.type === 'FRX') {
-														return (
-															<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
-															)
-													}
-												}else{
-													if (equipment.type === 'DRX') {
-														return (
-															<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
-															)
-													}
-												}
-											}
-											)}
-										</select>
-										<div className="invalid-feedback">
-											Como? Não entendi.
+						<center>
+							<GridLoader
+								sizeUnit={"px"}
+								size={30}
+								color={'#41b6ad'}
+								loading={loadPage}
+								/>
+						</center>
+							<div className="card" style={{display:((loadPage) ? 'none' : 'block')}}>
+								<Form ref={formRef} onSubmit={handleSubmit}>
+									<div className="card-header">
+										<h4>Editar Solicitação</h4>
+									</div>
+									<div className="card-body">
+										<div className="form-divider">Tipo de Análise e Equipamento</div>
+										<div className="form-group">
+											<div className="control-label">Selecione o tipo de análise</div>
+											<div className="custom-switches-stacked mt-2">
+												<label className="custom-switch">
+													<Switch 
+														onChange={() => {}}
+														disabled
+														checked={selectedMethod === 'FRX' || selectedMethod === '' ? false : true}
+														checkedIcon={false}
+														uncheckedIcon={false}
+														height={20}
+														width={36}
+														onColor="#41b6ad"
+														offColor="#e9ecef"
+													/>
+													<span className="custom-switch-description">DRX</span>
+												</label>
+												<label className="custom-switch">
+													<Switch 
+														onChange={() => {}}
+														disabled
+														checked={selectedMethod === 'DRX' || selectedMethod === '' ? false : true}
+														checkedIcon={false}
+														uncheckedIcon={false}
+														height={20}
+														width={36}
+														onColor="#41b6ad"
+														offColor="#e9ecef"
+													/>
+													<span className="custom-switch-description">FRX</span>
+												</label>
+											</div>
+										</div>
+										<div className="full-form" style={{display:(selectedMethod !== '' ? 'block' : 'none')}}>
+											<div className="form-group">
+												<Select
+													label="Equipamento"
+													name="equipment_id"
+													required="true"
+												>
+													{equipments[selectedMethod === '' ? "DRX" : selectedMethod].map(equipment => (
+														<option key={`equipment-${equipment.id}`} value={equipment.id}>{equipment.name}</option>
+													))}
+												</Select>
+											</div>
+											<div className="form-divider">Informações da Amostra</div>
+											<div className="form-group">
+												<Select
+													label="Escolha o tipo da amostra"
+													name="shape"
+													required="true"
+													onChange={(e) => setSelectedShape(e.target.value)}
+												>
+													<option value="Pó">Pó </option>
+													<option value="Filme">Filme </option>
+													<option value="Pastilha">Pastilha </option>
+													<option value="Eletródo">Eletródo</option>
+													<option value="Outro">Outro</option>
+												</Select>
+													<small className="text-danger">{menuOfShape[selectedMethod === '' ? "DRX" : selectedMethod][selectedShape]}</small>
+											</div>
+											<div className="form-divider"><strong>Observações sobre o volume da amostra</strong></div>
+											<div className="text-danger">*Sua amostra deve ter um volume mínimo de 0.5 ml.</div>
+											<div className="text-danger">*Amostras com um volume menor que 0.5 ml não serão aceitas.</div>
+											<div className="form-group text-center img-solicitation">
+												<img src={Eppendorf} alt="Eppendorf de 1,5 ml"/>
+											</div>
+											<div className="form-group">
+												<Input 
+													label="Composição"
+													name="composition"
+													required="true"
+													obs="Ex: H2SO4, NaCl ..."
+													type="text"
+													placeholder="Digite a composição da sua amostra"
+												/>
+											</div>
+											<div className="form-group">
+												<Choice 
+													name="secury"
+													label="Segurança"
+													multiple="checkbox"
+													defaultValue={selectedSecury}
+													options={[
+														{ id: "flammable", label: "Inflamável" },
+														{ id: "toxic", label: "Tóxico" },
+														{ id: "hygroscopic", label: "Higroscópico" },
+														{ id: "corrosive", label: "Corrosivo" },
+														{ id: "radioactive", label: "Radioativo" },
+													]}
+												/>
+											</div>
+											<div className="form-divider"><strong>Configurações da análise</strong></div>
+											{selectedMethod === 'DRX' && renderDRX()}
+											{selectedMethod === 'FRX' && renderFRX()}
+											<div className="form-divider"><strong>Observações Gerais</strong></div>
+											<div className="form-group">
+												<TextArea 
+													label="Observações"
+													name="note"
+													placeholder="Digite alguma observação da amostra caso necessário"
+													style={{height:'80px'}}
+												/>
+											</div>
+											<div className="card-footer text-right">
+												<Button type="submit" className="btn btn-primary btn-lg btn-block" loading={buttonLoading} name="Solicitar" loadName="Solicitando..."></Button>
+											</div>
 										</div>
 									</div>
-									<div className="form-divider">Informações da Amostra</div>
-									<div className="form-group">
-										<label>Escolha o tipo da amostra</label>
-										<select name="shape"  className="form-control" value={this.state.data.shape} onChange={(e) => this._onChange(e)} required>
-											<option value="">Selecione o tipo da amostra ...</option>
-											<option value="Pó">Pó</option>
-											<option value="Filme">Filme</option>
-											<option value="Pastilha">Pastilha</option>
-											<option value="Eletródo">Eletródo</option>
-											<option value="Outro">Outro</option>
-										</select>
-										<div className="invalid-feedback">
-											Como? Não entendi.
-										</div>
-									</div>
-									<div className="form-divider"><strong>Observações sobre o volume da amostra</strong></div>
-									<div className="text-danger">*Sua amostra deve ter um volume mínimo de 0.5 ml.</div>
-									<div className="text-danger">*Amostras com um volume menor que 0.5 ml não serão aceitas.</div>
-									<div className="form-group text-center img-solicitation">
-										<img src={Eppendorf} alt="Eppendorf de 1,5 ml"/>
-									</div>
-									<div className="form-group">
-									<label>Composição</label>
-									<input type="text" name="composition" defaultValue={this.state.data.composition} onChange={(e) => this._onChange(e)} className="form-control" required />
-									<div className="invalid-feedback">
-										Campo Obirgatório!!
-									</div>
-									</div>
-									<div className="form-group">
-									<div className="control-label">Segurança</div>
-									<div className="custom-switches-stacked mt-2">
-										<label className="custom-switch">
-										<input type="checkbox" name="flammable" checked={(this.state.data.flammable == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Inflamável</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="toxic" checked={(this.state.data.toxic == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Tóxico</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="hygroscopic" checked={(this.state.data.hygroscopic == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Higroscópico</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="corrosive" checked={(this.state.data.corrosive == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Corrosivo</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="radioactive" checked={(this.state.data.radioactive == 'Sim') ? true : false} onChange={(e) => this.handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Radioativo</span>
-										</label>
-									</div>
-									</div>
-
-									<div className="form-divider"><strong>Configurações da análise</strong></div>
-									{this.state.data.method === 'DRX' ? this.DRXrender() : ''}
-									{this.state.data.method === 'FRX' ? this.FRXrender() : ''}
-					
-									<div className="form-divider"><strong>Observações Gerais</strong></div>
-									<div className="form-group">
-										<label>Observações</label>
-										<textarea className="form-control" name="note" onChange={(e) => this._onChange(e)} value={this.state.data.note}></textarea>
-									</div>
-
-									{/* <div className="form-divider"><strong>Range de Amostras</strong></div>
-									<div className="form-group">
-										<label>Quantas amostras deseja cadastrar?</label>
-										<input type="number" className="form-control" name="quantity" onChange={(e) => this._onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={1} max={20} />
-									</div> */}
-								
-								</div>
-								
-					          </div>
-					          <div className="card-footer text-right">
-	                             <Button type="submit" className="btn btn-primary btn-lg btn-block" loading={this.state.loading} name="Editar" loadName="Editando..."></Button>
-					          </div>
-					        </form>
-					      </div>
+								</Form>
+							</div>
 						</div>
 					</div>
 				</div>
-			</Main>
-		);
-	}
+    </Main>
+  );
 }
+
+export default EditSolicitation;
