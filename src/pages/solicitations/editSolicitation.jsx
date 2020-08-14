@@ -215,7 +215,7 @@ function EditSolicitation() {
   )
 
   return (
-		<Main title="Cadastrar Solicitações">
+		<Main title="Editar Solicitação">
 				<div className="container">
 					<div className="row justify-content-md-center">
 						<div className="col-12 col-sm-12 col-lg-7">
