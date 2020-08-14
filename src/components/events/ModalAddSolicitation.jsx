@@ -5,6 +5,8 @@ import Eppendorf from '../../assets/img/eppendorf_1.5ml.jpg';
 import ButtonLoad from '../../components/events/LoadingButtom';
 import {getGap, getEquipment, postSolicitation} from '../../services/api';
 
+import AddSolicitation from '../../pages/solicitations/addSolicitation';
+
 const Red = () => (<span style={{color:'red'}}>*</span>);
 const inital = {
   data:{
@@ -199,137 +201,16 @@ function ModalProposta(props) {
         <Button variant="primary" title={props.title} className="btn btn-primary ml-1 mr-1" onClick={handleShow}>
           Cadastrar Amostras
         </Button>
-  
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Cadastro de Amostra</Modal.Title>
+            <Modal.Title></Modal.Title>
           </Modal.Header>
           <Modal.Body>
-           
-          <form className="needs-validation" onSubmit={onSubmit} method="post" id="" noValidate>
-					        
-					  <div className="card-body">
-                <div className="form-divider">Tipo de Análise e Equipamento</div>
-                <div className="form-group">
-                  <div className="control-label">Selecione o tipo de análise <Red /></div>
-                  <div className="custom-switches-stacked mt-2">
-                    <label className="custom-switch">
-                      <input type="radio" name="method" value="DRX" onChange={(e) => (_onChange(e) )} className="custom-switch-input" />
-                      <span className="custom-switch-indicator"></span>
-                      <span className="custom-switch-description">DRX</span>
-                    </label>
-                    <label className="custom-switch">
-                      <input type="radio" name="method" value="FRX" onChange={(e) => (_onChange(e))} className="custom-switch-input" />
-                      <span className="custom-switch-indicator"></span>
-                      <span className="custom-switch-description">FRX</span>
-                    </label>
-                  </div>
-                </div>
-								<div className="full-form" style={{display:(state.data.method !== '') ? 'block': 'none'}}>
-									<div className="form-group">
-										<label>Equipamento <Red /></label>
-										<select className="form-control" value={state.equiSelect} onChange={(e) => _onChange(e)} name="equipment_id" required>
-											<option value=""> Selecione o Equipamento ...</option>
-											{state.equipments.map(equipment => {
-												if (state.data.method == 'FRX') {
-													if (equipment.type == 'FRX') {
-														return (
-															<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
-															)
-													}
-												}else{
-													if (equipment.type == 'DRX') {
-														return (
-															<option key={equipment.id} value={equipment.id}>{equipment.name}</option>
-															)
-													}
-												}
-											}
-											)}
-										</select>
-										<div className="invalid-feedback">
-											Como? Não entendi.
-										</div>
-									</div>
-									<div className="form-divider">Informações da Amostra</div>
-									<div className="form-group">
-										<label>Escolha o tipo da amostra <Red /></label>
-										<select name="shape"  className="form-control" onChange={(e) => _onChange(e)} required>
-											<option value="">Selecione o tipo da amostra ...</option>
-											<option selected value="Pó">Pó {state.method == 'DRX' ? '- Mínimo de 1 grama, leve o pó peneirado e/ou macerado, preferência 230 mesh' : '- Leve o pó peneirado e/ou macerado'} </option>
-											<option value="Filme">Filme {state.method == 'DRX' ? '- Devem ter máx. 15x15mm2, espessura máx. de 3mm e devem ser planos' : '- Devem ter máx. de 2x2 cm2 e devem ser planos'}</option>
-											<option value="Pastilha">Pastilha {state.method == 'DRX' ? '- Disco devem ter máx. 15mm de diâmetro ou quadrado 15x15mm2, devem ter espessura máx. de 3mm e devem ser planos' : ' - Diâmetro menor: 17-19,5 mm, diâmetro máx. 30-44mm'}</option>
-											<option value="Eletródo">Eletródo {state.method == 'DRX' ? '- Disco devem ter máx. 15mm de diâmetro ou quadrado 15x15mm2, espessura máx. de 3mm e devem ser planos' : '- Devem ter máx. 2x2cm2 e devem ser planos'} </option>
-											<option value="Outro">Outro</option>
-										</select>
-										<div className="invalid-feedback">
-											Como? Não entendi.
-										</div>
-									</div>
-									<div className="form-divider"><strong>Observações sobre o volume da amostra</strong></div>
-									<div className="text-danger">*Sua amostra deve ter um volume mínimo de 0.5 ml.</div>
-									<div className="text-danger">*Amostras com um volume menor que 0.5 ml não serão aceitas.</div>
-									<div className="form-group text-center img-solicitation">
-										<img src={Eppendorf} alt="Eppendorf de 1,5 ml"/>
-									</div>
-									<div className="form-group">
-									<label>Composição <Red /></label>
-									<input type="text" name="composition" onChange={(e) => _onChange(e)} className="form-control" required />
-									<div className="invalid-feedback">
-										Campo Obirgatório!!
-									</div>
-									</div>
-									<div className="form-group">
-									<div className="control-label">Segurança</div>
-									<div className="custom-switches-stacked mt-2">
-										<label className="custom-switch">
-										<input type="checkbox" name="flammable" onChange={(e) => handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Inflamável</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="toxic" onChange={(e) => handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Tóxico</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="hygroscopic" onChange={(e) => handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Higroscópico</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="corrosive" onChange={(e) => handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Corrosivo</span>
-										</label>
-										<label className="custom-switch">
-										<input type="checkbox" name="radioactive" onChange={(e) => handleCheckbox(e)} defaultValue="Sim" className="custom-switch-input" />
-										<span className="custom-switch-indicator"></span>
-										<span className="custom-switch-description">Radioativo</span>
-										</label>
-									</div>
-									</div>
-									<div className="form-divider"><strong>Configurações da análise</strong></div>
-								  {state.data.method == 'DRX' ? DRXrender() : ''} 
-									{state.data.method == 'FRX' ? FRXrender() : ''}
-									<div className="form-divider"><strong>Observações Gerais</strong></div>
-									<div className="form-group">
-										<label>Observações</label>
-										<textarea className="form-control" name="note" onChange={(e) => _onChange(e)} defaultValue={""} />
-									</div>
-									<div className="form-divider"><strong>Range de Amostras</strong></div>
-									<div className="form-group">
-										<label>Quantas amostras deseja cadastrar?</label><br />
-										<label style={{color:'red'}}>No máximo 20 amostrar por solicitação</label>
-										<input type="text" className="form-control" name="quantity" onChange={(e) => _onChange(e)} placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" min={1} max={20} />
-									</div>
-								</div>
-					          </div>
-					          <div className="card-footer text-right">
-	                    <ButtonLoad type="submit" className="btn btn-primary btn-lg btn-block" loading={state.loading} name="Solicitar" loadName="Solicitando..."></ButtonLoad>
-					          </div>
-					      </form>
-          
+						<AddSolicitation 
+							user_id={props.user_id} 
+							handleLoadSol={props.handleLoadSol} 
+							handleClose={handleClose}
+						/>
           </Modal.Body>
         </Modal>
       </React.Fragment>
