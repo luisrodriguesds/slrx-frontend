@@ -230,7 +230,7 @@ function EditSolicitation() {
 							<div className="card" style={{display:((loadPage) ? 'none' : 'block')}}>
 								<Form ref={formRef} onSubmit={handleSubmit}>
 									<div className="card-header">
-										<h4>Editar Solicitação</h4>
+										<h4>Editar Solicitação - {sample}</h4>
 									</div>
 									<div className="card-body">
 										<div className="form-divider">Tipo de Análise e Equipamento</div>

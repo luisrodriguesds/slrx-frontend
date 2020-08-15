@@ -12,7 +12,7 @@ import UserEdit from '../pages/users/userEdit';
 import addUser from '../pages/users/addUser';
 import UsersProfile from '../pages/users/usersProfile';
 
-import Solicitations from '../pages/solicitations/solicitations';
+import Solicitations from '../pages/solicitations/solicitation';
 import SampleSingle from '../pages/solicitations/sampleSingle';
 import addSolicitation from '../pages/solicitations/addSolicitation';
 import editSolicitation from '../pages/solicitations/editSolicitation';
@@ -31,9 +31,6 @@ import Proposals from '../pages/Proposals/proposals';
 import AddProposals from '../pages/Proposals/addProposals';
 
 import NotFound from '../pages/notFound';
-
-
-// import { Container } from './styles';
 
 function AuthRoute() {
   return (

@@ -48,7 +48,7 @@ export const postSolicitation = (data) => api.post('/solictation', data);
 export const getSolicitation = ({page}) => api.get('/solictation/all?page='+page);
 export const searchSolicitation = (filter) => api.get('/solictation/filter?filter='+filter);
 export const searchSolicitationByUser = (filter, id) => api.get('/solictation/filter/user?filter='+filter+'&user_id='+id);
-export const filterhSolicitation = (filter) => api.get('/solictation/filterby?filter='+filter);
+export const filterSolicitation = (filter) => api.get('/solictation/filterby?filter='+filter);
 export const showSolicitation = (name) => api.get('/solictation/show/'+name);
 export const editSolicitation = (data) => api.put('/solictation/update/', data);
 export const destroySolicitation = (name) => api.delete('/solictation/destroy/'+name);
