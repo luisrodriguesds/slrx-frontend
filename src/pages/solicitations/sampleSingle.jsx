@@ -1,315 +1,313 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { GridLoader } from 'react-spinners';
+import { useParams, Link } from 'react-router-dom';
 
-import store from '../../store/store';
-import {getUser, showSolicitation, nextStepSolicitationFiveToSex} from '../../services/api';
-import axios, { post } from 'axios';
+import { sampleStatus } from '../../datas/sampleStatus';
+import { securyData } from '../../datas/securySamples';
 
 import Main from '../../components/template/Main';
-import LoadingPage from '../../components/events/LoadingPage';
+import Alert from '../../components/events/Alert';
+import GlobalErros from '../../components/errors/globalErros';
 
-export default class sampleSingle extends React.Component {
-	state = {
-		solicitation:{user:{name:''}, equipment:{name:''}, status:'', settings:{}},
-		status:[
-			{number:-3, descripiton:'Cancelada por falta de entrega da amostra.'},
-			{number:-2, descripiton:'Cancelada pelo operador.'},
-			{number:-1, descripiton:'Cancelada pelo responsável.'},
-			{number:1, descripiton:'Aguardando autorização'},
-			{number:2, descripiton:'Aguardando aprovação do Laboratório'},
-			{number:3, descripiton:'Aguardando confirmação da entrega da amostra'},
-			{number:4, descripiton:'Na fila do equipamento'},
-			{number:5, descripiton:'Em processo de análise'},
-			{number:6, descripiton:'Análise concluída. Aguardando recolhimento da amostra'},
-			{number:7, descripiton:'Solicitação Finalizada'},
-		],
-		user:{},
-		phase:'',
-		file:null,
-		loading:false,
-	  	loadpage:true
-	}
-	
-	async componentDidMount(){
-		const name = this.props.match.params.id;
+import { showSolicitation, nextStepSolicitationFiveToSex } from '../../services/api';
+import { useAuth } from '../../context/auth';
 
-		try{
-			const res = await showSolicitation(name);
-			const phase = this.state.status.filter((value) => value.number == res.data[0].status)[0].descripiton
-			
-			this.setState({solicitation:res.data[0], phase})
-		}catch(error){
-			alert(`Algo de errado acomteceu ou você não tem permissão para acessar esta página.`);
-			this.props.history.push('/solicitacoes')
-		}
+function SingleSolicitation() {
+  const { sample } = useParams() 
 
-		store.subscribe(() =>{
-			this.setState({
-				user:store.getState().user.user
-			})
-		});
-		store.dispatch({
-			type:'REQUEST_USER'
-		});
-		// console.log(this.state);
-		this.setState({loadpage:false});
-	}
+  const { user } = useAuth()
+  const permissions = useMemo(() => {
+    return ['administrador', 'operador']
+  }, [])
 
-	handleSubmit = async (e) => {
-		e.preventDefault();
-		
-		if (this.state.file == null) {
-			alert("Campo Enviar resultado obrigatório")
-			return false;
-		}
-		
-		try{
-			let res = await this.fileUpload(this.state.file);
-			if (res.data.error == true) {
-				alert(res.data.message);
-			}else{
-				alert(res.data.message);
-				//Atualizar estado
-				window.scroll(0,0);
-				const name = this.props.match.params.id;
+  const [loadingPage, setLoadingPage] = useState(true)
+  const [currentPhase, setCurrentPhase] = useState('')
+  const [currentColor, setCurrentColor] = useState('')
+  const [securies, setSecuries] = useState('')
+  const [file, setFile] = useState(null)
+  const [solicitation, setSolicitation] = useState({
+    user: {},
+    equipment: {},
+    settings: {}
+  })
 
-				res = await showSolicitation(name);
-				const phase = this.state.status.filter((value) => value.number == res.data[0].status)[0].descripiton
-				
-				this.setState({solicitation:res.data[0], phase})
-			}
-		}catch(e){
-			alert("Algo de errado aconteceu, por favor recarrege sua página");
-			// console.log(e);
-		}
+  const load = useCallback(async () => {
+    try {
+      const res = await showSolicitation(sample)
+      const [resSolicitation] = res.data
 
-	}
+      const filterSecury = securyData.filter(item => resSolicitation[item.id] === "Sim").map(item => item.label)
+      setSecuries(filterSecury.length > 0 ? filterSecury.join(', ') : '')
+      setSolicitation(resSolicitation)
+      setCurrentPhase(sampleStatus.find(item => item.number === resSolicitation.status).descripiton)
+      setCurrentColor(resSolicitation.status < 1 ? 'red' : (resSolicitation.status === 7 ? 'green' : 'blue'))
+    } catch (error) {
+      
+    }finally {
+      setLoadingPage(false)
+    }
+  }, [sample])
+  
+  useEffect(() => {
+    load()
+  }, [load])
 
-	onChange(e) {
-	    this.setState({file:e.target.files[0]})
-	}
-
-	fileUpload = async (file) => {
-	    const formData = new FormData();
-	    formData.append('id', this.state.solicitation.id)
-	    formData.append('sample', file)
+  const fileUpload = useCallback(async (id, sendFile) => {
+    const formData = new FormData();
+	    formData.append('id', id)
+	    formData.append('sample', sendFile)
 	    const config = {
 	        headers: {
 	            'content-type': 'multipart/form-data'
 	        }
 	    }
 	    return await nextStepSolicitationFiveToSex(formData, config)
-	 }
+  }, [])
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault()
+    if (file === null) {
+      Alert({
+        title: 'Opss...',
+        type: 'error',
+        text: 'Um arquivo precisa ser enviado!'
+      })
+    }
+
+    try {
+      await fileUpload(solicitation.id, file)
+      await load()
+      Alert({
+        title: 'Sucesso',
+        text: 'Arquivo enviado com sucesso!'
+      })
+    } catch (error) {
+      await load()
+      GlobalErros({
+        error
+      })
+    }finally {
+			window.scroll(0,0);
+    }
+    
+  }, [file, fileUpload, load, solicitation.id])
 
 
-	
-	render() {
-		const {solicitation} = this.state; 
-		return (
-			<Main title="Amostra">
-				<LoadingPage loading={this.state.loadpage} />
-				
-				<div className="row" style={{display:(this.state.loadpage ? 'none': 'flex')}}>
-					<div className="col-12 col-sm-12 col-lg-6">
-						<div className="card card-primary">
-		                  <div className="card-header">
-		                    <h4>{solicitation.name}</h4>
-		                  </div>
-		                  <div className="card-body">
-		                    <div className="ScrollStyle">
-		                    	<p>
-			                        <strong>Status: </strong> <span id="status" style={{color:(solicitation.status < 1) ? 'red' : ((solicitation.status == 7) ? 'green' : 'blue')}}><strong>{this.state.phase}</strong></span><br />
-			                    </p>
-			                    <p>
-			                        {this.state.user.permission == true && <React.Fragment><strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`/usuarios/ver-perfil/${solicitation.user && solicitation.user.id}`}>{solicitation.user && solicitation.user.name}</Link></span><br /> </React.Fragment>  }
-			                        {this.state.user.permission == false && <React.Fragment><strong>Solicitante: </strong><span id="detalhe_Solicitante"><Link to={`#`}>{solicitation.user && solicitation.user.name}</Link></span><br /> </React.Fragment>  }
-			                    </p>
-			                    <p>
-			                        <strong>Data da Solicitação: </strong><span id="detalhe_DataSolicitacao">{new Date(solicitation.created_at).toLocaleString('pt-BR')}</span><br />
-			                        {solicitation.received_date != null && <React.Fragment> <strong>Data do Recebimento: </strong><span id="detalhe_DataRecebimento">{new Date(solicitation.received_date).toLocaleString('pt-BR')}</span> <br /> </React.Fragment>}
-			                        {solicitation.conclusion_date != null && <React.Fragment> <strong>Data da Conclusão: </strong><span id="detalhe_DataConclusao">{new Date(solicitation.conclusion_date).toLocaleString('pt-BR')}</span> </React.Fragment>}
-			                    </p>
-			                    <p>
-			                        <strong>Equipamento: </strong> <span id="detalhe_Equipamento">{solicitation.equipment.name}</span><br />
-			                    </p>
-			                    <p>
-			                        <strong>Composição: </strong><span id="detalhe_Composicao">{solicitation.composition}</span><br />
-			                        <strong>Tipo: </strong> <span id="detalhe_Tipo">{solicitation.shape}</span><br />
-			                    </p>
-			                    {
-			                    	solicitation.method == 'DRX' && (
+  return (
+    <Main title="Amostra">
+      <center>
+        <GridLoader
+          sizeUnit={"px"}
+          size={30}
+          color={'#41b6ad'}
+          loading={loadingPage}
+          />
+      </center>
+      <div className="row" style={{display:(loadingPage ? 'none': 'flex')}}>
+        <div className="col-12 col-sm-12 col-lg-6">
+          <div className="card card-primary">
+            <div className="card-header">
+              <h4>{solicitation.name}</h4>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Solicitante:</p>
+                    <span>
+                      {permissions.includes(user.access_level_slug) ? (
+                        <Link to={`/usuarios/ver-perfil/${solicitation.user.id}`}>
+                          {solicitation.user.name}
+                        </Link>
+                      ): (
+                        <span>
+                          {solicitation.user.name}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Status:</p>
+                    <span className="font-weight-bold font-italic" style={{color:`${currentColor}`}}>{currentPhase}</span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Data da Solicitação:</p>
+                    <span>
+                      {new Date(solicitation.created_at).toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Data do Recebimento:</p>
+                    <span>
+                      {new Date(solicitation.received_date).toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Equipamento:</p>
+                    <span>
+                      {solicitation.equipment.name}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Composição:</p>
+                    <span>
+                      {solicitation.composition}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Forma:</p>
+                    <span>
+                      {solicitation.shape}
+                    </span>
+                  </div>
+                </div>
+                <div className="col-12 col-lg-6">
+                  <div className="form-group">
+                    <p className="font-weight-bold">Método:</p>
+                    <span>
+                      {solicitation.method}
+                    </span>
+                  </div>
+                </div>
+                {solicitation.method === 'DRX' && (
+                  <>
+                    <div className="col-12 col-lg-4">
+                      <div className="form-group">
+                        <p className="font-weight-bold">2θ Inicial:</p>
+                        <span>
+                          {solicitation.settings.dois_theta_inicial}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-12 col-lg-4">
+                      <div className="form-group">
+                        <p className="font-weight-bold">2θ Final:</p>
+                        <span>
+                          {solicitation.settings.dois_theta_final}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-12 col-lg-4">
+                      <div className="form-group">
+                        <p className="font-weight-bold">Δθ:</p>
+                        <span>
+                          {solicitation.settings.delta_dois_theta}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {solicitation.method === 'FRX' && (
+                  <>
+                    <div className="col-12 col-lg-6">
+                      <div className="form-group">
+                        <p className="font-weight-bold">Tipo de Medida:</p>
+                        <span>
+                          {solicitation.settings.medida}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="col-12 col-lg-6">
+                      <div className="form-group">
+                        <p className="font-weight-bold">Forma do Resultado:</p>
+                        <span>
+                          {solicitation.settings.resultado}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {securies && (
+                  <div className="col-12">
+                    <div className="form-group">
+                      <p className="font-weight-bold">Segurança:</p>
+                      <span>
+                        {securies}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {solicitation.note && (
+                  <div className="col-12">
+                    <div className="form-group">
+                      <p className="font-weight-bold">Observações:</p>
+                      <span>
+                        {solicitation.note}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <div className="col-12">
+                  <div className="form-group">
+                    <span>
+                      {solicitation.status === 7 || (permissions.includes(user.access_level_slug) && solicitation.status === 6) ? (
+                        <a href={solicitation.download} className="btn btn-danger">
+                          Download da medida
+                        </a>
+                      ) : ''}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {solicitation.status === 5 && (
+            <div className="card card-primary">
+              <div className="card-header">
+                <h4>Enviar resultado</h4>
+              </div>
+              <div className="card-body">
+                <form method="post" onSubmit={handleSubmit} encType="multipart/form-data" className="disabled-with-errors has-validation-callback">
+                  <div className="form-group">
+                    <input type="file" onChange={(e) => setFile(e.target.files[0])} required="" />
+                  </div>
+                  <input type="submit" value="Enviar" className="btn btn-primary" />
+                </form>
+              </div>
+            </div>
+          )}
 
-					                    <p id="detelhe_Configuracao_DRX">
-					                        <strong>2θ Inicial: </strong><span id="detalhe_2ThetaInicial">{solicitation.settings.dois_theta_inicial}</span><br />
-					                        <strong>2θ Final: </strong><span id="detalhe_2ThetaFinal">{solicitation.settings.dois_theta_final}</span><br />
-					                        <strong>Δθ: </strong><span id="detalhe_DeltaTheta">{solicitation.settings.delta_dois_theta}</span><br />
-					                    </p>
-			                    	)
-			                    }
+        </div>
+        <div className="col-12 col-sm-12 col-lg-6">
+          <div className="activities">
+            {sampleStatus.map((value,i) => {
+              if (value.number >= 1 && value.number <= solicitation.status) {
+                return (
+                  <div key={i} className="activity">
+                    <div className={`activity-icon ${(value.number === solicitation.status) ? 'bg-danger' : 'bg-primary'} text-white shadow-primary`}>
+                      <strong>{value.number}</strong>
+                    </div>
+                    <div className="activity-detail">
+                      <div className="mb-2">
+                        <span className="text-job">{new Date(solicitation.updated_at).toLocaleString('pt-BR')}</span>
+                        <span className="bullet" />
+                        <Link className="text-job" to="/">Ver</Link>
+                      </div>
+                      <p>{value.descripiton}</p>
+                    </div>
+                  </div>
+                );
+              }
+              return ''
+            })}
 
-			                    {
-			                    	solicitation.method == 'FRX' && (
-					                    <p id="detelhe_Configuracao_FRX">
-					                        <strong>Tipo de Medida: </strong><span id="detalhe_TipoMedida">{solicitation.settings.medida}</span><br />
-					                        <strong>Forma do Resultado: </strong><span id="detalhe_FormaResultado">{solicitation.settings.resultado}</span><br />
-					                    </p>
-			                    	)
-
-			                    }
-
-			                    <p>
-			                        <strong>Segurança: </strong>
-			                        	<span id="detalhe_Seguranca">
-			                        	{solicitation.corrosive == 'Sim' && 'Corrosivo, '}
-			                        	{solicitation.flammable == 'Sim' && 'Inflamável, '}
-			                        	{solicitation.hygroscopic == 'Sim' && 'Hidroscópico, '}
-			                        	{solicitation.radioactive == 'Sim' && 'Radioativo, '}
-			                        	{solicitation.toxic == 'Sim' && 'Tóxico'}
-			                        	</span>
-			                        <br />
-			                        <strong>Observações: </strong><span id="detalhe_Observacoes">{solicitation.note}</span><br />
-			                        <span id="detalhe_Corrosao"></span><br />
-			                    </p>
-			                    <p>
-			                    	{(this.state.user.permission == true && solicitation.status == 6) ? <a href={solicitation.download} className="btn btn-danger">Download da medida</a> : (((solicitation.status == 7) ? <a href={solicitation.download} className="btn btn-danger">Download da medida</a> : '')) }
-			                    </p>
-			                </div>
-		                  </div>
-		                </div>
-
-		                	
-						<div className="bloco relativo" id="UploadResultado" style={{display:((solicitation.status == 5 && this.state.user.permission == true) ? 'block' : 'none')}}>
-		                	<div className="card card-primary">
-		                  		<div className="card-body">
-
-									{/*
-										<div className="progress">
-										  <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
-										</div>
-									*/}
-									<h3>Enviar Resultado</h3>
-									<form name="result_upload" method="post" encType="multipart/form-data" onSubmit={(e) => this.handleSubmit(e)} className="disabled-with-errors has-validation-callback">
-										<input type="file" id="result_file" name="result_file" required=""  onChange={(e) => this.onChange(e)} data-validation="size required required required" data-validation-max-size="1M" data-validation-event="keyup change" />
-										<input type="submit" value="Enviar" className="btn btn-primary" />
-									</form>
-								</div>
-							</div>
-		                </div>
-
-					</div>
-					<div className="col-12 col-sm-12 col-lg-6">
-						<div className="activities">
-							{this.state.status.map((value,i) =>{
-
-								if (value.number >= 1 && value.number <= solicitation.status) {
-									
-									return (
-										<div key={i} className="activity">
-								          <div className={`activity-icon ${(value.number == solicitation.status) ? 'bg-danger' : 'bg-primary'} text-white shadow-primary`}>
-								            <strong>{value.number}</strong>
-								          </div>
-								          <div className="activity-detail">
-								            <div className="mb-2">
-								              <span className="text-job">{new Date(solicitation.updated_at).toLocaleString('pt-BR')}</span>
-								              <span className="bullet" />
-								              <Link className="text-job" to="/">Ver</Link>
-								              
-								            </div>
-								            <p>{value.descripiton}</p>
-								          </div>
-								        </div>
-									);
-								}else if (value.number < 1 && value.number === solicitation.status) {
-									return (
-										<div key={i} className="activity">
-								          <div className={`activity-icon bg-danger text-white shadow-primary`}>
-								            <strong>0</strong>
-								          </div>
-								          <div className="activity-detail">
-								            <div className="mb-2">
-								              <span className="text-job">{new Date(solicitation.updated_at).toLocaleString('pt-BR')}</span>
-								              <span className="bullet" />
-								              <Link className="text-job" to="/">Ver</Link>
-								              
-								            </div>
-								            <p>{value.descripiton}</p>
-								          </div>
-								        </div>
-									);
-								}
-							})}
-
-						</div>
-					</div>
-
-					{/*<div className="col-12 col-sm-12 col-lg-6">
-						<div className="activities">
-
-					        <div className="activity">
-					          <div className="activity-icon bg-primary text-white shadow-primary">
-					            <strong>1</strong>
-					          </div>
-					          <div className="activity-detail">
-					            <div className="mb-2">
-					              <span className="text-job">19/10/2018</span>
-					              <span className="bullet" />
-					              <Link className="text-job" to="/">Ver</Link>
-					              
-					            </div>
-					            <p>Mateus Nunes de Oliveira efetuou o a solicitação dessa amostra.</p>
-					          </div>
-					        </div>
-
-					        <div className="activity">
-					          <div className="activity-icon bg-primary text-white shadow-primary">
-					            <strong>2</strong>
-					          </div>
-					          <div className="activity-detail">
-					            <div className="mb-2">
-					              <span className="text-job">21/10/2018</span>
-					              <span className="bullet" />
-					              <Link className="text-job" to="/">Ver</Link>
-					              
-					            </div>
-					            <p>Orientador liberou a análise da amostra.</p>
-					          </div>
-					        </div>
-
-					        <div className="activity">
-					          <div className="activity-icon bg-primary text-white shadow-primary">
-					            <strong>3</strong>
-					          </div>
-					          <div className="activity-detail">
-					            <div className="mb-2">
-					              <span className="text-job">01/11/2018</span>
-					              <span className="bullet" />
-					              <Link className="text-job" to="/">Ver</Link>
-					              
-					            </div>
-					            <p>Isabela Oliveira recebeu a amostra deixada por Mateus Nunes de Oliveira.</p>
-					          </div>
-					        </div>
-
-					        <div className="activity">
-					          <div className="activity-icon bg-danger text-white shadow-primary">
-					            <strong>4</strong>
-					          </div>
-					          <div className="activity-detail">
-					            <div className="mb-2">
-					              <span className="text-job">--/--/----</span>
-					              <span className="bullet" />
-					              <Link className="text-job" to="/">Ver</Link>
-					              
-					            </div>
-					            <p>Amostra está na fila para o equipamento. Veja como está a <Link to="/fila-do-equipamento">fila</Link></p>
-					          </div>
-					        </div>
-
-					      </div>
-					</div>*/}
-
-				</div>
-			</Main>
-		);
-	}
+          </div>
+        </div>
+      </div>
+    </Main>
+  );
 }
+
+export default SingleSolicitation;

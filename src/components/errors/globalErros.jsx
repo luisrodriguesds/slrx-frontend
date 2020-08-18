@@ -17,19 +17,11 @@ const Errors = ({ error, formRef }) => {
     })
     window.scroll(0,0)
   }else if(error.response !== undefined){
-    if (error.response.status === 400) {
-      Alert({
-        title: <p>Ops ...</p>,
-        type: 'error',
-        text: 'Verifique se todos os campos estão preenchidos' 
-      })
-    }else{
-      Alert({
-        title: <p>Ops ...</p>,
-        type: 'error',
-        text: error.response.data.message 
-      })
-    }
+    Alert({
+      title: <p>Ops ...</p>,
+      type: 'error',
+      text: error.response.data.message  ? error.response.data.message  : 'Verifique se todos os campos estão preenchidos' 
+    })
   }else{
     Alert({
       title: <p>Ops ...</p>,
