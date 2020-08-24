@@ -38,7 +38,8 @@ export default class usersProfile extends React.Component {
 		propostas:[],
 		user_id:'',
 		loading:false,
-	  loadpage:true
+		loadpage:true,
+		number:''
 	}
 
 	async componentDidMount(){
@@ -65,6 +66,10 @@ export default class usersProfile extends React.Component {
 
 		const res = await getUserById(id);
 		let obs = ``, studants, propostas;
+		let wpp = res.data.user.phone1.replace('(', '')
+		wpp = wpp.replace(')', '')
+		wpp = wpp.replace('-', '')
+		this.setState({number: wpp})
 		switch(res.data.user.access_level_slug){
 			case "aluno":
 				obs = (res.data.user.academic == null ? '' : `${res.data.user.academic.laboratory}`);
@@ -410,7 +415,8 @@ export default class usersProfile extends React.Component {
 				          </div>
 				          <p><i>Sem descrição</i></p>
 				          <p>
-				          	{this.state.user.access_level_slug == 'administrador' && <Link to={`/usuarios/editar/${userSingle.id}`} className="btn btn-info mr-1" title="Editar"> Editar Usuário </Link>}
+										{this.state.user.access_level_slug == 'administrador' && <Link to={`/usuarios/editar/${userSingle.id}`} className="btn btn-info mr-1" title="Editar"> Editar Usuário </Link>}
+				          	{this.state.user.access_level_slug == 'administrador' && <a href={`https://api.whatsapp.com/send?phone=55${this.state.number}`} className="btn btn-success mr-1" target="_blank" title="Wpp"> <i className="fab fa-whatsapp"></i> Wpp </a>}
 				          </p>
 				        </div>
 				        <div className="card-footer text-center pt-0">
