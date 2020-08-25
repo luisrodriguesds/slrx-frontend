@@ -82,7 +82,7 @@ function Proposals() {
 			                   {proposals.map(proposal => (
                            <tr key={`prop-${proposal.id}`}>
                              <td>#</td>
-                              <td>{proposal.user.name}</td>
+                              <td>{proposal.user && proposal.user.name}</td>
                               <td>
                                 <a href={`${process.env.REACT_APP_API_URL}/solictation/proposta?data=${proposal.url}`} rel="noopener noreferrer" target="_blank">Proposta</a>
                               </td>
