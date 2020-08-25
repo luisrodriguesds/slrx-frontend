@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Container } from './styles';
 import { searchSolicitation, postProposta } from '../../services/api';
 import Main from '../../components/template/Main';
+import GlobalErros from '../../components/errors/globalErros';
 
 function AddProposals() {
   const [solicitations, setSolicitations] = useState([])
@@ -83,7 +84,9 @@ function AddProposals() {
         setProposta({url:data, user_id:0});
         setSendProp(false);
     } catch (error) {
-       
+      GlobalErros({
+        error
+      })
     }
   }
 
@@ -95,7 +98,9 @@ function AddProposals() {
         setSendProp(true)      
       }
     }catch(error){
-
+      GlobalErros({
+        error
+      })
     }
   }
 
@@ -134,7 +139,6 @@ function AddProposals() {
                                   ))}
                                 </div>
                                 <Container>
-                                  {console.log(samples)}
                                   <div className="table-responsive">
                                     <table className="table table-striped">
                                       <tbody>
@@ -245,8 +249,10 @@ function AddProposals() {
                             </div>
                         </div>
                     </form>
-                    <div className="col-10">
-                      <button hidden={sendProp} className="btn btn-danger btn-lg btn-block" onClick={handleSendProposta}>Gerar Ordem</button>
+                    <div className="card-footer">
+                      <div className="col-12">
+                        <button hidden={sendProp} className="btn btn-danger btn-lg btn-block" onClick={handleSendProposta}>Gerar Ordem</button>
+                      </div>
                     </div>
                 </div>
               </div>

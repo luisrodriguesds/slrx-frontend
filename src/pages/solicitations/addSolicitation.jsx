@@ -322,7 +322,6 @@ function AddSolicitation({ user_id, handleLoadSol, handleClose }) {
                 type="number"
                 placeholder="Digite quantas amostras serão cadastradas nesta Solicitação" 
                 min={1} 
-                max={20}
               />
             </div>
 
